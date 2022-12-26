@@ -11,10 +11,10 @@ import {
   Row,
   Typography,
 } from "antd";
-import { INDIGO_600 } from "../constants/colors";
+import { INDIGO_600 } from "../../constants/colors";
 import { useState } from "react";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
-import { handleValidateOnFieldChange } from "../utils/validation";
+import { handleValidateOnFieldChange } from "../../utils/validation";
 
 export default function Home() {
   const { Content } = Layout;
