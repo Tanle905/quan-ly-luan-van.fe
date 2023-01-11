@@ -1,6 +1,12 @@
 html {
   font-family: Montserrat;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
