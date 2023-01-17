@@ -1,0 +1,10 @@
+export const INDIGO_100 = "#eef2ff";
+export const INDIGO_200 = "#e0e7ff";
+export const INDIGO_300 = "#c7d2fe";
+export const INDIGO_400 = "#a5b4fc";
+export const INDIGO_500 = "#818cf8";
+export const INDIGO_600 = "#6366f1";
+export const INDIGO_700 = "#4f46e5";
+export const INDIGO_800 = "#4338ca";
+export const INDIGO_900 = "#312e81";
+export const GRAY_100 = "#f3f4f6";
