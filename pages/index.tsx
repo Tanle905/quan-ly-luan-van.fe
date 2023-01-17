@@ -1,6 +1,7 @@
 import { Layout } from "antd";
 import Head from "next/head";
 import { OGHeader } from "../components/organisms/header/header.organism";
+import { OGTeacherTable } from "../components/organisms/table/teacher-table.organism";
 
 export default function Home() {
   const { Content, Header } = Layout;
@@ -15,6 +16,9 @@ export default function Home() {
       </Head>
       <Content className="h-screen bg-gray-100">
         <OGHeader />
+        <Content className="mt-16">
+          <OGTeacherTable />
+        </Content>
       </Content>
     </>
   );

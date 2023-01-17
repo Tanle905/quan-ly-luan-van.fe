@@ -83,7 +83,7 @@ export default function Home() {
                   </Content>
                 </Col>
                 <Col>
-                  <Link style={{ color: INDIGO_600 }}>Quên mật khẩu?</Link>
+                  <Link className="text-indigo-600">Quên mật khẩu?</Link>
                 </Col>
               </Row>
               <Button

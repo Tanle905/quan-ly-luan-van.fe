@@ -5,11 +5,9 @@ export function AtomHeaderBrand(props: any) {
   const { Content } = Layout;
 
   return (
-    <Content className="flex">
+    <Content className="flex text-center">
       <BookOutlined className="text-3xl mr-2" />
-      <Typography.Title style={{ margin: 0 }} level={4}>
-        Quản lý luận văn
-      </Typography.Title>
+      <span className="inline-block text-xl font-semibold my-2">Quản lý luận văn.</span>
     </Content>
   );
 }
