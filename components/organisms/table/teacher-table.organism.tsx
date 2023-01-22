@@ -4,15 +4,22 @@ import { useEffect, useState } from "react";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
 import { baseUrl, TEACHER_ENDPOINT } from "../../../constants/endpoints";
 import { Teacher } from "../../../interfaces/teacher.interface";
+import useSWR from "swr";
+import { requestSendSubject } from "../../../constants/observables";
 
 interface OGTeacherTableProps {}
 
 export function OGTeacherTable({}: OGTeacherTableProps) {
-  const [teacherData, setTeacherData] = useState<Teacher[]>();
   const [msg, contextHolder] = message.useMessage();
+  const { data, mutate } = useSWR<Teacher[] | undefined>(
+    baseUrl + TEACHER_ENDPOINT.BASE,
+    fetchData
+  );
 
   useEffect(() => {
-    fetchData().then((result: any) => setTeacherData(result));
+    const requestSendSubscription = requestSendSubject.subscribe({
+      next: () => mutate(),
+    });
   }, []);
 
   async function fetchData() {
@@ -31,6 +38,8 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
       message.error(error.message);
     }
   }
+
+  if (!data) return;
 
   return (
     <>
@@ -59,7 +68,7 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
           <Table
             bordered
             columns={teacherListConfig.table.columns}
-            dataSource={teacherData}
+            dataSource={data}
           />
         </Layout.Content>
       </Layout.Content>

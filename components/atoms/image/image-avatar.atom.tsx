@@ -1,7 +1,7 @@
+import { PoweroffOutlined, TabletOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, MenuProps } from "antd";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { User } from "../../../interfaces/user.interface";
@@ -12,25 +12,32 @@ interface AtomImageAvatarProps {
 }
 
 export function AtomImageAvatar({ size }: AtomImageAvatarProps) {
-  const router = useRouter();
   const user: User | null = useRecoilValue(userState);
-  const resetUser = useResetRecoilState(userState);
 
   const items: MenuProps["items"] = [
     {
       key: "1",
-      label: <Link href={SCREEN_ROUTE.PROFILE}>Profile</Link>,
+      label: (
+        <Link href={SCREEN_ROUTE.PROFILE}>
+          <TabletOutlined className="mr-2" />
+          Xem Hồ Sơ
+        </Link>
+      ),
     },
     {
       key: "2",
-      label: <span onClick={handleSignOut}>Sign Out</span>,
+      label: (
+        <span onClick={handleSignOut}>
+          <PoweroffOutlined className="mr-2" />
+          Đăng xuất
+        </span>
+      ),
     },
   ];
 
   function handleSignOut() {
-    resetUser();
     localStorage.removeItem(LOCAL_STORAGE.USER_DATA);
-    router.push(SCREEN_ROUTE.LOGIN);
+    window.location.reload();
   }
 
   if (!user) return;

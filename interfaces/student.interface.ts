@@ -2,7 +2,7 @@ import { User } from "./user.interface";
 
 export interface Student extends User {
   MSSV: string;
-  isRequestSent?: boolean;
+  sentRequestList?: string[];
   topic?: any;
   teacher?: any;
   thesisProgress?: any;

@@ -9,4 +9,5 @@ export interface User {
   phoneNumber?: number;
   name?: string;
   isDeactivated?: boolean;
+  accessToken?: string;
 }

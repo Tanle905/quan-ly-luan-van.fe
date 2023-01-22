@@ -4,5 +4,8 @@ export const AUTH_ENDPOINT = {
   LOGIN: "/login",
 };
 export const TEACHER_ENDPOINT = {
-  BASE:'/teacher',
-}
+  BASE: "/teacher",
+};
+export const REQUEST_ENDPOINT = {
+  BASE: "/request",
+};

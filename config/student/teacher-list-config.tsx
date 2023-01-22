@@ -9,6 +9,10 @@ export const teacherListConfig: TableConfig = {
   table: {
     columns: [
       {
+        title: "MSCB",
+        dataIndex: "MSCB",
+      },
+      {
         title: "Họ và Tên",
         dataIndex: "name",
       },
@@ -22,9 +26,11 @@ export const teacherListConfig: TableConfig = {
         render: (major) => major.name,
       },
       {
-        width: '10%',
+        width: "10%",
         title: "Hành động",
-        render: (text) => <AtomTeacherTableAction />,
+        render: (text, teacher: any) => (
+          <AtomTeacherTableAction teacher={teacher} />
+        ),
       },
     ],
   },
