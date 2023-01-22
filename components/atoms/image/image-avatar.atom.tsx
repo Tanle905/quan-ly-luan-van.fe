@@ -25,6 +25,9 @@ export function AtomImageAvatar({ size }: AtomImageAvatarProps) {
       ),
     },
     {
+      type: "divider",
+    },
+    {
       key: "2",
       label: (
         <span onClick={handleSignOut}>
@@ -40,7 +43,7 @@ export function AtomImageAvatar({ size }: AtomImageAvatarProps) {
     window.location.reload();
   }
 
-  if (!user) return;
+  if (!user) return null;
 
   return (
     <Dropdown menu={{ items }} placement={"bottomRight"}>
