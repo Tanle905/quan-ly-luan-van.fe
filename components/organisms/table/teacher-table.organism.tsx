@@ -6,13 +6,17 @@ import { baseUrl, TEACHER_ENDPOINT } from "../../../constants/endpoints";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import useSWR from "swr";
 import { requestSendSubject } from "../../../constants/observables";
+import { useRecoilValue } from "recoil";
+import { userState } from "../../../stores/auth.store";
+import { Student } from "../../../interfaces/student.interface";
 
 interface OGTeacherTableProps {}
 
 export function OGTeacherTable({}: OGTeacherTableProps) {
+  const user = useRecoilValue<Student | null>(userState);
   const [msg, contextHolder] = message.useMessage();
   const { data, mutate } = useSWR<Teacher[] | undefined>(
-    baseUrl + TEACHER_ENDPOINT.BASE,
+    user && baseUrl + TEACHER_ENDPOINT.BASE,
     fetchData
   );
 
@@ -20,12 +24,21 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
     const requestSendSubscription = requestSendSubject.subscribe({
       next: () => mutate(),
     });
+
+    return () => {
+      requestSendSubscription.unsubscribe();
+    };
   }, []);
 
   async function fetchData() {
     try {
       const { data }: { data: { data: Teacher[] } } = await axios.get(
-        baseUrl + TEACHER_ENDPOINT.BASE
+        baseUrl + TEACHER_ENDPOINT.BASE,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        }
       );
       const transformedData = data.data.map((teacher) => {
         const newData = { ...teacher, ...teacher.profile };
@@ -35,7 +48,7 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
       });
       return transformedData;
     } catch (error: any) {
-      message.error(error.message);
+      message.error(error.response.data.message);
     }
   }
 
@@ -68,7 +81,12 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
           <Table
             bordered
             columns={teacherListConfig.table.columns}
-            dataSource={data}
+            dataSource={data.map((data, index) => {
+              return {
+                key: index,
+                ...data,
+              };
+            })}
           />
         </Layout.Content>
       </Layout.Content>

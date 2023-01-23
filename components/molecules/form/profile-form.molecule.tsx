@@ -1,6 +1,6 @@
 import { Form, Input, Layout } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { Roles } from "../../../constants/enums";
 import { User } from "../../../interfaces/user.interface";
 import { userState } from "../../../stores/auth.store";

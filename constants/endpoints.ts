@@ -9,3 +9,6 @@ export const TEACHER_ENDPOINT = {
 export const REQUEST_ENDPOINT = {
   BASE: "/request",
 };
+export const NOTIFICATION_ENDPOINT = {
+  BASE: "/notification",
+};

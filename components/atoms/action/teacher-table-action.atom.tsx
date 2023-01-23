@@ -7,9 +7,14 @@ import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Observable } from "rxjs";
-import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
+import {
+  baseUrl,
+  NOTIFICATION_ENDPOINT,
+  REQUEST_ENDPOINT,
+} from "../../../constants/endpoints";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { requestSendSubject } from "../../../constants/observables";
+import { Notification } from "../../../interfaces/notification.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import { userState } from "../../../stores/auth.store";
@@ -21,8 +26,10 @@ interface AtomTeacherTableActionProps {
 export function AtomTeacherTableAction({
   teacher,
 }: AtomTeacherTableActionProps) {
-  const [user, setUser] = useRecoilState<Student | null>(userState);
-  const isRequestSent = user?.sentRequestList?.includes(teacher.MSCB);
+  const [user, setUser] = useRecoilState<Student>(userState);
+  const isRequestSent = user?.sentRequestList?.find(
+    (request) => request.MSCB === teacher.MSCB
+  );
   const [msg, contextHolder] = message.useMessage();
 
   async function handleSendRequest() {
@@ -39,6 +46,7 @@ export function AtomTeacherTableAction({
           },
         }
       );
+
       setUser((prevUser: any) => {
         localStorage.setItem(
           LOCAL_STORAGE.USER_DATA,
@@ -54,10 +62,24 @@ export function AtomTeacherTableAction({
       });
       requestSendSubject.next(1);
       message.success("Gửi yêu cầu thành công");
+
+      const notificationBody: Notification = {
+        sender: user._id,
+        receiver: teacher._id,
+        content: `Sinh viên ${user.name}(${user.email})-${user.MSSV} đã gửi yêu cầu xin hướng dẫn.`,
+      };
+
+      await axios.post(baseUrl + NOTIFICATION_ENDPOINT.BASE, notificationBody, {
+        headers: {
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      });
     } catch (error: any) {
       message.error(error.message);
     }
   }
+
+  if (!user) return null;
 
   return (
     <>
