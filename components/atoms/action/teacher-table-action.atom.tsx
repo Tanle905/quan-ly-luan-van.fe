@@ -5,18 +5,16 @@ import {
 } from "@ant-design/icons";
 import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { Observable } from "rxjs";
+import { useRecoilState } from "recoil";
 import {
   baseUrl,
-  NOTIFICATION_ENDPOINT,
   REQUEST_ENDPOINT,
 } from "../../../constants/endpoints";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { requestSendSubject } from "../../../constants/observables";
-import { Notification } from "../../../interfaces/notification.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
+import { NotificationService } from "../../../services/notification.service";
 import { userState } from "../../../stores/auth.store";
 
 interface AtomTeacherTableActionProps {
@@ -63,16 +61,11 @@ export function AtomTeacherTableAction({
       requestSendSubject.next(1);
       message.success("Gửi yêu cầu thành công");
 
-      const notificationBody: Notification = {
+      await NotificationService.sendNotification({
+        user,
         sender: user._id,
         receiver: teacher._id,
         content: `Sinh viên ${user.lastName} ${user.firstName} (${user.email}) - ${user.MSSV} đã gửi yêu cầu xin hướng dẫn.`,
-      };
-
-      await axios.post(baseUrl + NOTIFICATION_ENDPOINT.BASE, notificationBody, {
-        headers: {
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
       });
     } catch (error: any) {
       message.error(error.message);

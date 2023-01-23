@@ -1,5 +1,6 @@
-import { Dropdown, Layout, MenuItemProps, MenuProps } from "antd";
+import { Divider, Dropdown, Layout, MenuItemProps, MenuProps } from "antd";
 import axios, { AxiosError } from "axios";
+import moment from "moment";
 import { ReactElement, ReactNode, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useSWR from "swr";
@@ -21,13 +22,14 @@ export function AtomNotificationListDropDown({
     user && baseUrl + NOTIFICATION_ENDPOINT.BASE,
     notificationFetcher
   );
+  const [open, setOpen] = useState(false);
   const [menuItems, setMenuItems] = useState<MenuProps["items"]>([
     {
       key: "1",
       disabled: true,
       label: (
-        <Layout.Content className="flex justify-between h-32 space-x-4 items-center cursor-default">
-          <span className="text-gray-500">Không có thông báo nào</span>
+        <Layout.Content className="flex justify-between w-96 h-32 space-x-4 items-center cursor-default">
+          <span className="text-gray-500 m-auto">Không có thông báo nào</span>
         </Layout.Content>
       ),
     },
@@ -38,11 +40,24 @@ export function AtomNotificationListDropDown({
       data.length > 0 &&
       setMenuItems(
         data.map((notification, index) => {
+          const time = moment(notification.createdAt).format("LT");
+          const date = moment(notification.createdAt).format("LL");
           return {
             key: index,
+            className: "cursor-default hover:bg-indigo-600 transition-all",
             label: (
-              <Layout.Content className="w-56">
-                <span>{notification.content}</span>
+              <Layout.Content className="w-96 relative">
+                {!notification.is_read && (
+                  <div className="absolute top-0 right-0 bg-indigo-600 h-2 w-2 rounded-full"></div>
+                )}
+                <div className="w-5/6">
+                  <span className="text-gray-600">{notification.content}</span>
+                  <Layout.Content>
+                    <span className="text-xs text-gray-500">{time}</span>
+                    <Divider type="vertical" className="border-gray-400" />
+                    <span className="text-xs text-gray-500">{date}</span>
+                  </Layout.Content>
+                </div>
               </Layout.Content>
             ),
           };
@@ -66,9 +81,11 @@ export function AtomNotificationListDropDown({
 
   return (
     <Dropdown
-      menu={{ items: menuItems }}
+      menu={{ items: menuItems, className: "max-h-96 overflow-auto" }}
       trigger={["click"]}
-      placement="bottom"
+      placement="bottomRight"
+      open={open}
+      onOpenChange={() => setOpen(!open)}
     >
       {children}
     </Dropdown>

@@ -11,6 +11,8 @@ export const TEACHER_ENDPOINT = {
 };
 export const REQUEST_ENDPOINT = {
   BASE: "/request",
+  ACCEPT: "/accept",
+  REJECT: "/reject",
 };
 export const NOTIFICATION_ENDPOINT = {
   BASE: "/notification",

@@ -4,4 +4,6 @@ export interface Notification {
     type?: string;
     content: string;
     is_read?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
