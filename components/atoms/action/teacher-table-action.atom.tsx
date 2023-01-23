@@ -66,7 +66,7 @@ export function AtomTeacherTableAction({
       const notificationBody: Notification = {
         sender: user._id,
         receiver: teacher._id,
-        content: `Sinh viên ${user.name}(${user.email})-${user.MSSV} đã gửi yêu cầu xin hướng dẫn.`,
+        content: `Sinh viên ${user.lastName} ${user.firstName} (${user.email}) - ${user.MSSV} đã gửi yêu cầu xin hướng dẫn.`,
       };
 
       await axios.post(baseUrl + NOTIFICATION_ENDPOINT.BASE, notificationBody, {

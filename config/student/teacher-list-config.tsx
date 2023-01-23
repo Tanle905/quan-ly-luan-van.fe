@@ -17,6 +17,11 @@ export const teacherListConfig: TableConfig = {
         key: "name",
         title: "Họ và Tên",
         dataIndex: "name",
+        render: (text, record: any) => (
+          <span>
+            {record.lastName} {record.firstName}
+          </span>
+        ),
       },
       {
         key: "email",

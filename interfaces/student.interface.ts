@@ -7,4 +7,5 @@ export interface Student extends User {
   teacher?: any;
   thesisProgress?: any;
   reportSchedule?: any;
+  profile?: any;
 }

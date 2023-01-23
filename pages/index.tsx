@@ -1,7 +1,9 @@
 import { Layout } from "antd";
 import Head from "next/head";
 import { OGHeader } from "../components/organisms/header/header.organism";
+import { OGStudentTable } from "../components/organisms/table/student-table.organism";
 import { OGTeacherTable } from "../components/organisms/table/teacher-table.organism";
+import { isTeacher } from "../utils/role.util";
 
 export default function Home() {
   const { Content } = Layout;
@@ -17,7 +19,7 @@ export default function Home() {
       <Content className="h-screen bg-gray-100">
         <OGHeader />
         <Content className="mt-16">
-          <OGTeacherTable />
+          {isTeacher() ? <OGStudentTable /> : <OGTeacherTable />}
         </Content>
       </Content>
     </>

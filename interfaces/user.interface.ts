@@ -1,14 +1,19 @@
 export interface User {
   _id: string;
-  username: string;
   email: string;
-  roles?: string[];
   password: string;
+  roles?: string[];
   MSSV?: string;
   MSCB?: string;
+  teacherProfile?: any;   //virtual field
+  studentProfile?: any;   //virtual field
+  firstName?: string;
+  lastName?: string;
   imageUrl?: string;
   phoneNumber?: number;
-  name?: string;
   isDeactivated?: boolean;
+  ethnic?: string;
+  religion?: string;
+  CCCD?: string;
   accessToken?: string;
 }

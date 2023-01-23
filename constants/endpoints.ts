@@ -3,6 +3,9 @@ export const AUTH_ENDPOINT = {
   BASE: "/auth",
   LOGIN: "/login",
 };
+export const STUDENT_ENDPOINT = {
+  BASE: "/student",
+};
 export const TEACHER_ENDPOINT = {
   BASE: "/teacher",
 };

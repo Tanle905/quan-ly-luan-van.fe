@@ -21,10 +21,15 @@ export function MCProfileForm({}: MCProfileFormProps) {
           name={user.roles?.includes(Roles.STUDENT) ? "MSSV" : "MSCB"}
         >
           <Input type="text" disabled />
-        </Form.Item>{" "}
-        <Form.Item label="Họ và tên" name={"name"}>
+        </Form.Item>
+        <Layout.Content className="flex justify-end space-x-5">
+        <Form.Item label="Họ" name={"lastName"}>
           <Input type="text" disabled />
         </Form.Item>
+        <Form.Item label="Tên" name={"firstName"}>
+          <Input type="text" disabled />
+        </Form.Item>
+        </Layout.Content>
         <Form.Item label="Địa chỉ email" name={"email"}>
           <Input type="text" disabled />
         </Form.Item>

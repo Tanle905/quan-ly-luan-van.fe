@@ -43,7 +43,7 @@ export default function Home() {
       localStorage.setItem(LOCAL_STORAGE.USER_DATA, JSON.stringify(data));
       router.push(SCREEN_ROUTE.BASE);
     } catch (error: any) {
-      message.error(error.message);
+      message.error(error.response.data.message);
     }
   }
 
