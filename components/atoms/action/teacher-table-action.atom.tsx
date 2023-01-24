@@ -5,6 +5,7 @@ import {
 } from "@ant-design/icons";
 import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
+import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
@@ -22,12 +23,15 @@ export function AtomTeacherTableAction({
   teacher,
 }: AtomTeacherTableActionProps) {
   const [user, setUser] = useRecoilState<Student>(userState);
+  const [isLoading, setIsLoading] = useState(false);
   const isRequestSent = user?.sentRequestList?.find(
     (request) => request.MSCB === teacher.MSCB
   );
   const [msg, contextHolder] = message.useMessage();
 
   async function handleSendRequest() {
+    if (isRequestSent || isLoading) return;
+    setIsLoading(true);
     try {
       const res = await axios.post(
         baseUrl + REQUEST_ENDPOINT.BASE,
@@ -43,13 +47,6 @@ export function AtomTeacherTableAction({
       );
 
       setUser((prevUser: Student) => {
-        localStorage.setItem(
-          LOCAL_STORAGE.USER_DATA,
-          JSON.stringify({
-            ...prevUser,
-            sentRequestList: res.data.studentData.sentRequestList,
-          })
-        );
         return {
           ...prevUser,
           sentRequestList: res.data.studentData.sentRequestList,
@@ -65,6 +62,8 @@ export function AtomTeacherTableAction({
       });
     } catch (error: any) {
       message.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -86,11 +85,11 @@ export function AtomTeacherTableAction({
         >
           <SendOutlined
             className={`p-2 rounded-md transition-all ${
-              isRequestSent
+              isRequestSent || isLoading
                 ? "cursor-default text-gray-700 bg-gray-300"
                 : "cursor-pointer hover:bg-indigo-600 hover:text-white"
             }`}
-            onClick={() => !isRequestSent && handleSendRequest()}
+            onClick={handleSendRequest}
           />
         </Tooltip>
         <Tooltip title="Xem thông tin giảng viên">

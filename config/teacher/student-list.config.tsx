@@ -3,6 +3,7 @@ import { TableConfig } from "../interface/table-config.interface";
 
 export const studentListConfig: TableConfig = {
   apiEndpoint: "",
+  title: "Quản lý sinh viên",
   table: {
     columns: [
       {

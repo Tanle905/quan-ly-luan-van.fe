@@ -17,6 +17,11 @@ export function OGHeader({}) {
     setUser(userData);
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+    localStorage.setItem(LOCAL_STORAGE.USER_DATA, JSON.stringify(user));
+  }, [user]);
+
   return (
     <Layout.Content className="flex justify-between px-20 py-1 bg-white shadow-sm">
       <MCHeaderLeft />

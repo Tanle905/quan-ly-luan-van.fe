@@ -19,7 +19,7 @@ export function MCHeaderRight({ styles }: MCHeaderRightProps) {
       <AtomIconHeader icon={<SearchOutlined />} />
       <AtomIconHeader
         icon={
-          <AtomNotificationListDropDown>
+          <AtomNotificationListDropDown >
             <BellOutlined />
           </AtomNotificationListDropDown>
         }

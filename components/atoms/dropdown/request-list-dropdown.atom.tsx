@@ -34,7 +34,7 @@ export function AtomRequestListDropdown({
           return {
             key: index,
             label: (
-              <Layout.Content className=" flex w-72 justify-between space-x-4 px-1 items-center cursor-default">
+              <Layout.Content className=" flex justify-between space-x-4 px-1 items-center cursor-default">
                 <Layout.Content className="flex flex-col">
                   <Layout.Content className="flex items-center space-x-2">
                     <span className="font-semibold">
@@ -97,19 +97,16 @@ export function AtomRequestListDropdown({
       );
 
       setUser((prevUser: any) => {
-        localStorage.setItem(
-          LOCAL_STORAGE.USER_DATA,
-          JSON.stringify({
-            ...prevUser,
-            [listName]: res.data[currentUserName][listName],
-          })
-        );
+        const updatedData = {
+          [listName]: res.data[currentUserName][listName],
+          studentList: res.data[currentUserName].studentList,
+        };
+
         return {
           ...prevUser,
-          [listName]: res.data[currentUserName][listName],
+          ...updatedData,
         };
       });
-      requestSendSubject.next(1);
       await NotificationService.sendNotification({
         user,
         receiver: request.studentId,
@@ -117,6 +114,7 @@ export function AtomRequestListDropdown({
           isTeacher() ? request.teacherName : request.studentName
         } đã chấp nhận yêu cầu của bạn.`,
       });
+      requestSendSubject.next(1);
       message.success("Chấp nhận yêu cầu thành công");
     } catch (error: any) {
       message.error(error.response.data.message);
@@ -138,19 +136,11 @@ export function AtomRequestListDropdown({
       );
 
       setUser((prevUser: any) => {
-        localStorage.setItem(
-          LOCAL_STORAGE.USER_DATA,
-          JSON.stringify({
-            ...prevUser,
-            [listName]: res.data[currentUserName][listName],
-          })
-        );
         return {
           ...prevUser,
           [listName]: res.data[currentUserName][listName],
         };
       });
-      requestSendSubject.next(1);
       await NotificationService.sendNotification({
         user,
         receiver: isTeacher() ? request.studentId : request.teacherId,
@@ -158,6 +148,7 @@ export function AtomRequestListDropdown({
           isTeacher() ? request.teacherName : request.studentName
         } đã hủy yêu cầu.`,
       });
+      requestSendSubject.next(1);
       message.success("Xóa yêu cầu thành công");
     } catch (error: any) {
       message.error(error.response.data.message);
