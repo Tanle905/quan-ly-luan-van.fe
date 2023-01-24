@@ -7,7 +7,7 @@ export interface Student extends User {
   class: string;
   major: string;
   department: string;
-  sentRequestList?: Request[];
+  sentRequestList: Request[];
   topic?: any;
   teacher?: Teacher[];
   thesisProgress?: any;

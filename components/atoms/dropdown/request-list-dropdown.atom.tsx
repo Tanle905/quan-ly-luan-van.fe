@@ -54,16 +54,18 @@ export function AtomRequestListDropdown({
                     <span className="text-xs text-gray-500">{date}</span>
                   </Layout.Content>
                 </Layout.Content>
-                {isTeacher() && (
-                  <CheckOutlined
-                    className="text-green-600 hover:bg-gray-200 p-2 rounded-md transition-all"
-                    onClick={() => handleAcceptRequest(request)}
+                <Layout.Content className="space-x-1">
+                  {isTeacher() && (
+                    <CheckOutlined
+                      className="text-green-600 hover:bg-gray-200 p-2 rounded-md transition-all"
+                      onClick={() => handleAcceptRequest(request)}
+                    />
+                  )}
+                  <CloseOutlined
+                    onClick={() => handleDeleteRequest(request)}
+                    className="text-red-600 hover:bg-gray-200 p-2 rounded-md transition-all"
                   />
-                )}
-                <CloseOutlined
-                  onClick={() => handleDeleteRequest(request)}
-                  className="text-red-600 hover:bg-gray-200 p-2 rounded-md transition-all"
-                />
+                </Layout.Content>
               </Layout.Content>
             ),
           };
