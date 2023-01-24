@@ -1,7 +1,11 @@
 import { Input, Layout, message, Table, Tag, Typography } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { baseUrl, STUDENT_ENDPOINT, TEACHER_ENDPOINT } from "../../../constants/endpoints";
+import { useEffect } from "react";
+import {
+  baseUrl,
+  STUDENT_ENDPOINT,
+  TEACHER_ENDPOINT,
+} from "../../../constants/endpoints";
 import useSWR from "swr";
 import { requestSendSubject } from "../../../constants/observables";
 import { useRecoilValue } from "recoil";
@@ -40,13 +44,8 @@ export function OGStudentTable({}: OGStudentTableProps) {
           },
         }
       );
-      const transformedData = data.data.map((student) => {
-        const newData = { ...student, ...student.profile };
-        delete newData.profile;
 
-        return newData;
-      });
-      return transformedData;
+      return data.data;
     } catch (error: any) {
       message.error(error.response.data.message);
     }

@@ -8,6 +8,8 @@ import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { requestSendSubject } from "../../../constants/observables";
 import { Request } from "../../../interfaces/request.interface";
+import { Student } from "../../../interfaces/student.interface";
+import { Teacher } from "../../../interfaces/teacher.interface";
 import { NotificationService } from "../../../services/notification.service";
 import { userState } from "../../../stores/auth.store";
 import { isTeacher } from "../../../utils/role.util";
@@ -20,11 +22,11 @@ export function AtomRequestListDropdown({
   children,
 }: AtomRequestListDropdownProps) {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useRecoilState<any>(userState);
+  const [user, setUser] = useRecoilState<(Student & Teacher) | null>(userState);
   const listName = isTeacher() ? "receivedRequestList" : "sentRequestList";
   const currentUserName = isTeacher() ? "teacherData" : "studentData";
   const requestListMenuItems: MenuProps["items"] =
-    user?.[listName]?.length > 0
+    user && Array.isArray(user[listName]) && user[listName].length > 0
       ? user?.[listName]?.map((request: Request, index: number) => {
           const time = moment(request.createdAt).format("LT");
           const date = moment(request.createdAt).format("LL");
@@ -110,7 +112,6 @@ export function AtomRequestListDropdown({
       requestSendSubject.next(1);
       await NotificationService.sendNotification({
         user,
-        sender: request.teacherId,
         receiver: request.studentId,
         content: `${
           isTeacher() ? request.teacherName : request.studentName
@@ -152,7 +153,6 @@ export function AtomRequestListDropdown({
       requestSendSubject.next(1);
       await NotificationService.sendNotification({
         user,
-        sender: isTeacher() ? request.teacherId : request.studentId,
         receiver: isTeacher() ? request.studentId : request.teacherId,
         content: `${
           isTeacher() ? request.teacherName : request.studentName

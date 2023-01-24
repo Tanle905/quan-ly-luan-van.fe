@@ -12,7 +12,4 @@ export interface Student extends User {
   teacher?: Teacher[];
   thesisProgress?: any;
   reportSchedule?: any;
-  profile?: User;   //virtual field
-  createdAt?: Date;
-  updatedAt?: Date;
 }

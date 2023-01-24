@@ -8,7 +8,4 @@ export interface Teacher extends User {
   receivedRequestList: Request[];
   studentList: Student[];
   reportSchedule: any[];
-  profile?: User; //virtual field
-  createdAt?: Date;
-  updatedAt?: Date;
 }

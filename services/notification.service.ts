@@ -5,17 +5,14 @@ import { Notification } from "../interfaces/notification.interface";
 export const NotificationService = {
   sendNotification: async ({
     user,
-    sender,
     receiver,
     content,
   }: {
     user: any;
-    sender: string;
     receiver: string;
     content: string;
   }) => {
     const notificationBody: Notification = {
-      sender,
       receiver,
       content,
     };

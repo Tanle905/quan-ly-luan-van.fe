@@ -40,13 +40,8 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
           },
         }
       );
-      const transformedData = data.data.map((teacher) => {
-        const newData = { ...teacher, ...teacher.profile };
-        delete newData.profile;
 
-        return newData;
-      });
-      return transformedData;
+      return data.data;
     } catch (error: any) {
       message.error(error.response.data.message);
     }

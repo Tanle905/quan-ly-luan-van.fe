@@ -6,10 +6,7 @@ import {
 import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
 import { useRecoilState } from "recoil";
-import {
-  baseUrl,
-  REQUEST_ENDPOINT,
-} from "../../../constants/endpoints";
+import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { requestSendSubject } from "../../../constants/observables";
 import { Student } from "../../../interfaces/student.interface";
@@ -45,7 +42,7 @@ export function AtomTeacherTableAction({
         }
       );
 
-      setUser((prevUser: any) => {
+      setUser((prevUser: Student) => {
         localStorage.setItem(
           LOCAL_STORAGE.USER_DATA,
           JSON.stringify({
@@ -63,7 +60,6 @@ export function AtomTeacherTableAction({
 
       await NotificationService.sendNotification({
         user,
-        sender: user._id,
         receiver: teacher._id,
         content: `Sinh viên ${user.lastName} ${user.firstName} (${user.email}) - ${user.MSSV} đã gửi yêu cầu xin hướng dẫn.`,
       });

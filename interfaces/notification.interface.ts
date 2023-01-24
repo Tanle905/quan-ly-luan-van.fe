@@ -1,5 +1,5 @@
 export interface Notification {
-    sender: string;
+    sender?: string;
     receiver: string;
     type?: string;
     content: string;

@@ -1,6 +1,3 @@
-import { Student } from "./student.interface";
-import { Teacher } from "./teacher.interface";
-
 export interface User {
   _id: string;
   email: string;
@@ -8,8 +5,6 @@ export interface User {
   roles?: string[];
   MSSV?: string;
   MSCB?: string;
-  teacherProfile?: Teacher;   //virtual field
-  studentProfile?: Student;   //virtual field
   firstName?: string;
   lastName?: string;
   imageUrl?: string;
@@ -19,4 +14,6 @@ export interface User {
   religion?: string;
   CCCD?: string;
   accessToken?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
