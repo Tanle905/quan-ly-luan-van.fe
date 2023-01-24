@@ -1,11 +1,18 @@
+import { Request } from "./request.interface";
+import { Teacher } from "./teacher.interface";
 import { User } from "./user.interface";
 
 export interface Student extends User {
   MSSV: string;
-  sentRequestList?: { MSCB: string; name: string; email: string }[];
+  class: string;
+  major: string;
+  department: string;
+  sentRequestList?: Request[];
   topic?: any;
-  teacher?: any;
+  teacher?: Teacher[];
   thesisProgress?: any;
   reportSchedule?: any;
-  profile?: any;
+  profile?: User;   //virtual field
+  createdAt?: Date;
+  updatedAt?: Date;
 }
