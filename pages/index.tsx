@@ -1,12 +1,17 @@
 import { Layout } from "antd";
 import Head from "next/head";
+import { useRecoilValue } from "recoil";
 import { OGHeader } from "../components/organisms/header/header.organism";
 import { OGStudentTable } from "../components/organisms/table/student-table.organism";
 import { OGTeacherTable } from "../components/organisms/table/teacher-table.organism";
+import { Student } from "../interfaces/student.interface";
+import { Teacher } from "../interfaces/teacher.interface";
+import { userState } from "../stores/auth.store";
 import { isTeacher } from "../utils/role.util";
 
+const { Content } = Layout;
 export default function Home() {
-  const { Content } = Layout;
+  const user = useRecoilValue<(Student & Teacher) | null>(userState);
 
   return (
     <>
@@ -19,7 +24,11 @@ export default function Home() {
       <Content className="h-screen bg-gray-100">
         <OGHeader />
         <Content className="mt-16">
-          {isTeacher() ? <OGStudentTable /> : <OGTeacherTable />}
+          {isTeacher() ? (
+            <OGStudentTable />
+          ) : (
+            !user?.teacher && <OGTeacherTable />
+          )}
         </Content>
       </Content>
     </>

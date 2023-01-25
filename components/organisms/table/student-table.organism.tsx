@@ -52,7 +52,7 @@ export function OGStudentTable({}: OGStudentTableProps) {
     }
   }
 
-  if (!data) return;
+  if (!data) return null;
 
   return (
     <>

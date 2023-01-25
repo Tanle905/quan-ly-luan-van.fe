@@ -47,7 +47,7 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
     }
   }
 
-  if (!data) return;
+  if (!data) return null;
 
   return (
     <>
