@@ -1,5 +1,12 @@
 * {
   font-family: Arial, Helvetica, sans-serif;
+  --fc-button-text-color: #fff;
+  --fc-button-bg-color: rgb(79 70 229);;
+  --fc-button-border-color: rgb(79 70 229);;
+  --fc-button-hover-bg-color: rgb(99 102 241);;
+  --fc-button-hover-border-color: rgb(99 102 241);;
+  --fc-button-active-bg-color: rgb(99 102 241);
+  --fc-button-active-border-color: rgb(99 102 241);
 }
 
 body {

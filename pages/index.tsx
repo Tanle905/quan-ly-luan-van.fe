@@ -1,6 +1,7 @@
 import { Layout } from "antd";
 import Head from "next/head";
 import { useRecoilValue } from "recoil";
+import { AtomThesisProgressCalendar } from "../components/atoms/calendar/thesis-progress-calendar.atom";
 import { OGHeader } from "../components/organisms/header/header.organism";
 import { OGStudentTable } from "../components/organisms/table/student-table.organism";
 import { OGTeacherTable } from "../components/organisms/table/teacher-table.organism";
@@ -21,13 +22,15 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Content className="h-screen bg-gray-100">
+      <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <Content className="mt-16">
+        <Content className="mt-14">
           {isTeacher() ? (
             <OGStudentTable />
+          ) : user?.teacher ? (
+            <AtomThesisProgressCalendar />
           ) : (
-            !user?.teacher && <OGTeacherTable />
+            <OGTeacherTable />
           )}
         </Content>
       </Content>
