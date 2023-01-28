@@ -17,3 +17,7 @@ export const REQUEST_ENDPOINT = {
 export const NOTIFICATION_ENDPOINT = {
   BASE: "/notification",
 };
+export const THESIS_PROGRESS_ENDPOINT = {
+  BASE: "/thesis-progress",
+  EVENT: "/event",
+};
