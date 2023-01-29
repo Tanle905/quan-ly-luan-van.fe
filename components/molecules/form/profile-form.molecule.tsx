@@ -1,5 +1,4 @@
 import { Form, Input, Layout } from "antd";
-import { useForm } from "antd/es/form/Form";
 import { useRecoilValue } from "recoil";
 import { Roles } from "../../../constants/enums";
 import { User } from "../../../interfaces/user.interface";
@@ -8,8 +7,8 @@ import { userState } from "../../../stores/auth.store";
 interface MCProfileFormProps {}
 
 export function MCProfileForm({}: MCProfileFormProps) {
-  const user: User = useRecoilValue(userState);
-  const [form] = useForm();
+  const user = useRecoilValue<User | null>(userState);
+  const [form] = Form.useForm();
 
   if (!user) return null;
 

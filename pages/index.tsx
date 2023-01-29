@@ -1,7 +1,7 @@
 import { Layout } from "antd";
 import Head from "next/head";
 import { useRecoilValue } from "recoil";
-import { AtomThesisProgressCalendar } from "../components/organisms/calendar/thesis-progress-calendar.atom";
+import { OGThesisProgressCalendar } from "../components/organisms/calendar/thesis-progress-calendar.atom";
 import { OGHeader } from "../components/organisms/header/header.organism";
 import { OGStudentTable } from "../components/organisms/table/student-table.organism";
 import { OGTeacherTable } from "../components/organisms/table/teacher-table.organism";
@@ -28,7 +28,7 @@ export default function Home() {
           {isTeacher() ? (
             <OGStudentTable />
           ) : user?.teacher ? (
-            <AtomThesisProgressCalendar />
+            <OGThesisProgressCalendar />
           ) : (
             <OGTeacherTable />
           )}

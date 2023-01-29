@@ -6,8 +6,12 @@ import { RecoilRoot } from "recoil";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { loginRouteProtection } from "../utils/route-protection.util";
+import dayjs from "dayjs";
+import LocalizedFormat from "dayjs/plugin/localizedFormat";
+
 
 export default function App({ Component, pageProps }: AppProps) {
+  dayjs.extend(LocalizedFormat);
   const router = useRouter();
 
   useEffect(() => {

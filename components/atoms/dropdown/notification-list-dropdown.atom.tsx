@@ -1,6 +1,6 @@
 import { Divider, Dropdown, Layout, MenuItemProps, MenuProps } from "antd";
 import axios, { AxiosError } from "axios";
-import moment from "moment";
+import dayjs from "dayjs";
 import { ReactElement, ReactNode, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useSWR from "swr";
@@ -40,8 +40,8 @@ export function AtomNotificationListDropDown({
       data.length > 0 &&
       setMenuItems(
         data.map((notification, index) => {
-          const time = moment(notification.createdAt).format("LT");
-          const date = moment(notification.createdAt).format("LL");
+          const time = dayjs(notification.createdAt).format("LT");
+          const date = dayjs(notification.createdAt).format("LL");
           return {
             key: index,
             className: "cursor-default hover:bg-indigo-600 transition-all",

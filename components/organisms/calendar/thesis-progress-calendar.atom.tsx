@@ -3,7 +3,7 @@ import interaction from "@fullcalendar/interaction";
 import moment from "@fullcalendar/moment";
 import FullCalendar from "@fullcalendar/react";
 import { Layout, message, Typography } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MCAddEventModal } from "../../molecules/modal/add-event-modal.molecule";
 import useSWR from "swr";
 import {
@@ -15,25 +15,41 @@ import { userState } from "../../../stores/auth.store";
 import axios from "axios";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
+import { ThesisProgress } from "../../../interfaces/thesis-progress.interface";
+import { calendarEventSendSubject } from "../../../constants/observables";
 
-interface AtomThesisProgressCalendarProps {}
+interface OGThesisProgressCalendarProps {}
 
-export function AtomThesisProgressCalendar({}: AtomThesisProgressCalendarProps) {
+export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { data } = useSWR(
+  const [currentDateData, setCurrentDateData] = useState<any>(null);
+  const [currentEventData, setCurrentEventData] = useState<
+    ThesisProgress["events"] | null
+  >(null);
+  const { data, mutate } = useSWR<ThesisProgress["events"]>(
     baseUrl + THESIS_PROGRESS_ENDPOINT.BASE + THESIS_PROGRESS_ENDPOINT.EVENT,
     thesisProgressEventFetcher
   );
   const user = useRecoilValue<(Teacher & Student) | null>(userState);
   const [msg, contextHodler] = message.useMessage();
 
+  useEffect(() => {
+    const calendarEventSendSubscription = calendarEventSendSubject.subscribe({
+      next: () => {
+        mutate();
+      },
+    });
+
+    return () => {
+      calendarEventSendSubscription.unsubscribe();
+    };
+  }, []);
+
   async function thesisProgressEventFetcher() {
     if (!user) return;
     try {
       const { data } = await axios.post(
-        baseUrl +
-          THESIS_PROGRESS_ENDPOINT.BASE +
-          THESIS_PROGRESS_ENDPOINT.EVENT,
+        baseUrl + THESIS_PROGRESS_ENDPOINT.BASE,
         { MSSV: user.MSSV },
         {
           headers: {
@@ -41,9 +57,8 @@ export function AtomThesisProgressCalendar({}: AtomThesisProgressCalendarProps) 
           },
         }
       );
-      console.log(data);
 
-      return data;
+      return data.data;
     } catch (error: any) {
       message.error(error.response.data.message);
     }
@@ -89,15 +104,22 @@ export function AtomThesisProgressCalendar({}: AtomThesisProgressCalendarProps) 
             firstDay={1}
             height={550}
             dateClick={(data) => {
-              console.log(data);
+              setCurrentDateData(data);
               setIsModalVisible(true);
             }}
             select={(data) => {
-              console.log(data);
+              setCurrentDateData(data);
+              setIsModalVisible(true);
+            }}
+            eventClick={({ event }) => {
+              setCurrentDateData(event);
+              setCurrentEventData(event as any);
               setIsModalVisible(true);
             }}
           />
           <MCAddEventModal
+            currentDateData={currentDateData}
+            currentEventData={currentDateData}
             isModalVisible={isModalVisible}
             setIsModelVisible={setIsModalVisible}
           />

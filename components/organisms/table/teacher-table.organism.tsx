@@ -1,6 +1,6 @@
 import { Input, Layout, message, Table, Tag, Typography } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
 import { baseUrl, TEACHER_ENDPOINT } from "../../../constants/endpoints";
 import { Teacher } from "../../../interfaces/teacher.interface";
@@ -22,7 +22,9 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
 
   useEffect(() => {
     const requestSendSubscription = requestSendSubject.subscribe({
-      next: () => mutate(),
+      next: () => {
+        mutate()
+      },
     });
 
     return () => {

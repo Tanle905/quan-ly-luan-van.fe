@@ -1,11 +1,10 @@
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Divider, Dropdown, Layout, MenuProps, message } from "antd";
 import axios from "axios";
-import moment from "moment";
+import dayjs from "dayjs";
 import { ReactElement, ReactNode, useState } from "react";
 import { useRecoilState } from "recoil";
 import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
-import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { requestSendSubject } from "../../../constants/observables";
 import { Request } from "../../../interfaces/request.interface";
 import { Student } from "../../../interfaces/student.interface";
@@ -28,8 +27,8 @@ export function AtomRequestListDropdown({
   const requestListMenuItems: MenuProps["items"] =
     user && Array.isArray(user[listName]) && user[listName].length > 0
       ? user?.[listName]?.map((request: Request, index: number) => {
-          const time = moment(request.createdAt).format("LT");
-          const date = moment(request.createdAt).format("LL");
+          const time = dayjs(request.createdAt).format("LT");
+          const date = dayjs(request.createdAt).format("LL");
 
           return {
             key: index,
