@@ -3,7 +3,7 @@ import { DateClickArg } from "@fullcalendar/interaction";
 import { Button, Form, message, Modal } from "antd";
 import axios from "axios";
 import { Dayjs } from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import {
   baseUrl,
@@ -20,6 +20,7 @@ interface MCAddEventModalProps {
   setIsModelVisible: any;
   currentDateData: (DateSelectArg & DateClickArg) | null;
   currentEventData: CalendarEvent | null;
+  setCurrentEventData: any;
 }
 
 export function MCAddEventModal({
@@ -27,22 +28,30 @@ export function MCAddEventModal({
   setIsModelVisible,
   currentDateData,
   currentEventData,
+  setCurrentEventData,
 }: MCAddEventModalProps) {
   const [isValid, setIsValid] = useState(false);
+  const [isFormEditable, setIsFormEditable] = useState(true);
   const [msg, contextHodler] = message.useMessage();
   const [addEventForm] = Form.useForm();
   const user = useRecoilValue<User | null>(userState);
+
+  useEffect(() => {
+    setIsFormEditable(currentEventData ? false : true);
+  }, [currentEventData]);
 
   function handleCloseModal() {
     setIsValid(false);
     addEventForm.resetFields();
     setIsModelVisible(false);
+    setCurrentEventData(null);
   }
 
   async function handleSaveEvent() {
     const startDate: Dayjs = addEventForm.getFieldValue("date")[0];
     const endDate: Dayjs = addEventForm.getFieldValue("date")[1];
     const title = addEventForm.getFieldValue("title");
+    const description = addEventForm.getFieldValue("description");
 
     if (!user) return;
 
@@ -56,6 +65,7 @@ export function MCAddEventModal({
           start: startDate.toISOString(),
           end: endDate.add(1, "day").toISOString(),
           title,
+          description,
         },
         {
           headers: {
@@ -76,7 +86,7 @@ export function MCAddEventModal({
       {contextHodler}
       <Modal
         open={isModalVisible}
-        title="Thêm sự kiện"
+        title={currentEventData ? "Chỉnh sửa sự kiện" : "Thêm sự kiện"}
         destroyOnClose={true}
         closable
         onCancel={handleCloseModal}
@@ -84,12 +94,20 @@ export function MCAddEventModal({
           <Button type="text" onClick={handleCloseModal}>
             Hủy bỏ
           </Button>,
+          currentEventData ? (
+            <Button type="dashed" onClick={() => setIsFormEditable(true)}>
+              Chỉnh sửa
+            </Button>
+          ) : (
+            <></>
+          ),
           <Button type="primary" disabled={!isValid} onClick={handleSaveEvent}>
             Lưu
           </Button>,
         ]}
       >
         <MCAddEventForm
+          isFormEditable={isFormEditable}
           currentDateData={currentDateData}
           currentEventData={currentEventData}
           form={addEventForm}

@@ -103,6 +103,7 @@ export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
             locale="vi"
             firstDay={1}
             height={550}
+            eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
             dateClick={(data) => {
               setCurrentDateData(data);
               setIsModalVisible(true);
@@ -119,7 +120,8 @@ export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
           />
           <MCAddEventModal
             currentDateData={currentDateData}
-            currentEventData={currentDateData}
+            currentEventData={currentEventData}
+            setCurrentEventData={setCurrentEventData}
             isModalVisible={isModalVisible}
             setIsModelVisible={setIsModalVisible}
           />

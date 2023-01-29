@@ -4,12 +4,12 @@ import { DateClickArg } from "@fullcalendar/interaction";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import { handleValidateOnFieldChange } from "../../../utils/validation.util";
-import { CalendarEvent } from "../../../interfaces/calendar.interface";
 
 interface MCAddEventFormProps {
   currentDateData: (DateSelectArg & DateClickArg) | null;
-  currentEventData: CalendarEvent | null;
+  currentEventData: any | null;
   form: FormInstance;
+  isFormEditable: boolean;
   setIsValid: any;
 }
 
@@ -17,6 +17,7 @@ export function MCAddEventForm({
   currentDateData,
   currentEventData,
   form,
+  isFormEditable,
   setIsValid,
 }: MCAddEventFormProps) {
   const selectedDateRange = currentDateData?.date
@@ -30,6 +31,9 @@ export function MCAddEventForm({
     form.setFieldsValue({ date: selectedDateRange });
     if (currentEventData) {
       form.setFieldsValue({ title: currentEventData.title });
+      form.setFieldsValue({
+        description: currentEventData.extendedProps?.description,
+      });
     }
   }, []);
 
@@ -37,12 +41,20 @@ export function MCAddEventForm({
     <Form
       form={form}
       onValuesChange={() => handleValidateOnFieldChange(form, setIsValid)}
+      layout="vertical"
     >
       <Form.Item label={"Thời gian"} name="date" required>
-        <DatePicker.RangePicker format={"DD-MM-YYYY"} />
+        <DatePicker.RangePicker
+          format={"DD-MM-YYYY"}
+          className="w-full"
+          disabled={!isFormEditable}
+        />
       </Form.Item>
-      <Form.Item label={"Nội dung"} name="title" required>
-        <Input.TextArea rows={5} />
+      <Form.Item label={"Tiêu đề"} name="title" required>
+        <Input disabled={!isFormEditable} />
+      </Form.Item>
+      <Form.Item label={"Nội dung"} name="description" required>
+        <Input.TextArea rows={5} disabled={!isFormEditable} />
       </Form.Item>
     </Form>
   );
