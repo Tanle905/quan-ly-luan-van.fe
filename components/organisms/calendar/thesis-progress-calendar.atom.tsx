@@ -17,23 +17,29 @@ import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import { ThesisProgress } from "../../../interfaces/thesis-progress.interface";
 import { calendarEventSendSubject } from "../../../constants/observables";
+import { cache } from "swr/_internal";
 
-interface OGThesisProgressCalendarProps {}
+interface OGThesisProgressCalendarProps {
+  MSSV?: string;
+}
 
-export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
+export function OGThesisProgressCalendar({
+  MSSV,
+}: OGThesisProgressCalendarProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentDateData, setCurrentDateData] = useState<any>(null);
-  const [currentEventData, setCurrentEventData] = useState<
-    any | null
-  >(null);
-  const { data, mutate } = useSWR<ThesisProgress["events"]>(
-    baseUrl + THESIS_PROGRESS_ENDPOINT.BASE + THESIS_PROGRESS_ENDPOINT.EVENT,
+  const [currentEventData, setCurrentEventData] = useState<any | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+  const { data, mutate } = useSWR(
+    isMounted &&
+      baseUrl + THESIS_PROGRESS_ENDPOINT.BASE + THESIS_PROGRESS_ENDPOINT.EVENT,
     thesisProgressEventFetcher
   );
   const user = useRecoilValue<(Teacher & Student) | null>(userState);
   const [msg, contextHodler] = message.useMessage();
 
   useEffect(() => {
+    setIsMounted(true);
     const calendarEventSendSubscription = calendarEventSendSubject.subscribe({
       next: () => {
         mutate();
@@ -41,6 +47,7 @@ export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
     });
 
     return () => {
+      clearCache();
       calendarEventSendSubscription.unsubscribe();
     };
   }, []);
@@ -50,7 +57,7 @@ export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
     try {
       const { data } = await axios.post(
         baseUrl + THESIS_PROGRESS_ENDPOINT.BASE,
-        { MSSV: user.MSSV },
+        { MSSV: MSSV ? MSSV : user.MSSV },
         {
           headers: {
             Authorization: `Bearer ${user?.accessToken}`,
@@ -62,6 +69,10 @@ export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
     } catch (error: any) {
       message.error(error.response.data.message);
     }
+  }
+
+  function clearCache() {
+    mutate(() => true, undefined);
   }
 
   return (
@@ -118,13 +129,15 @@ export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
               setIsModalVisible(true);
             }}
           />
-          <MCAddEventModal
-            currentDateData={currentDateData}
-            currentEventData={currentEventData}
-            setCurrentEventData={setCurrentEventData}
-            isModalVisible={isModalVisible}
-            setIsModelVisible={setIsModalVisible}
-          />
+          {!MSSV && (
+            <MCAddEventModal
+              currentDateData={currentDateData}
+              currentEventData={currentEventData}
+              setCurrentEventData={setCurrentEventData}
+              isModalVisible={isModalVisible}
+              setIsModelVisible={setIsModalVisible}
+            />
+          )}
         </Layout.Content>
       </Layout.Content>
       <style>{`

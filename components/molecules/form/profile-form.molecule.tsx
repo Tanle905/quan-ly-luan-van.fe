@@ -1,8 +1,16 @@
+import {
+  CarOutlined,
+  MailOutlined,
+  NumberOutlined,
+  PhoneOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { Form, Input, Layout } from "antd";
 import { useRecoilValue } from "recoil";
 import { Roles } from "../../../constants/enums";
 import { User } from "../../../interfaces/user.interface";
 import { userState } from "../../../stores/auth.store";
+import { isStudent, isTeacher } from "../../../utils/role.util";
 
 interface MCProfileFormProps {}
 
@@ -13,25 +21,136 @@ export function MCProfileForm({}: MCProfileFormProps) {
   if (!user) return null;
 
   return (
-    <Layout.Content className="p-5">
-      <Form initialValues={user} form={form}>
-        <Form.Item
-          label="MSSV"
-          name={user.roles?.includes(Roles.STUDENT) ? "MSSV" : "MSCB"}
-        >
-          <Input type="text" disabled />
-        </Form.Item>
-        <Layout.Content className="flex justify-end space-x-5">
-        <Form.Item label="Họ" name={"lastName"}>
-          <Input type="text" disabled />
-        </Form.Item>
-        <Form.Item label="Tên" name={"firstName"}>
-          <Input type="text" disabled />
-        </Form.Item>
-        </Layout.Content>
-        <Form.Item label="Địa chỉ email" name={"email"}>
-          <Input type="text" disabled />
-        </Form.Item>
+    <Layout.Content className="rounded-md shadow-md bg-white p-5">
+      <Form
+        initialValues={{
+          ...user,
+          roles: isTeacher() ? "Giảng viên" : "Sinh viên",
+        }}
+        form={form}
+        className="space-y-5"
+      >
+        <div className="flex items-center">
+          <span className="w-52">{isStudent() ? "MSSV: " : "MSCB: "}</span>
+          <Form.Item
+            className="inline-block w-96"
+            name={isStudent() ? "MSSV" : "MSCB"}
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="text" disabled prefix={<NumberOutlined />} />
+          </Form.Item>
+        </div>
+        <div className="flex items-center">
+          <span className="w-52">Họ và tên: </span>
+          <div className="flex items-center space-x-5">
+            <Form.Item
+              name={"lastName"}
+              className="inline-block w-[11.4rem]"
+              style={{ marginBottom: 0 }}
+            >
+              <Input type="text" disabled prefix={<UserOutlined />} />
+            </Form.Item>
+            <Form.Item
+              name={"firstName"}
+              className="inline-block w-[11.4rem]"
+              style={{ marginBottom: 0 }}
+            >
+              <Input type="text" disabled />
+            </Form.Item>
+          </div>
+        </div>
+        <div className="flex items-center">
+          <span className="w-52">Số điện thoại: </span>
+          <Form.Item
+            name={"phoneNumber"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="number" disabled prefix={<PhoneOutlined />} />
+          </Form.Item>
+        </div>
+        <div className="flex items-center">
+          <span className="w-52">Địa chỉ Email: </span>
+          <Form.Item
+            name={"email"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="text" disabled prefix={<MailOutlined />} />
+          </Form.Item>
+        </div>
+        <div className="flex items-center">
+          <span className="w-52">Chức vụ: </span>
+          <Form.Item
+            name={"roles"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="text" disabled />
+          </Form.Item>
+        </div>
+        <div className="flex items-center">
+          <span className="w-52">Chuyên ngành: </span>
+          <Form.Item
+            name={"major"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="text" disabled />
+          </Form.Item>
+        </div>
+        {isStudent() && (
+          <div className="flex items-center">
+            <span className="w-52">Lớp: </span>
+            <Form.Item
+              name={"class"}
+              className="inline-block w-96"
+              style={{ marginBottom: 0 }}
+            >
+              <Input type="text" disabled />
+            </Form.Item>
+          </div>
+        )}
+        <div className="flex items-center">
+          <span className="w-52">Trường: </span>
+          <Form.Item
+            name={"department"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="text" disabled />
+          </Form.Item>
+        </div>
+        <div className="flex items-center">
+          <span className="w-52">Dân tộc: </span>
+          <Form.Item
+            name={"ethnic"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="text" disabled />
+          </Form.Item>
+        </div>
+        <div className="flex items-center">
+          <span className="w-52">Tôn giáo: </span>
+          <Form.Item
+            name={"religion"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="text" disabled />
+          </Form.Item>
+        </div>
+        <div className="flex items-center">
+          <span className="w-52">CCCD: </span>
+          <Form.Item
+            name={"CCCD"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <Input type="text" disabled />
+          </Form.Item>
+        </div>
       </Form>
     </Layout.Content>
   );

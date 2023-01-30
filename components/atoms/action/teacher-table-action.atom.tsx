@@ -8,7 +8,6 @@ import axios from "axios";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
-import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { requestSendSubject } from "../../../constants/observables";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";

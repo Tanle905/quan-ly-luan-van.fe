@@ -1,3 +1,4 @@
+import { AtomStudentTableAction } from "../../components/atoms/action/student-table-action.atom";
 import {} from "../../components/atoms/action/teacher-table-action.atom";
 import { TableConfig } from "../interface/table-config.interface";
 
@@ -30,6 +31,7 @@ export const studentListConfig: TableConfig = {
         key: "action",
         width: "10%",
         title: "Hành động",
+        render:(text, student:any)=> <AtomStudentTableAction  student={student}/>
       },
     ],
   },
