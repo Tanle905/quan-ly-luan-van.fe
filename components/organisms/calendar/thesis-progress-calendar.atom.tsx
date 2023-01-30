@@ -24,7 +24,7 @@ export function OGThesisProgressCalendar({}: OGThesisProgressCalendarProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentDateData, setCurrentDateData] = useState<any>(null);
   const [currentEventData, setCurrentEventData] = useState<
-    ThesisProgress["events"] | null
+    any | null
   >(null);
   const { data, mutate } = useSWR<ThesisProgress["events"]>(
     baseUrl + THESIS_PROGRESS_ENDPOINT.BASE + THESIS_PROGRESS_ENDPOINT.EVENT,

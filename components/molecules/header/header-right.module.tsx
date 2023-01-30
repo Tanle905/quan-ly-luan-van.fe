@@ -5,7 +5,7 @@ import {
 } from "@ant-design/icons";
 import { Badge, Layout } from "antd";
 import { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import { userState } from "../../../stores/auth.store";
@@ -20,7 +20,7 @@ interface MCHeaderRightProps {
 }
 
 export function MCHeaderRight({ styles }: MCHeaderRightProps) {
-  const [user] = useRecoilState<Student & Teacher>(userState);
+  const user = useRecoilValue<Student & Teacher | null>(userState);
   const [notificationCount, setNotificationCount] = useState(0);
   const [requestCount, setRequestCount] = useState(0);
 
@@ -52,21 +52,25 @@ export function MCHeaderRight({ styles }: MCHeaderRightProps) {
           </AtomNotificationListDropDown>
         }
       />
-      <AtomIconHeader
-        icon={
-          <AtomRequestListDropdown>
-            <Layout.Content className="relative">
-              <UnorderedListOutlined />
-              <Badge
-                className="absolute -top-[0.4rem] right-[0.15rem] w-1"
-                count={requestCount}
-                showZero
-                size="small"
-              />
-            </Layout.Content>
-          </AtomRequestListDropdown>
-        }
-      />
+      {user?.teacher ? (
+        <></>
+      ) : (
+        <AtomIconHeader
+          icon={
+            <AtomRequestListDropdown>
+              <Layout.Content className="relative">
+                <UnorderedListOutlined />
+                <Badge
+                  className="absolute -top-[0.4rem] right-[0.15rem] w-1"
+                  count={requestCount}
+                  showZero
+                  size="small"
+                />
+              </Layout.Content>
+            </AtomRequestListDropdown>
+          }
+        />
+      )}
       <AtomImageAvatar />
     </Layout.Content>
   );

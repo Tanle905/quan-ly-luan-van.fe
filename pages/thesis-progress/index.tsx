@@ -1,14 +1,11 @@
 import { Layout } from "antd";
 import Head from "next/head";
 import { useRecoilValue } from "recoil";
-import { OGThesisProgressCalendar } from "../components/organisms/calendar/thesis-progress-calendar.atom";
-import { OGHeader } from "../components/organisms/header/header.organism";
-import { OGStudentTable } from "../components/organisms/table/student-table.organism";
-import { OGTeacherTable } from "../components/organisms/table/teacher-table.organism";
-import { Student } from "../interfaces/student.interface";
-import { Teacher } from "../interfaces/teacher.interface";
-import { userState } from "../stores/auth.store";
-import { isTeacher } from "../utils/role.util";
+import { OGThesisProgressCalendar } from "../../components/organisms/calendar/thesis-progress-calendar.atom";
+import { OGHeader } from "../../components/organisms/header/header.organism";
+import { Student } from "../../interfaces/student.interface";
+import { Teacher } from "../../interfaces/teacher.interface";
+import { userState } from "../../stores/auth.store";
 
 const { Content } = Layout;
 export default function Home() {
@@ -25,7 +22,7 @@ export default function Home() {
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
         <Content className="mt-14">
-          {isTeacher() ? <OGStudentTable /> : <OGTeacherTable />}
+          <OGThesisProgressCalendar />
         </Content>
       </Content>
     </>

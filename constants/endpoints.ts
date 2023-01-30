@@ -19,5 +19,8 @@ export const NOTIFICATION_ENDPOINT = {
 };
 export const THESIS_PROGRESS_ENDPOINT = {
   BASE: "/thesis-progress",
-  EVENT: "/event",
+  EVENT: {
+    BASE: "/event",
+    DELETE: "/delete",
+  },
 };

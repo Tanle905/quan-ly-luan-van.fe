@@ -56,11 +56,12 @@ export function MCAddEventModal({
     if (!user) return;
 
     try {
-      await axios.post(
+      await axios[currentEventData ? "put" : "post"](
         baseUrl +
           THESIS_PROGRESS_ENDPOINT.BASE +
-          THESIS_PROGRESS_ENDPOINT.EVENT,
+          THESIS_PROGRESS_ENDPOINT.EVENT.BASE,
         {
+          ...(currentEventData ? { id: currentEventData?.id } : {}),
           MSSV: user?.MSSV,
           start: startDate.toISOString(),
           end: endDate.add(1, "day").toISOString(),
@@ -74,7 +75,36 @@ export function MCAddEventModal({
         }
       );
       calendarEventSendSubject.next(1);
-      message.success("Thêm lịch thành công !");
+      currentEventData
+        ? message.success("Chỉnh sửa sự kiện thành công")
+        : message.success("Thêm sự kiện thành công !");
+      handleCloseModal();
+    } catch (error: any) {
+      message.error(error.response.data.message);
+    }
+  }
+
+  async function handleDeleteEvent() {
+    if (!user) return;
+
+    try {
+      await axios.post(
+        baseUrl +
+          THESIS_PROGRESS_ENDPOINT.BASE +
+          THESIS_PROGRESS_ENDPOINT.EVENT.BASE +
+          THESIS_PROGRESS_ENDPOINT.EVENT.DELETE,
+        {
+          id: currentEventData?.id,
+          MSSV: user?.MSSV,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        }
+      );
+      calendarEventSendSubject.next(1);
+      message.success("Xóa sự kiện thành công !");
       handleCloseModal();
     } catch (error: any) {
       message.error(error.response.data.message);
@@ -97,6 +127,17 @@ export function MCAddEventModal({
           currentEventData ? (
             <Button type="dashed" onClick={() => setIsFormEditable(true)}>
               Chỉnh sửa
+            </Button>
+          ) : (
+            <></>
+          ),
+          currentEventData ? (
+            <Button
+              className="text-white bg-red-600 hover:bg-red-500 transition-all"
+              type="ghost"
+              onClick={handleDeleteEvent}
+            >
+              Xóa sự kiện
             </Button>
           ) : (
             <></>
