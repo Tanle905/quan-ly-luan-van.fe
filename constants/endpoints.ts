@@ -1,4 +1,5 @@
-export const baseUrl = "http://localhost:13000";
+export const baseUrl =
+  "https://quan-ly-luan-van-be.vercel.app" || "http://localhost:13000";
 export const AUTH_ENDPOINT = {
   BASE: "/auth",
   LOGIN: "/login",
