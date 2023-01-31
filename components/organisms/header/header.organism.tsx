@@ -7,7 +7,7 @@ import { MCHeaderLeft } from "../../molecules/header/header-left.molecule";
 import { MCHeaderRight } from "../../molecules/header/header-right.module";
 
 export function OGHeader({}) {
-  const [user, setUser] = useRecoilState(userState);
+  const [user, setUser] = useRecoilState<any>(userState);
 
   useEffect(() => {
     if (!localStorage.getItem(LOCAL_STORAGE.USER_DATA)) return;

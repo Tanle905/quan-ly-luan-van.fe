@@ -1,8 +1,8 @@
-import { Divider, Dropdown, Layout, MenuItemProps, MenuProps } from "antd";
-import axios, { AxiosError } from "axios";
+import { Divider, Dropdown, Layout, MenuProps } from "antd";
+import axios from "axios";
 import dayjs from "dayjs";
 import { ReactElement, ReactNode, useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import useSWR from "swr";
 import { baseUrl, NOTIFICATION_ENDPOINT } from "../../../constants/endpoints";
 import { Notification } from "../../../interfaces/notification.interface";

@@ -23,10 +23,10 @@ interface AtomTeacherTableActionProps {
 export function AtomTeacherTableAction({
   teacher,
 }: AtomTeacherTableActionProps) {
-  const [user, setUser] = useRecoilState<Student>(userState);
+  const [user, setUser] = useRecoilState<any>(userState);
   const [isLoading, setIsLoading] = useState(false);
   const isRequestSent = user?.sentRequestList?.find(
-    (request) => request.MSCB === teacher.MSCB
+    (request: any) => request.MSCB === teacher.MSCB
   );
   const [msg, contextHolder] = message.useMessage();
   const router = useRouter();
@@ -35,13 +35,10 @@ export function AtomTeacherTableAction({
     if (isRequestSent || isLoading) return;
     setIsLoading(true);
     try {
-      const res = await axios.post(
-        baseUrl + REQUEST_ENDPOINT.BASE,
-        {
-          MSSV: user?.MSSV,
-          MSCB: teacher.MSCB,
-        },
-      );
+      const res = await axios.post(baseUrl + REQUEST_ENDPOINT.BASE, {
+        MSSV: user?.MSSV,
+        MSCB: teacher.MSCB,
+      });
 
       setUser((prevUser: Student) => {
         return {
@@ -91,7 +88,9 @@ export function AtomTeacherTableAction({
         </Tooltip>
         <Tooltip title="Xem thông tin giảng viên">
           <InfoCircleOutlined
-            onClick={() => router.push(`${SCREEN_ROUTE.PROFILE}/${teacher._id}`)}
+            onClick={() =>
+              router.push(`${SCREEN_ROUTE.PROFILE}/${teacher._id}`)
+            }
             className="cursor-pointer p-2 hover:bg-indigo-600 hover:text-white rounded-md transition-all"
           />
         </Tooltip>

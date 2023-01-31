@@ -7,8 +7,6 @@ import { useRecoilState } from "recoil";
 import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
 import { requestSendSubject } from "../../../constants/observables";
 import { Request } from "../../../interfaces/request.interface";
-import { Student } from "../../../interfaces/student.interface";
-import { Teacher } from "../../../interfaces/teacher.interface";
 import { NotificationService } from "../../../services/notification.service";
 import { userState } from "../../../stores/auth.store";
 import { isTeacher } from "../../../utils/role.util";
@@ -21,7 +19,7 @@ export function AtomRequestListDropdown({
   children,
 }: AtomRequestListDropdownProps) {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useRecoilState<(Student & Teacher) | null>(userState);
+  const [user, setUser] = useRecoilState<any>(userState);
   const listName = isTeacher() ? "receivedRequestList" : "sentRequestList";
   const currentUserName = isTeacher() ? "teacherData" : "studentData";
   const requestListMenuItems: MenuProps["items"] =
