@@ -5,16 +5,25 @@ import { INDIGO_600 } from "../constants/colors";
 import { RecoilRoot } from "recoil";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { loginRouteProtection, calendarRouteProtection } from "../utils/route-protection.util";
+import {
+  loginRouteProtection,
+  calendarRouteProtection,
+} from "../utils/route-protection.util";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
-
+import { getToken } from "../utils/local-storage.util";
+import axios from "axios";
 
 export default function App({ Component, pageProps }: AppProps) {
   dayjs.extend(LocalizedFormat);
   const router = useRouter();
 
   useEffect(() => {
+    //attach token if exist
+    const token = getToken();
+    if (token) axios.defaults.headers.common["Authorization"] = token;
+    else axios.defaults.headers.common["Authorization"] = null;
+    //route protection
     loginRouteProtection(router);
     calendarRouteProtection(router);
   }, [router.pathname]);

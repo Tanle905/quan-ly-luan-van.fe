@@ -89,11 +89,6 @@ export function AtomRequestListDropdown({
         baseUrl + REQUEST_ENDPOINT.BASE + REQUEST_ENDPOINT.ACCEPT,
         {
           id: request._id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
         }
       );
 
@@ -128,11 +123,6 @@ export function AtomRequestListDropdown({
         baseUrl + REQUEST_ENDPOINT.BASE + REQUEST_ENDPOINT.REJECT,
         {
           id: request._id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
         }
       );
 

@@ -38,12 +38,7 @@ export function OGStudentTable({}: OGStudentTableProps) {
     try {
       const { data }: { data: { data: Student[] } } = await axios.post(
         baseUrl + STUDENT_ENDPOINT.BASE,
-        { studentList: user?.studentList },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        }
+        { studentList: user?.studentList }
       );
 
       return data.data;

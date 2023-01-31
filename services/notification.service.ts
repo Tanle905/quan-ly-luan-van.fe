@@ -17,10 +17,6 @@ export const NotificationService = {
       content,
     };
 
-    await axios.post(baseUrl + NOTIFICATION_ENDPOINT.BASE, notificationBody, {
-      headers: {
-        Authorization: `Bearer ${user?.accessToken}`,
-      },
-    });
+    await axios.post(baseUrl + NOTIFICATION_ENDPOINT.BASE, notificationBody);
   },
 };

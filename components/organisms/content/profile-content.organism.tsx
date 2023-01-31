@@ -9,11 +9,11 @@ import { MCProfileAvatarForm } from "../../molecules/form/profile-avatar-form.mo
 import { MCProfileForm } from "../../molecules/form/profile-form.molecule";
 const { Content } = Layout;
 
-interface OGPRofilePageProps {
+interface OGPRofileContentProps {
   userId?: string;
 }
 
-export function OGPRofilePage({ userId }: OGPRofilePageProps) {
+export function OGPRofileContent({ userId }: OGPRofileContentProps) {
   const [msg, contextHolder] = message.useMessage();
   const user = useRecoilValue<User | null>(userState);
   const isDifferentUser = userId ? true : false;
@@ -27,12 +27,7 @@ export function OGPRofilePage({ userId }: OGPRofilePageProps) {
 
     try {
       const { data }: { data: User } = await axios.get(
-        baseUrl + PROFILE_ENDPOINT.BASE + "/" + userId,
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        }
+        baseUrl + PROFILE_ENDPOINT.BASE + "/" + userId
       );
 
       return data;

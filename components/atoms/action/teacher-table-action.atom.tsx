@@ -41,11 +41,6 @@ export function AtomTeacherTableAction({
           MSSV: user?.MSSV,
           MSCB: teacher.MSCB,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        }
       );
 
       setUser((prevUser: Student) => {

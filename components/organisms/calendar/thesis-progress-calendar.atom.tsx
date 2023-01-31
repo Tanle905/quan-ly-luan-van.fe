@@ -57,12 +57,7 @@ export function OGThesisProgressCalendar({
     try {
       const { data } = await axios.post(
         baseUrl + THESIS_PROGRESS_ENDPOINT.BASE,
-        { MSSV: MSSV ? MSSV : user.MSSV },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        }
+        { MSSV: MSSV ? MSSV : user.MSSV }
       );
 
       return data.data;

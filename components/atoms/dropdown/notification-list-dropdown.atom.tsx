@@ -67,11 +67,9 @@ export function AtomNotificationListDropDown({
 
   async function notificationFetcher() {
     try {
-      const { data } = await axios.get(baseUrl + NOTIFICATION_ENDPOINT.BASE, {
-        headers: {
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
-      });
+      const { data } = await axios.get(
+        baseUrl + NOTIFICATION_ENDPOINT.BASE,
+      );
 
       return data;
     } catch (error: any) {

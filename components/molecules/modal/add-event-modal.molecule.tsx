@@ -67,11 +67,6 @@ export function MCAddEventModal({
           end: endDate.add(1, "day").toISOString(),
           title,
           description,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
         }
       );
       calendarEventSendSubject.next(1);
@@ -96,11 +91,6 @@ export function MCAddEventModal({
         {
           id: currentEventData?.id,
           MSSV: user?.MSSV,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
         }
       );
       calendarEventSendSubject.next(1);
