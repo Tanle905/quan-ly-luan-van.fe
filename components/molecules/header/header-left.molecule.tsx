@@ -21,7 +21,7 @@ export function MCHeaderLeft({ styles }: MCHeaderLeftProps) {
         title="Trang Chủ"
         href={user?.teacher ? SCREEN_ROUTE.THESIS_PROGRESS : SCREEN_ROUTE.BASE}
       />
-      <AtomHeaderNavLink title="Danh Sách" href="/list" />
+      <AtomHeaderNavLink title="Danh Sách" href={SCREEN_ROUTE.SCHEDULE} />
     </Layout.Content>
   );
 }

@@ -5,10 +5,12 @@ import {
 } from "@ant-design/icons";
 import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
 import { requestSendSubject } from "../../../constants/observables";
+import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import { NotificationService } from "../../../services/notification.service";
@@ -27,6 +29,7 @@ export function AtomTeacherTableAction({
     (request) => request.MSCB === teacher.MSCB
   );
   const [msg, contextHolder] = message.useMessage();
+  const router = useRouter();
 
   async function handleSendRequest() {
     if (isRequestSent || isLoading) return;
@@ -92,7 +95,10 @@ export function AtomTeacherTableAction({
           />
         </Tooltip>
         <Tooltip title="Xem thông tin giảng viên">
-          <InfoCircleOutlined className="cursor-pointer p-2 hover:bg-indigo-600 hover:text-white rounded-md transition-all" />
+          <InfoCircleOutlined
+            onClick={() => router.push(`${SCREEN_ROUTE.PROFILE}/${teacher._id}`)}
+            className="cursor-pointer p-2 hover:bg-indigo-600 hover:text-white rounded-md transition-all"
+          />
         </Tooltip>
       </Layout.Content>
     </>

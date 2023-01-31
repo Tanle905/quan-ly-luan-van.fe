@@ -35,8 +35,7 @@ export function MCHeaderRight({ styles }: MCHeaderRightProps) {
   }, [user]);
 
   return (
-    <Layout.Content className="flex space-x-4 py-2 items-center" style={styles}>
-      <AtomIconHeader icon={<SearchOutlined />} />
+    <Layout.Content className="flex justify-end space-x-4 py-2 items-center" style={styles}>
       <AtomIconHeader
         icon={
           <AtomNotificationListDropDown>

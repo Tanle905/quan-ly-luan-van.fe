@@ -1,11 +1,13 @@
 import { Layout } from "antd";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { OGHeader } from "../../components/organisms/header/header.organism";
 import { OGPRofilePage } from "../../components/organisms/profile/profile-page.organism";
+const { Content } = Layout;
 
 export default function Home() {
-  const { Content } = Layout;
-
+  const router = useRouter();
+  const { pid } = router.query;
   return (
     <>
       <Head>
@@ -16,7 +18,7 @@ export default function Home() {
       </Head>
       <Content className="h-screen overflow-auto bg-gray-100">
         <OGHeader />
-        <OGPRofilePage />
+        <OGPRofilePage userId={pid as string} />
       </Content>
     </>
   );

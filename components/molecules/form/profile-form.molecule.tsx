@@ -1,40 +1,39 @@
 import {
-  CarOutlined,
   MailOutlined,
   NumberOutlined,
   PhoneOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Form, Input, Layout } from "antd";
-import { useRecoilValue } from "recoil";
+import { useEffect } from "react";
 import { Roles } from "../../../constants/enums";
 import { User } from "../../../interfaces/user.interface";
-import { userState } from "../../../stores/auth.store";
-import { isStudent, isTeacher } from "../../../utils/role.util";
 
-interface MCProfileFormProps {}
+interface MCProfileFormProps {
+  profile: User | null | undefined;
+}
 
-export function MCProfileForm({}: MCProfileFormProps) {
-  const user = useRecoilValue<User | null>(userState);
+export function MCProfileForm({ profile }: MCProfileFormProps) {
   const [form] = Form.useForm();
+  const isStudent = profile?.roles?.includes(Roles.STUDENT);
 
-  if (!user) return null;
+  useEffect(() => {
+    form.setFieldsValue({
+      ...profile,
+      roles: isStudent ?  "Sinh viên" : "Giảng viên",
+    });
+  }, []);
+
+  if (!profile) return null;
 
   return (
     <Layout.Content className="rounded-md shadow-md bg-white p-5">
-      <Form
-        initialValues={{
-          ...user,
-          roles: isTeacher() ? "Giảng viên" : "Sinh viên",
-        }}
-        form={form}
-        className="space-y-5"
-      >
+      <Form form={form} className="space-y-5">
         <div className="flex items-center">
-          <span className="w-52">{isStudent() ? "MSSV: " : "MSCB: "}</span>
+          <span className="w-52">{isStudent ? "MSSV: " : "MSCB: "}</span>
           <Form.Item
             className="inline-block w-96"
-            name={isStudent() ? "MSSV" : "MSCB"}
+            name={isStudent ? "MSSV" : "MSCB"}
             style={{ marginBottom: 0 }}
           >
             <Input type="text" disabled prefix={<NumberOutlined />} />
@@ -99,7 +98,7 @@ export function MCProfileForm({}: MCProfileFormProps) {
             <Input type="text" disabled />
           </Form.Item>
         </div>
-        {isStudent() && (
+        {isStudent && (
           <div className="flex items-center">
             <span className="w-52">Lớp: </span>
             <Form.Item
