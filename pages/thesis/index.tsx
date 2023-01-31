@@ -1,7 +1,7 @@
 import { Layout } from "antd";
 import Head from "next/head";
 import { useRecoilValue } from "recoil";
-import { OGThesisProgressCalendar } from "../../components/organisms/calendar/thesis-progress-calendar.atom";
+import { OGThesisProgressContent } from "../../components/organisms/content/thesis-progress-content.organism";
 import { OGHeader } from "../../components/organisms/header/header.organism";
 import { Student } from "../../interfaces/student.interface";
 import { Teacher } from "../../interfaces/teacher.interface";
@@ -21,8 +21,8 @@ export default function Home() {
       </Head>
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <Content className="mt-14">
-          <OGThesisProgressCalendar />
+        <Content className="my-5">
+          <OGThesisProgressContent />
         </Content>
       </Content>
     </>

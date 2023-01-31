@@ -1,7 +1,7 @@
 import { Layout } from "antd";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { OGThesisProgressCalendar } from "../../components/organisms/calendar/thesis-progress-calendar.atom";
+import { OGThesisProgressContent } from "../../components/organisms/content/thesis-progress-content.organism";
 import { OGHeader } from "../../components/organisms/header/header.organism";
 
 const { Content } = Layout;
@@ -20,8 +20,8 @@ export default function Home() {
       </Head>
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <Content className="mt-14">
-          <OGThesisProgressCalendar MSSV={router.query.pid as string} />
+        <Content className="my-5">
+          <OGThesisProgressContent MSSV={router.query.pid as string} />
         </Content>
       </Content>
     </>
