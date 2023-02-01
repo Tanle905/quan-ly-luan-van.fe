@@ -1,5 +1,6 @@
 import { Request } from "./request.interface";
 import { Teacher } from "./teacher.interface";
+import { Topic } from "./topic.interface";
 import { User } from "./user.interface";
 
 export interface Student extends User {
@@ -9,7 +10,8 @@ export interface Student extends User {
   department: string;
   sentRequestList: Request[];
   topic?: any;
-  teacher?: Teacher[];
+  teacher?: Teacher;
+  sentTopic?: Topic;
   thesisProgress?: any;
   reportSchedule?: any;
 }

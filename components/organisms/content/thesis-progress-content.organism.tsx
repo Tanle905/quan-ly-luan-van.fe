@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import { Student } from "../../../interfaces/student.interface";
 import { userState } from "../../../stores/auth.store";
 import { MCThesisProgressCalendar } from "../../molecules/calendar/thesis-progress-calendar.molecule";
+import { MCTopicForm } from "../../molecules/form/topic-form.molecule";
 
 interface OGThesisProgressContentProps {
   MSSV?: string;
@@ -16,18 +17,18 @@ export function OGThesisProgressContent({
     {
       key: "1",
       label: `Chủ đề luận văn`,
-      children: `Content of Tab Pane 1`,
+      children: <MCTopicForm MSSV={MSSV} />,
     },
     {
       key: "2",
       label: `Tiến trình luận văn`,
       children: <MCThesisProgressCalendar MSSV={MSSV} />,
-      disabled: !user?.topic,
+      disabled: !user?.sentTopic?.isTopicAccepted,
     },
   ];
 
   return (
-    <Layout.Content className="space-y-3 px-5">
+    <Layout.Content className="space-y-3 mx-20">
       <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
         Báo cáo tiến độ luận văn
       </Typography.Title>

@@ -11,6 +11,7 @@ import {
 } from "../../../constants/endpoints";
 import { calendarEventSendSubject } from "../../../constants/observables";
 import { CalendarEvent } from "../../../interfaces/calendar.interface";
+import { Student } from "../../../interfaces/student.interface";
 import { User } from "../../../interfaces/user.interface";
 import { userState } from "../../../stores/auth.store";
 import { MCAddEventForm } from "../form/add-event-form.molecule";
@@ -34,7 +35,7 @@ export function MCAddEventModal({
   const [isFormEditable, setIsFormEditable] = useState(true);
   const [msg, contextHodler] = message.useMessage();
   const [addEventForm] = Form.useForm();
-  const user = useRecoilValue<User | null>(userState);
+  const user = useRecoilValue<Student | null>(userState);
 
   useEffect(() => {
     setIsFormEditable(currentEventData ? false : true);
@@ -63,6 +64,7 @@ export function MCAddEventModal({
         {
           ...(currentEventData ? { id: currentEventData?.id } : {}),
           MSSV: user?.MSSV,
+          MSCB: user.teacher?.MSCB,
           start: startDate.toISOString(),
           end: endDate.add(1, "day").toISOString(),
           title,

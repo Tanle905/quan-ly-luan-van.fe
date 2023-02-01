@@ -18,6 +18,7 @@ import { baseUrl, AUTH_ENDPOINT } from "../../../constants/endpoints";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { handleValidateOnFieldChange } from "../../../utils/validation.util";
+import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
 
 export function OGLoginContent() {
   const router = useRouter();
@@ -57,10 +58,9 @@ export function OGLoginContent() {
             </Paragraph>
             <Form
               onFieldsChange={() =>
-                handleValidateOnFieldChange(loginForm, setIsLoginFormValid)
+                setIsLoginFormValid(handleValidateOnFieldChange(loginForm))
               }
               layout="vertical"
-              onFinish={() => handleLogin(loginForm)}
               form={loginForm}
             >
               <Form.Item
@@ -95,15 +95,18 @@ export function OGLoginContent() {
                   <Link className="text-indigo-600">Quên mật khẩu?</Link>
                 </Col>
               </Row>
-              <Button
+              <AtomLoadingButton
                 disabled={!isLoginFormValid}
-                type="primary"
-                htmlType="submit"
-                style={{ height: 40 }}
-                className="w-full"
+                onClick={() => handleLogin(loginForm)}
+                buttonProps={{
+                  type: "primary",
+                  htmlType: "submit",
+                  style: { height: 40 },
+                  className: "w-full",
+                }}
               >
                 Đăng nhập
-              </Button>
+              </AtomLoadingButton>
             </Form>
           </Content>
         </Content>

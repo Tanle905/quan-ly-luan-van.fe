@@ -40,7 +40,7 @@ export function MCAddEventForm({
   return (
     <Form
       form={form}
-      onValuesChange={() => handleValidateOnFieldChange(form, setIsValid)}
+      onFieldsChange={() => setIsValid(handleValidateOnFieldChange(form))}
       layout="vertical"
     >
       <Form.Item label={"Thời gian"} name="date" required>

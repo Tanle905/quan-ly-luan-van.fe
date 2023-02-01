@@ -1,5 +1,6 @@
-export const baseUrl =
-  "https://quan-ly-luan-van-be.vercel.app" || "http://localhost:13000";
+export const baseUrl = false
+  ? "https://quan-ly-luan-van-be.vercel.app"
+  : "http://localhost:13000";
 export const AUTH_ENDPOINT = {
   BASE: "/auth",
   LOGIN: "/login",
@@ -27,4 +28,7 @@ export const THESIS_PROGRESS_ENDPOINT = {
     BASE: "/event",
     DELETE: "/delete",
   },
+};
+export const TOPIC_ENDPOINT = {
+  BASE: "/topic",
 };
