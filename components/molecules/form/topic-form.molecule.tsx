@@ -30,15 +30,16 @@ const { TextArea } = Input;
 
 interface MCTopicFormProps {
   MSSV?: string;
+  topic: any;
+  setTopic: any;
 }
 
-export function MCTopicForm({ MSSV }: MCTopicFormProps) {
+export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
   const [user, setUser] = useRecoilState<any>(userState);
   const [form] = Form.useForm();
   const [msg, contextHolder] = message.useMessage();
   const [isValid, setIsValid] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
-  const [topic, setTopic] = useState<Topic | null>(null);
   const isTopicExist = topic ? true : false;
   const { data, mutate } = useSWR(
     isTeacher() && TOPIC_ENDPOINT.BASE,
