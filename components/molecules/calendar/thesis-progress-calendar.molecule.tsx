@@ -15,6 +15,7 @@ import { userState } from "../../../stores/auth.store";
 import { MCAddEventModal } from "../modal/add-event-modal.molecule";
 import useSWR from "swr";
 import moment from "@fullcalendar/moment";
+import { clearCache } from "../../../utils/swr.util";
 
 interface MCThesisProgressCalendarProps {
   MSSV?: string;
@@ -44,7 +45,7 @@ export function MCThesisProgressCalendar({
     });
 
     return () => {
-      clearCache();
+      clearCache(mutate);
       calendarEventSendSubscription.unsubscribe();
     };
   }, []);
@@ -61,10 +62,6 @@ export function MCThesisProgressCalendar({
     } catch (error: any) {
       message.error(error.response.data.message);
     }
-  }
-
-  function clearCache() {
-    mutate(() => true, undefined);
   }
 
   return (

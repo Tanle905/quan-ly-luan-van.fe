@@ -13,11 +13,13 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
+import useSWR from "swr";
 import { TOPIC_ENDPOINT } from "../../../constants/endpoints";
 import { TopicStatus } from "../../../constants/enums";
 import { Topic } from "../../../interfaces/topic.interface";
 import { userState } from "../../../stores/auth.store";
 import { isStudent, isTeacher } from "../../../utils/role.util";
+import { clearCache } from "../../../utils/swr.util";
 import { handleValidateOnFieldChange } from "../../../utils/validation.util";
 import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
 
@@ -30,12 +32,6 @@ interface MCTopicFormProps {
   MSSV?: string;
 }
 
-let steps: StepsProps["items"] = [
-  { title: "Chưa tạo chủ đề" },
-  { title: "Chờ duyệt" },
-  { title: "Đã duyệt", status: "finish" },
-];
-
 export function MCTopicForm({ MSSV }: MCTopicFormProps) {
   const [user, setUser] = useRecoilState<any>(userState);
   const [form] = Form.useForm();
@@ -44,11 +40,30 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
   const [canEdit, setCanEdit] = useState(false);
   const [topic, setTopic] = useState<Topic | null>(null);
   const isTopicExist = topic ? true : false;
+  const { data, mutate } = useSWR(
+    isTeacher() && TOPIC_ENDPOINT.BASE,
+    handleGetTopic
+  );
+  let steps: StepsProps["items"] = [
+    { title: "Tạo chủ đề" },
+    { title: "Chờ duyệt" },
+    { title: "Đã duyệt", status: "finish" },
+  ];
+
+  useEffect(() => {
+    return () => {
+      clearCache(mutate);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!data) return;
+
+    setTopic(data);
+  }, [data]);
 
   useEffect(() => {
     if (!user) return;
-
-    if (isTeacher()) handleGetTopic().then((data) => setTopic(data));
 
     if (user?.sentTopic) setTopic(user.sentTopic);
   }, [user]);
@@ -86,6 +101,7 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
         }
       );
 
+      message.success("Gửi chủ đề thành công !");
       setUser((prevUser: any) => {
         return { ...prevUser, sentTopic: res.data.data };
       });
@@ -104,6 +120,9 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
       const res = await axios.put(
         `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}/${topic._id}`
       );
+
+      message.success("Yêu cầu chỉnh sửa thành công !");
+      mutate();
     } catch (error: any) {
       message.error(error.response.data.message);
     }
@@ -116,6 +135,9 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}/${topic._id}`
       );
+
+      message.success("Chấp nhận chủ đề thành công !");
+      mutate();
     } catch (error: any) {
       message.error(error.response.data.message);
     }
@@ -165,12 +187,7 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
         >
           <Content className="flex items-center">
             <span className="w-20">Trạng thái: </span>
-            <Steps
-              progressDot
-              items={steps}
-              current={calculateSteps()}
-              className="w-1/2"
-            />
+            <Steps items={steps} current={calculateSteps()} className="w-1/2" />
           </Content>
           <Content className="flex items-center">
             <span className="w-20">Tên đề tài: </span>
@@ -231,14 +248,20 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
         <>
           {isTeacher() && !(topic?.topicStatus === TopicStatus.Accepted) && (
             <Content className="flex justify-end space-x-2">
-              <Button
-                disabled={!isTopicExist && !canEdit}
+              <AtomLoadingButton
+                disabled={
+                  topic?.topicStatus === TopicStatus.RequestChange ||
+                  (!isTopicExist && !canEdit)
+                }
                 onClick={handleRequestChangeTopic}
-                type="ghost"
-                className="text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400"
+                buttonProps={{
+                  type: "ghost",
+                  className:
+                    "text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400",
+                }}
               >
                 Yêu cầu chỉnh sửa
-              </Button>
+              </AtomLoadingButton>
               <AtomLoadingButton
                 disabled={!isTopicExist}
                 onClick={handleAcceptTopic}
