@@ -1,5 +1,6 @@
 import { Layout, Tabs, TabsProps, Typography } from "antd";
 import { useRecoilValue } from "recoil";
+import { TopicStatus } from "../../../constants/enums";
 import { Student } from "../../../interfaces/student.interface";
 import { userState } from "../../../stores/auth.store";
 import { MCThesisProgressCalendar } from "../../molecules/calendar/thesis-progress-calendar.molecule";
@@ -23,7 +24,7 @@ export function OGThesisProgressContent({
       key: "2",
       label: `Tiến trình luận văn`,
       children: <MCThesisProgressCalendar MSSV={MSSV} />,
-      disabled: !user?.sentTopic?.isTopicAccepted,
+      disabled: user?.sentTopic?.topicStatus !== TopicStatus.Accepted,
     },
   ];
 
