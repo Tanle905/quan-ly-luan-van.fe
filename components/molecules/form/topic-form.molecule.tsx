@@ -5,13 +5,16 @@ import {
   Input,
   Layout,
   message,
+  StepProps,
   Steps,
+  StepsProps,
   Typography,
 } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { TOPIC_ENDPOINT } from "../../../constants/endpoints";
+import { TopicStatus } from "../../../constants/enums";
 import { Topic } from "../../../interfaces/topic.interface";
 import { userState } from "../../../stores/auth.store";
 import { isStudent, isTeacher } from "../../../utils/role.util";
@@ -23,24 +26,24 @@ const { Title } = Typography;
 const { Item } = Form;
 const { TextArea } = Input;
 
-const steps = [
-  { title: "Tạo chủ đề" },
-  { title: "Chờ duyệt" },
-  { title: "Đã duyệt" },
-];
-
 interface MCTopicFormProps {
   MSSV?: string;
 }
 
+let steps: StepsProps["items"] = [
+  { title: "Chưa tạo chủ đề" },
+  { title: "Chờ duyệt" },
+  { title: "Đã duyệt", status: "finish" },
+];
+
 export function MCTopicForm({ MSSV }: MCTopicFormProps) {
   const [user, setUser] = useRecoilState<any>(userState);
-  const isTopicExist = user?.sentTopic ? true : false;
   const [form] = Form.useForm();
   const [msg, contextHolder] = message.useMessage();
   const [isValid, setIsValid] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [topic, setTopic] = useState<Topic | null>(null);
+  const isTopicExist = topic ? true : false;
 
   useEffect(() => {
     if (!user) return;
@@ -63,7 +66,6 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}?MSSV=${MSSV}&MSCB=${user.MSCB}`
     );
-
     return res.data.data;
   }
 
@@ -89,6 +91,21 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
       });
     } catch (error: any) {
       message.error(error.response.data.message);
+    } finally {
+      setIsValid(false);
+      setCanEdit(false);
+    }
+  }
+
+  async function handleRequestChangeTopic() {
+    if (!topic) return;
+
+    try {
+      const res = await axios.put(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}/${topic._id}`
+      );
+    } catch (error: any) {
+      message.error(error.response.data.message);
     }
   }
 
@@ -108,11 +125,21 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
     if (!topic) {
       return 0;
     }
-    switch (topic.isTopicAccepted) {
-      case false:
-        return 1;
 
-      case true:
+    const errorStep: StepProps = {
+      title: "Yêu câu chỉnh sửa",
+      status: "error",
+    };
+
+    switch (topic.topicStatus) {
+      case TopicStatus.Pending:
+        return 1;
+      case TopicStatus.RequestChange:
+        if (steps) {
+          steps[1] = errorStep;
+        }
+        return 1;
+      case TopicStatus.Accepted:
         return 2;
       default:
         return 0;
@@ -202,17 +229,18 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
           )}
         </>
         <>
-          {isTeacher() && !topic?.isTopicAccepted && (
+          {isTeacher() && !(topic?.topicStatus === TopicStatus.Accepted) && (
             <Content className="flex justify-end space-x-2">
               <Button
-                disabled={isTopicExist && !canEdit}
-                onClick={handleResetField}
+                disabled={!isTopicExist && !canEdit}
+                onClick={handleRequestChangeTopic}
                 type="ghost"
                 className="text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400"
               >
                 Yêu cầu chỉnh sửa
               </Button>
               <AtomLoadingButton
+                disabled={!isTopicExist}
                 onClick={handleAcceptTopic}
                 buttonProps={{ type: "primary" }}
               >

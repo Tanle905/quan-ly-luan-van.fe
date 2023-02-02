@@ -1,3 +1,5 @@
+import { TopicStatus } from "../constants/enums";
+
 export interface Topic {
   _id?: string;
   MSSV: string;
@@ -5,5 +7,5 @@ export interface Topic {
   studentName:string;
   topicName: string;
   topicDescription: string;
-  isTopicAccepted?: boolean;
+  topicStatus?: TopicStatus;
 }
