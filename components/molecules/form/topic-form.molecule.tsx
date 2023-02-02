@@ -42,8 +42,8 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
   const [isValid, setIsValid] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const isTopicExist = topic ? true : false;
-  const { data, mutate } = useSWR(
-    isTeacher() && TOPIC_ENDPOINT.BASE,
+  const { data, mutate, isValidating } = useSWR(
+    isTeacher() && mounted && TOPIC_ENDPOINT.BASE,
     topicFetcher
   );
   let steps: StepsProps["items"] = [
