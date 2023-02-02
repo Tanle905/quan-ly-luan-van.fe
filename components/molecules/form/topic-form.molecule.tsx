@@ -35,6 +35,7 @@ interface MCTopicFormProps {
 }
 
 export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
+  const [mounted, setMounted] = useState(false);
   const [user, setUser] = useRecoilState<any>(userState);
   const [form] = Form.useForm();
   const [msg, contextHolder] = message.useMessage();
@@ -52,6 +53,8 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
   ];
 
   useEffect(() => {
+    setMounted(true);
+
     return () => {
       clearCache(mutate);
     };
@@ -173,6 +176,8 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
     form.resetFields();
     setIsValid(false);
   }
+
+  if(!mounted) return null;
 
   return (
     <>

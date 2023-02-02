@@ -35,6 +35,8 @@ export function OGHeader({}) {
   }, [user]);
 
   async function profileFetcher() {
+    if (!axios.defaults.headers.common["Authorization"]) return;
+
     const res = await axios.get(
       process.env.NEXT_PUBLIC_BASE_URL + PROFILE_ENDPOINT.BASE
     );

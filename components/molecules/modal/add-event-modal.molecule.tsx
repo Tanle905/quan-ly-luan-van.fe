@@ -5,14 +5,13 @@ import axios from "axios";
 import { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import {
-    THESIS_PROGRESS_ENDPOINT,
-} from "../../../constants/endpoints";
+import { THESIS_PROGRESS_ENDPOINT } from "../../../constants/endpoints";
 import { calendarEventSendSubject } from "../../../constants/observables";
 import { CalendarEvent } from "../../../interfaces/calendar.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { User } from "../../../interfaces/user.interface";
 import { userState } from "../../../stores/auth.store";
+import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
 import { MCAddEventForm } from "../form/add-event-form.molecule";
 
 interface MCAddEventModalProps {
@@ -123,19 +122,26 @@ export function MCAddEventModal({
             <></>
           ),
           currentEventData ? (
-            <Button
-              className="text-white bg-red-600 hover:bg-red-500 transition-all"
-              type="ghost"
+            <AtomLoadingButton
               onClick={handleDeleteEvent}
+              buttonProps={{
+                className:
+                  "text-white bg-red-600 hover:bg-red-500 transition-all",
+                type: "ghost",
+              }}
             >
               Xóa sự kiện
-            </Button>
+            </AtomLoadingButton>
           ) : (
             <></>
           ),
-          <Button type="primary" disabled={!isValid} onClick={handleSaveEvent}>
+          <AtomLoadingButton
+            disabled={!isValid}
+            onClick={handleSaveEvent}
+            buttonProps={{ type: "primary" }}
+          >
             Lưu
-          </Button>,
+          </AtomLoadingButton>,
         ]}
       >
         <MCAddEventForm

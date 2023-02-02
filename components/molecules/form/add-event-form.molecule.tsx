@@ -50,10 +50,20 @@ export function MCAddEventForm({
           disabled={!isFormEditable}
         />
       </Form.Item>
-      <Form.Item label={"Tiêu đề"} name="title" required>
+      <Form.Item
+        label={"Tiêu đề"}
+        name="title"
+        rules={[{ required: true }]}
+        required
+      >
         <Input disabled={!isFormEditable} />
       </Form.Item>
-      <Form.Item label={"Nội dung"} name="description" required>
+      <Form.Item
+        label={"Nội dung"}
+        name="description"
+        rules={[{ required: true }]}
+        required
+      >
         <Input.TextArea rows={5} disabled={!isFormEditable} />
       </Form.Item>
     </Form>
