@@ -2,7 +2,7 @@ import { Layout, message } from "antd";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import useSWR from "swr";
-import { baseUrl, PROFILE_ENDPOINT } from "../../../constants/endpoints";
+import { PROFILE_ENDPOINT } from "../../../constants/endpoints";
 import { User } from "../../../interfaces/user.interface";
 import { userState } from "../../../stores/auth.store";
 import { MCProfileAvatarForm } from "../../molecules/form/profile-avatar-form.molecule";
@@ -18,7 +18,7 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
   const user = useRecoilValue<User | null>(userState);
   const isDifferentUser = userId ? true : false;
   const { data } = useSWR<User | undefined>(
-    userId && baseUrl + PROFILE_ENDPOINT.BASE,
+    userId && process.env.NEXT_PUBLIC_BASE_URL + PROFILE_ENDPOINT.BASE,
     userProfileFetcher
   );
 
@@ -27,7 +27,7 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
 
     try {
       const { data }: { data: User } = await axios.get(
-        baseUrl + PROFILE_ENDPOINT.BASE + "/" + userId
+        process.env.NEXT_PUBLIC_BASE_URL + PROFILE_ENDPOINT.BASE + "/" + userId
       );
 
       return data;

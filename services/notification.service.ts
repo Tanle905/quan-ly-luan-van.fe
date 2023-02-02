@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl, NOTIFICATION_ENDPOINT } from "../constants/endpoints";
+import { NOTIFICATION_ENDPOINT } from "../constants/endpoints";
 import { Notification } from "../interfaces/notification.interface";
 
 export const NotificationService = {
@@ -17,6 +17,6 @@ export const NotificationService = {
       content,
     };
 
-    await axios.post(baseUrl + NOTIFICATION_ENDPOINT.BASE, notificationBody);
+    await axios.post(process.env.NEXT_PUBLIC_BASE_URL + NOTIFICATION_ENDPOINT.BASE, notificationBody);
   },
 };

@@ -4,7 +4,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { ReactElement, ReactNode, useState } from "react";
 import { useRecoilState } from "recoil";
-import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
+import { REQUEST_ENDPOINT } from "../../../constants/endpoints";
 import { requestSendSubject } from "../../../constants/observables";
 import { Request } from "../../../interfaces/request.interface";
 import { NotificationService } from "../../../services/notification.service";
@@ -84,7 +84,7 @@ export function AtomRequestListDropdown({
   async function handleAcceptRequest(request: Request) {
     try {
       const res = await axios.post(
-        baseUrl + REQUEST_ENDPOINT.BASE + REQUEST_ENDPOINT.ACCEPT,
+        process.env.NEXT_PUBLIC_BASE_URL + REQUEST_ENDPOINT.BASE + REQUEST_ENDPOINT.ACCEPT,
         {
           id: request._id,
         }
@@ -118,7 +118,7 @@ export function AtomRequestListDropdown({
   async function handleDeleteRequest(request: Request) {
     try {
       const res = await axios.post(
-        baseUrl + REQUEST_ENDPOINT.BASE + REQUEST_ENDPOINT.REJECT,
+        process.env.NEXT_PUBLIC_BASE_URL + REQUEST_ENDPOINT.BASE + REQUEST_ENDPOINT.REJECT,
         {
           id: request._id,
         }

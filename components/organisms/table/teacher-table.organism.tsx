@@ -2,7 +2,7 @@ import { Input, Layout, message, Table, Tag, Typography } from "antd";
 import axios from "axios";
 import { useEffect } from "react";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
-import { baseUrl, TEACHER_ENDPOINT } from "../../../constants/endpoints";
+import { TEACHER_ENDPOINT } from "../../../constants/endpoints";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import useSWR from "swr";
 import { requestSendSubject } from "../../../constants/observables";
@@ -16,7 +16,7 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
   const user = useRecoilValue<Student | null>(userState);
   const [msg, contextHolder] = message.useMessage();
   const { data, mutate } = useSWR<Teacher[] | undefined>(
-    user && baseUrl + TEACHER_ENDPOINT.BASE,
+    user && process.env.NEXT_PUBLIC_BASE_URL + TEACHER_ENDPOINT.BASE,
     fetchData
   );
 
@@ -35,7 +35,7 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
   async function fetchData() {
     try {
       const { data }: { data: { data: Teacher[] } } = await axios.get(
-        baseUrl + TEACHER_ENDPOINT.BASE
+        process.env.NEXT_PUBLIC_BASE_URL + TEACHER_ENDPOINT.BASE
       );
 
       return data.data;

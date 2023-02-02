@@ -6,8 +6,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import {
-  baseUrl,
-  THESIS_PROGRESS_ENDPOINT,
+    THESIS_PROGRESS_ENDPOINT,
 } from "../../../constants/endpoints";
 import { calendarEventSendSubject } from "../../../constants/observables";
 import { Student } from "../../../interfaces/student.interface";
@@ -30,7 +29,7 @@ export function MCThesisProgressCalendar({
   const [isMounted, setIsMounted] = useState(false);
   const { data, mutate } = useSWR(
     isMounted &&
-      baseUrl + THESIS_PROGRESS_ENDPOINT.BASE + THESIS_PROGRESS_ENDPOINT.EVENT,
+      process.env.NEXT_PUBLIC_BASE_URL + THESIS_PROGRESS_ENDPOINT.BASE + THESIS_PROGRESS_ENDPOINT.EVENT,
     thesisProgressEventFetcher
   );
   const user = useRecoilValue<(Teacher & Student) | null>(userState);
@@ -54,7 +53,7 @@ export function MCThesisProgressCalendar({
     if (!user) return;
     try {
       const { data } = await axios.post(
-        baseUrl + THESIS_PROGRESS_ENDPOINT.BASE,
+        process.env.NEXT_PUBLIC_BASE_URL + THESIS_PROGRESS_ENDPOINT.BASE,
         { MSSV: MSSV ? MSSV : user.MSSV }
       );
 

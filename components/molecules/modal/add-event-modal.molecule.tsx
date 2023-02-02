@@ -6,8 +6,7 @@ import { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import {
-  baseUrl,
-  THESIS_PROGRESS_ENDPOINT,
+    THESIS_PROGRESS_ENDPOINT,
 } from "../../../constants/endpoints";
 import { calendarEventSendSubject } from "../../../constants/observables";
 import { CalendarEvent } from "../../../interfaces/calendar.interface";
@@ -58,7 +57,7 @@ export function MCAddEventModal({
 
     try {
       await axios[currentEventData ? "put" : "post"](
-        baseUrl +
+        process.env.NEXT_PUBLIC_BASE_URL +
           THESIS_PROGRESS_ENDPOINT.BASE +
           THESIS_PROGRESS_ENDPOINT.EVENT.BASE,
         {
@@ -86,7 +85,7 @@ export function MCAddEventModal({
 
     try {
       await axios.post(
-        baseUrl +
+        process.env.NEXT_PUBLIC_BASE_URL +
           THESIS_PROGRESS_ENDPOINT.BASE +
           THESIS_PROGRESS_ENDPOINT.EVENT.BASE +
           THESIS_PROGRESS_ENDPOINT.EVENT.DELETE,

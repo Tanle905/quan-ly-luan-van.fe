@@ -2,8 +2,7 @@ import { Input, Layout, message, Table, Tag, Typography } from "antd";
 import axios from "axios";
 import { useEffect } from "react";
 import {
-  baseUrl,
-  STUDENT_ENDPOINT,
+    STUDENT_ENDPOINT,
   TEACHER_ENDPOINT,
 } from "../../../constants/endpoints";
 import useSWR from "swr";
@@ -20,7 +19,7 @@ export function OGStudentTable({}: OGStudentTableProps) {
   const user = useRecoilValue<Teacher | null>(userState);
   const [msg, contextHolder] = message.useMessage();
   const { data, mutate } = useSWR<Student[] | undefined>(
-    user && baseUrl + TEACHER_ENDPOINT.BASE,
+    user && process.env.NEXT_PUBLIC_BASE_URL + TEACHER_ENDPOINT.BASE,
     studentListFetcher
   );
 
@@ -37,7 +36,7 @@ export function OGStudentTable({}: OGStudentTableProps) {
   async function studentListFetcher() {
     try {
       const { data }: { data: { data: Student[] } } = await axios.post(
-        baseUrl + STUDENT_ENDPOINT.BASE,
+        process.env.NEXT_PUBLIC_BASE_URL + STUDENT_ENDPOINT.BASE,
         { studentList: user?.studentList }
       );
 

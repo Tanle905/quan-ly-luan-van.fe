@@ -8,7 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { baseUrl, REQUEST_ENDPOINT } from "../../../constants/endpoints";
+import { REQUEST_ENDPOINT } from "../../../constants/endpoints";
 import { requestSendSubject } from "../../../constants/observables";
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { Student } from "../../../interfaces/student.interface";
@@ -35,7 +35,7 @@ export function AtomTeacherTableAction({
     if (isRequestSent || isLoading) return;
     setIsLoading(true);
     try {
-      const res = await axios.post(baseUrl + REQUEST_ENDPOINT.BASE, {
+      const res = await axios.post(process.env.NEXT_PUBLIC_BASE_URL + REQUEST_ENDPOINT.BASE, {
         MSSV: user?.MSSV,
         MSCB: teacher.MSCB,
       });

@@ -14,7 +14,7 @@ import { useState } from "react";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { baseUrl, AUTH_ENDPOINT } from "../../../constants/endpoints";
+import { AUTH_ENDPOINT } from "../../../constants/endpoints";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { handleValidateOnFieldChange } from "../../../utils/validation.util";
@@ -36,7 +36,7 @@ export function OGLoginContent() {
   async function handleLogin(form: FormInstance) {
     try {
       const { data } = await axios.post(
-        baseUrl + AUTH_ENDPOINT.BASE + AUTH_ENDPOINT.LOGIN,
+        process.env.NEXT_PUBLIC_BASE_URL + AUTH_ENDPOINT.BASE + AUTH_ENDPOINT.LOGIN,
         form.getFieldsValue()
       );
       localStorage.setItem(LOCAL_STORAGE.USER_DATA, JSON.stringify(data));

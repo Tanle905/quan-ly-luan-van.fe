@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { ReactElement, ReactNode, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import useSWR from "swr";
-import { baseUrl, NOTIFICATION_ENDPOINT } from "../../../constants/endpoints";
+import { NOTIFICATION_ENDPOINT } from "../../../constants/endpoints";
 import { Notification } from "../../../interfaces/notification.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
@@ -19,7 +19,7 @@ export function AtomNotificationListDropDown({
 }: AtomNotificationListDropDownProps) {
   const user = useRecoilValue<Student | Teacher | null>(userState);
   const { data } = useSWR<Notification[] | null>(
-    user && baseUrl + NOTIFICATION_ENDPOINT.BASE,
+    user && process.env.NEXT_PUBLIC_BASE_URL + NOTIFICATION_ENDPOINT.BASE,
     notificationFetcher
   );
   const [open, setOpen] = useState(false);
@@ -68,7 +68,7 @@ export function AtomNotificationListDropDown({
   async function notificationFetcher() {
     try {
       const { data } = await axios.get(
-        baseUrl + NOTIFICATION_ENDPOINT.BASE,
+        process.env.NEXT_PUBLIC_BASE_URL + NOTIFICATION_ENDPOINT.BASE,
       );
 
       return data;

@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { baseUrl, TOPIC_ENDPOINT } from "../../../constants/endpoints";
+import { TOPIC_ENDPOINT } from "../../../constants/endpoints";
 import { Topic } from "../../../interfaces/topic.interface";
 import { userState } from "../../../stores/auth.store";
 import { isStudent, isTeacher } from "../../../utils/role.util";
@@ -61,7 +61,7 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
 
   async function handleGetTopic() {
     const res = await axios.get(
-      `${baseUrl}${TOPIC_ENDPOINT.BASE}?MSSV=${MSSV}&MSCB=${user.MSCB}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}?MSSV=${MSSV}&MSCB=${user.MSCB}`
     );
 
     return res.data.data;
@@ -74,7 +74,7 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
     const topicName = form.getFieldValue("topicName");
     try {
       const res = await axios.post<any, any, Topic>(
-        baseUrl + TOPIC_ENDPOINT.BASE,
+        process.env.NEXT_PUBLIC_BASE_URL + TOPIC_ENDPOINT.BASE,
         {
           MSSV: user.MSSV,
           MSCB: user.teacher?.MSCB as string,
@@ -97,7 +97,7 @@ export function MCTopicForm({ MSSV }: MCTopicFormProps) {
 
     try {
       const res = await axios.post(
-        `${baseUrl}${TOPIC_ENDPOINT.BASE}/${topic._id}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}/${topic._id}`
       );
     } catch (error: any) {
       message.error(error.response.data.message);
