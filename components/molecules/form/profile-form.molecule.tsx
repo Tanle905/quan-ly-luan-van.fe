@@ -20,9 +20,9 @@ export function MCProfileForm({ profile }: MCProfileFormProps) {
   useEffect(() => {
     form.setFieldsValue({
       ...profile,
-      roles: isStudent ?  "Sinh viên" : "Giảng viên",
+      roles: isStudent ? "Sinh viên" : "Giảng viên",
     });
-  }, []);
+  }, [profile]);
 
   if (!profile) return null;
 

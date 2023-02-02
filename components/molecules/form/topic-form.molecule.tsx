@@ -43,7 +43,7 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
   const isTopicExist = topic ? true : false;
   const { data, mutate } = useSWR(
     isTeacher() && TOPIC_ENDPOINT.BASE,
-    handleGetTopic
+    topicFetcher
   );
   let steps: StepsProps["items"] = [
     { title: "Tạo chủ đề" },
@@ -78,7 +78,7 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
     [topic]
   );
 
-  async function handleGetTopic() {
+  async function topicFetcher() {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}?MSSV=${MSSV}&MSCB=${user.MSCB}`
     );
@@ -219,58 +219,63 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
             </Item>
           </Content>
         </Form>
-        <Divider />
         <>
-          {isStudent() && (
-            <Content className="flex justify-end space-x-2">
-              {user?.sentTopic && (
-                <Button onClick={() => setCanEdit(true)} type="dashed">
-                  Chỉnh sửa chủ đề
+          {isStudent() && !(topic?.topicStatus === TopicStatus.Accepted) && (
+            <>
+              <Divider />
+              <Content className="flex justify-end space-x-2">
+                {user?.sentTopic && (
+                  <Button onClick={() => setCanEdit(true)} type="dashed">
+                    Chỉnh sửa chủ đề
+                  </Button>
+                )}
+                <Button
+                  disabled={isTopicExist && !canEdit}
+                  onClick={handleResetField}
+                  type="ghost"
+                  className="text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400"
+                >
+                  Đặt lại
                 </Button>
-              )}
-              <Button
-                disabled={isTopicExist && !canEdit}
-                onClick={handleResetField}
-                type="ghost"
-                className="text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400"
-              >
-                Đặt lại
-              </Button>
-              <AtomLoadingButton
-                disabled={!isValid}
-                onClick={handleSendTopic}
-                buttonProps={{ type: "primary" }}
-              >
-                Gửi đề tài
-              </AtomLoadingButton>
-            </Content>
+                <AtomLoadingButton
+                  disabled={!isValid}
+                  onClick={handleSendTopic}
+                  buttonProps={{ type: "primary" }}
+                >
+                  Gửi đề tài
+                </AtomLoadingButton>
+              </Content>
+            </>
           )}
         </>
         <>
           {isTeacher() && !(topic?.topicStatus === TopicStatus.Accepted) && (
-            <Content className="flex justify-end space-x-2">
-              <AtomLoadingButton
-                disabled={
-                  topic?.topicStatus === TopicStatus.RequestChange ||
-                  (!isTopicExist && !canEdit)
-                }
-                onClick={handleRequestChangeTopic}
-                buttonProps={{
-                  type: "ghost",
-                  className:
-                    "text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400",
-                }}
-              >
-                Yêu cầu chỉnh sửa
-              </AtomLoadingButton>
-              <AtomLoadingButton
-                disabled={!isTopicExist}
-                onClick={handleAcceptTopic}
-                buttonProps={{ type: "primary" }}
-              >
-                Duyệt đề tài
-              </AtomLoadingButton>
-            </Content>
+            <>
+              <Divider />
+              <Content className="flex justify-end space-x-2">
+                <AtomLoadingButton
+                  disabled={
+                    topic?.topicStatus === TopicStatus.RequestChange ||
+                    (!isTopicExist && !canEdit)
+                  }
+                  onClick={handleRequestChangeTopic}
+                  buttonProps={{
+                    type: "ghost",
+                    className:
+                      "text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400",
+                  }}
+                >
+                  Yêu cầu chỉnh sửa
+                </AtomLoadingButton>
+                <AtomLoadingButton
+                  disabled={!isTopicExist}
+                  onClick={handleAcceptTopic}
+                  buttonProps={{ type: "primary" }}
+                >
+                  Duyệt đề tài
+                </AtomLoadingButton>
+              </Content>
+            </>
           )}
         </>
       </Content>
