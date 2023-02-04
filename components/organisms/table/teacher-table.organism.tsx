@@ -1,24 +1,30 @@
 import { Input, Layout, message, Table, Tag, Typography } from "antd";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
 import { TEACHER_ENDPOINT } from "../../../constants/endpoints";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import useSWR from "swr";
-import { requestSendSubject } from "../../../constants/observables";
+import {
+  onSearchTableSubject,
+  requestSendSubject,
+} from "../../../constants/observables";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
 import { Student } from "../../../interfaces/student.interface";
+import { SearchElement } from "./element/search-element.organism";
 
 interface OGTeacherTableProps {}
 
 export function OGTeacherTable({}: OGTeacherTableProps) {
   const user = useRecoilValue<Student | null>(userState);
   const [msg, contextHolder] = message.useMessage();
+  const [queryParams, setQueryParams] = useState<{}>({});
   const { data, mutate } = useSWR<Teacher[] | undefined>(
     user && process.env.NEXT_PUBLIC_BASE_URL + TEACHER_ENDPOINT.BASE,
     fetchData
   );
+  const queryParamsRef = useRef({});
 
   useEffect(() => {
     const requestSendSubscription = requestSendSubject.subscribe({
@@ -26,16 +32,40 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
         mutate();
       },
     });
+    const onSearchTableSubscription = onSearchTableSubject.subscribe({
+      next: (value) => {
+        setQueryParams((prevQueryParams) => {
+          return { ...prevQueryParams, search: value };
+        });
+      },
+    });
 
     return () => {
       requestSendSubscription.unsubscribe();
+      onSearchTableSubscription.unsubscribe();
     };
   }, []);
 
-  async function fetchData() {
-    try {
+  useEffect(() => {
+    queryParamsRef.current = queryParams;
+    mutate();
+  }, [queryParams]);
+
+  async function fetchData(value: any) {
+    const queryParamsList = Object.entries(queryParamsRef.current);
+    const queryString =
+      queryParamsList.length > 0
+        ? queryParamsList.map((entry, index) => {
+            if (index === 0) {
+              return `/?${entry[0]}=${entry[1]}`;
+            }
+            return `&${entry[0]}=${entry[1]}`;
+          })
+        : "";
+
+        try {
       const { data }: { data: { data: Teacher[] } } = await axios.get(
-        process.env.NEXT_PUBLIC_BASE_URL + TEACHER_ENDPOINT.BASE
+        `${process.env.NEXT_PUBLIC_BASE_URL}${TEACHER_ENDPOINT.BASE}${queryString}`
       );
 
       return data.data;
@@ -65,7 +95,7 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
               )}
             </Layout.Content>
             <Layout.Content className="flex items-center">
-              {teacherListConfig.search && <Input.Search />}
+              {teacherListConfig.search && <SearchElement />}
               {teacherListConfig.extraComponent &&
                 teacherListConfig.extraComponent.map((component) => component)}
             </Layout.Content>

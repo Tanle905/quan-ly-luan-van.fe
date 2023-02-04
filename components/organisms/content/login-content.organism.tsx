@@ -60,6 +60,7 @@ export function OGLoginContent() {
               onFieldsChange={() =>
                 setIsLoginFormValid(handleValidateOnFieldChange(loginForm))
               }
+              onValuesChange={()=>console.log(loginForm.getFieldsError())}
               layout="vertical"
               form={loginForm}
             >

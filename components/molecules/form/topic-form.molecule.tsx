@@ -42,7 +42,7 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
   const [isValid, setIsValid] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const isTopicExist = topic ? true : false;
-  const { data, mutate, isValidating } = useSWR(
+  const { data, mutate } = useSWR(
     isTeacher() && mounted && TOPIC_ENDPOINT.BASE,
     topicFetcher
   );
