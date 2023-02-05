@@ -2,7 +2,7 @@ import { Input, Layout, message, Table, Tag, Typography } from "antd";
 import axios from "axios";
 import { useEffect } from "react";
 import {
-    STUDENT_ENDPOINT,
+  STUDENT_ENDPOINT,
   TEACHER_ENDPOINT,
 } from "../../../constants/endpoints";
 import useSWR from "swr";
@@ -18,7 +18,9 @@ interface OGStudentTableProps {}
 export function OGStudentTable({}: OGStudentTableProps) {
   const user = useRecoilValue<Teacher | null>(userState);
   const [msg, contextHolder] = message.useMessage();
-  const { data, mutate } = useSWR<Student[] | undefined>(
+  const { data, isLoading, isValidating, mutate } = useSWR<
+    Student[] | undefined
+  >(
     user && process.env.NEXT_PUBLIC_BASE_URL + TEACHER_ENDPOINT.BASE,
     studentListFetcher
   );
@@ -73,6 +75,8 @@ export function OGStudentTable({}: OGStudentTableProps) {
             </Layout.Content>
           </Layout.Content>
           <Table
+            loading={isLoading || isValidating}
+            pagination={{ pageSize: 10 }}
             bordered
             columns={studentListConfig.table.columns}
             dataSource={data.map((data, index) => {

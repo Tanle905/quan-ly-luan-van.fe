@@ -1,11 +1,26 @@
 import { TableConfig } from "../interface/table-config.interface";
 import { AtomTeacherTableAction } from "../../components/atoms/action/teacher-table-action.atom";
+import { Tag } from "antd";
+import { TAG_ENDPOINT } from "../../constants/endpoints";
+import { MajorTag } from "../../components/molecules/form/profile-form.molecule";
 
 export const teacherListConfig: TableConfig = {
   apiEndpoint: "",
   title: "Danh sách giảng viên",
   search: true,
-  extraComponent: [],
+  filter: [
+    {
+      key: "majorTags",
+      label: "Chủ đề",
+      endpoint: TAG_ENDPOINT.BASE + TAG_ENDPOINT.MAJOR_TAGS,
+      selectProps: { mode: "multiple", showArrow: true, tagRender: MajorTag },
+    },
+    {
+      key: "test",
+      label: "Test",
+      data: [{ value: "test" }],
+    },
+  ],
   table: {
     columns: [
       {
@@ -32,7 +47,17 @@ export const teacherListConfig: TableConfig = {
         key: "major",
         title: "Chuyên ngành",
         dataIndex: "major",
-        render: (major) => major.name,
+        render: (major) => major,
+      },
+      {
+        key: "majorTags",
+        title: "Chủ đề",
+        dataIndex: "majorTags",
+        render: (majorTags: any, row: any) => {
+          return majorTags.map((tag: string, index: number) => (
+            <Tag key={index}>{tag}</Tag>
+          ));
+        },
       },
       {
         key: "action",

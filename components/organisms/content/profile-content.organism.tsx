@@ -1,10 +1,12 @@
 import { Layout, message } from "antd";
 import axios from "axios";
+import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import useSWR from "swr";
 import { PROFILE_ENDPOINT } from "../../../constants/endpoints";
 import { User } from "../../../interfaces/user.interface";
 import { userState } from "../../../stores/auth.store";
+import { clearCache } from "../../../utils/swr.util";
 import { MCProfileAvatarForm } from "../../molecules/form/profile-avatar-form.molecule";
 import { MCProfileForm } from "../../molecules/form/profile-form.molecule";
 const { Content } = Layout;
@@ -17,10 +19,16 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
   const [msg, contextHolder] = message.useMessage();
   const user = useRecoilValue<User | null>(userState);
   const isDifferentUser = userId ? true : false;
-  const { data } = useSWR<User | undefined>(
+  const { data, mutate } = useSWR<User | undefined>(
     userId && process.env.NEXT_PUBLIC_BASE_URL + PROFILE_ENDPOINT.BASE,
     userProfileFetcher
   );
+
+  useEffect(() => {
+    return () => {
+      clearCache(mutate);
+    };
+  }, []);
 
   async function userProfileFetcher() {
     if (!user) return;
@@ -53,7 +61,10 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
             />
           </Content>
           <Content className="col-span-9">
-            <MCProfileForm profile={userId ? data : user} />
+            <MCProfileForm
+              profile={userId ? data : user}
+              readOnly={userId ? true : false}
+            />
           </Content>
         </Content>
       </Content>
