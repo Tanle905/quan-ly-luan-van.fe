@@ -15,11 +15,6 @@ export const teacherListConfig: TableConfig = {
       endpoint: TAG_ENDPOINT.BASE + TAG_ENDPOINT.MAJOR_TAGS,
       selectProps: { mode: "multiple", showArrow: true, tagRender: MajorTag },
     },
-    {
-      key: "test",
-      label: "Test",
-      data: [{ value: "test" }],
-    },
   ],
   table: {
     columns: [
@@ -41,18 +36,21 @@ export const teacherListConfig: TableConfig = {
       {
         key: "email",
         title: "Email",
+        sorter: true,
         dataIndex: "email",
       },
       {
         key: "major",
         title: "Chuyên ngành",
         dataIndex: "major",
+        sorter: true,
         render: (major) => major,
       },
       {
         key: "majorTags",
         title: "Chủ đề",
         dataIndex: "majorTags",
+        sorter: true,
         render: (majorTags: any, row: any) => {
           return majorTags.map((tag: string, index: number) => (
             <Tag key={index}>{tag}</Tag>

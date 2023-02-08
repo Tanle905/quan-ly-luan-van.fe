@@ -1,4 +1,4 @@
-import { Input, Layout, message, Spin, Table, Tag, Typography } from "antd";
+import { Layout, message, Table, Tag, Typography } from "antd";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
@@ -16,13 +16,14 @@ import { Student } from "../../../interfaces/student.interface";
 import { SearchElement } from "./element/search-element.organism";
 import { LoadingOutlined } from "@ant-design/icons";
 import { FilterElement } from "./element/filter-element.organism";
+import { FilterValue, TablePaginationConfig } from "antd/es/table/interface";
 
 interface OGTeacherTableProps {}
 
 export function OGTeacherTable({}: OGTeacherTableProps) {
   const user = useRecoilValue<Student | null>(userState);
   const [msg, contextHolder] = message.useMessage();
-  const [queryParams, setQueryParams] = useState<{}>({});
+  const [queryParams, setQueryParams] = useState<any>({});
   const { data, isLoading, isValidating, mutate } = useSWR<
     Teacher[] | undefined
   >(
@@ -39,14 +40,14 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
     });
     const onSearchTableSubscription = onSearchTableSubject.subscribe({
       next: (value) => {
-        setQueryParams((prevQueryParams) => {
+        setQueryParams((prevQueryParams: any) => {
           return { ...prevQueryParams, search: value };
         });
       },
     });
     const onFilterTableSubscription = onFilterTableSubject.subscribe({
       next: (value) => {
-        setQueryParams((prevQueryParams) => {
+        setQueryParams((prevQueryParams: any) => {
           return { ...prevQueryParams, filter: JSON.parse(value as string) };
         });
       },
@@ -70,20 +71,30 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
 
   async function fetchData(value: any) {
     const queryParamsList = Object.entries(queryParamsRef.current);
-
-    const queryString =
-      queryParamsList.length > 0
-        ? queryParamsList.map((entry, index) => {
-            if (entry[0] === "filter") {
-              const filterEntries = Object.entries(entry[1] as {});
-
-              return `${index === 0 ? "/?" : "&"}${filterEntries[0][0]}=${
-                filterEntries[0][1]
-              }`;
-            }
-            return `${index === 0 ? "/?" : "&"}${entry[0]}=${entry[1]}`;
-          })
-        : "";
+    const mappedQueryParamsList: string[] = [];
+    queryParamsList.forEach((entry, index) => {
+      if (entry[0] === "filter") {
+        const filterEntries = Object.entries(entry[1] as {});
+        filterEntries.forEach((filterEntry) =>
+          mappedQueryParamsList.push(
+            `${index === 0 ? "/?" : "&"}${filterEntry[0]}=${filterEntry[1]}`
+          )
+        );
+      } else if (entry[0] === "sorter") {
+        const filterEntries = Object.entries(entry[1] as {});
+        filterEntries.forEach((filterEntry) =>
+          mappedQueryParamsList.push(
+            `${index === 0 ? "/?" : "&"}sortBy=${filterEntry[0]}&isAscSorting=${
+              filterEntry[1] === "ascend" ? 1 : -1
+            }`
+          )
+        );
+      } else
+        mappedQueryParamsList.push(
+          `${index === 0 ? "/?" : "&"}${entry[0]}=${entry[1]}`
+        );
+    });
+    const queryString = mappedQueryParamsList.join("");
 
     try {
       const { data }: { data: { data: Teacher[] } } = await axios.get(
@@ -94,6 +105,23 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
     } catch (error: any) {
       message.error(error.response.data.message);
     }
+  }
+
+  function handleSortTable(
+    pagi: TablePaginationConfig,
+    filter: Record<string, FilterValue | null>,
+    sorter: any,
+    extra: any
+  ) {
+    setQueryParams((prevQueryParams: any) => {
+      if (sorter.column === undefined) {
+        delete prevQueryParams.sorter;
+        return prevQueryParams;
+      }
+      return { ...prevQueryParams, sorter: { [sorter.field]: sorter.order } };
+    });
+    console.log(sorter);
+    mutate();
   }
 
   if (!data) return null;
@@ -132,6 +160,7 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
             pagination={{ pageSize: 10 }}
             bordered
             columns={teacherListConfig.table.columns}
+            onChange={handleSortTable}
             dataSource={data.map((data, index) => {
               return {
                 key: index,

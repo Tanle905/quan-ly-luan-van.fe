@@ -1,7 +1,7 @@
 import { UnorderedListOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Layout, MenuProps, Select } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FilterConfig } from "../../../../config/interface/table-config.interface";
 import { onFilterTableSubject } from "../../../../constants/observables";
 
@@ -13,6 +13,7 @@ export function FilterElement({ config }: FilterElementProps) {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<MenuProps["items"]>([]);
   const [filterValue, setFilterValue] = useState<{} | null>(null);
+  const filterValueRef = useRef(filterValue);
 
   useEffect(() => {
     config.map(async (filter, index) => {
@@ -43,6 +44,10 @@ export function FilterElement({ config }: FilterElementProps) {
     });
   }, []);
 
+  useEffect(() => {
+    filterValueRef.current = filterValue;
+  }, [filterValue]);
+
   function handleSetItems(item: any) {
     setItems((prevItems) => [...(prevItems as []), item]);
   }
@@ -66,9 +71,11 @@ export function FilterElement({ config }: FilterElementProps) {
               <Button
                 disabled={!filterValue}
                 type="primary"
-                onClick={() =>
-                  onFilterTableSubject.next(JSON.stringify(filterValue))
-                }
+                onClick={() => {
+                  onFilterTableSubject.next(
+                    JSON.stringify(filterValueRef.current)
+                  );
+                }}
               >
                 Lọc
               </Button>
