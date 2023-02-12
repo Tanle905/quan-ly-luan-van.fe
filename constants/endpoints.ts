@@ -29,3 +29,7 @@ export const THESIS_PROGRESS_ENDPOINT = {
 export const TOPIC_ENDPOINT = {
   BASE: "/topic",
 };
+export const TAG_ENDPOINT = {
+  BASE: "/tag",
+  MAJOR_TAGS: "/major",
+};

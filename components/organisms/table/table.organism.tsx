@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import {
+  onFilterTableSubject,
   onSearchTableSubject,
   requestSendSubject,
 } from "../../../constants/observables";
@@ -11,6 +12,9 @@ import { userState } from "../../../stores/auth.store";
 import { Student } from "../../../interfaces/student.interface";
 import { SearchElement } from "./element/search-element.organism";
 import { TableConfig } from "../../../config/interface/table-config.interface";
+import { LoadingOutlined } from "@ant-design/icons";
+import { FilterElement } from "./element/filter-element.organism";
+import { FilterValue, TablePaginationConfig } from "antd/es/table/interface";
 
 interface OGTableProps {
   config: TableConfig;
@@ -21,7 +25,7 @@ export function OGTable({ config }: OGTableProps) {
   const [msg, contextHolder] = message.useMessage();
   const [queryParams, setQueryParams] = useState<{}>({});
   const url = user && process.env.NEXT_PUBLIC_BASE_URL + config.apiEndpoint;
-  const { data, mutate } = useSWR(
+  const { data, isLoading, isValidating, mutate } = useSWR<>(
     user && process.env.NEXT_PUBLIC_BASE_URL + config.apiEndpoint,
     fetchData
   );
@@ -35,8 +39,15 @@ export function OGTable({ config }: OGTableProps) {
     });
     const onSearchTableSubscription = onSearchTableSubject.subscribe({
       next: (value) => {
-        setQueryParams((prevQueryParams) => {
+        setQueryParams((prevQueryParams: any) => {
           return { ...prevQueryParams, search: value };
+        });
+      },
+    });
+    const onFilterTableSubscription = onFilterTableSubject.subscribe({
+      next: (value) => {
+        setQueryParams((prevQueryParams: any) => {
+          return { ...prevQueryParams, filter: JSON.parse(value as string) };
         });
       },
     });
@@ -44,25 +55,45 @@ export function OGTable({ config }: OGTableProps) {
     return () => {
       requestSendSubscription.unsubscribe();
       onSearchTableSubscription.unsubscribe();
+      onFilterTableSubscription.unsubscribe();
     };
   }, []);
 
   useEffect(() => {
+    //Preventing duplicate params
+    if (JSON.stringify(queryParamsRef.current) === JSON.stringify(queryParams))
+      return;
+
     queryParamsRef.current = queryParams;
     mutate();
   }, [queryParams]);
 
   async function fetchData(url: string) {
     const queryParamsList = Object.entries(queryParamsRef.current);
-    const queryString =
-      queryParamsList.length > 0
-        ? queryParamsList.map((entry, index) => {
-            if (index === 0) {
-              return `/?${entry[0]}=${entry[1]}`;
-            }
-            return `&${entry[0]}=${entry[1]}`;
-          })
-        : "";
+    const mappedQueryParamsList: string[] = [];
+    queryParamsList.forEach((entry, index) => {
+      if (entry[0] === "filter") {
+        const filterEntries = Object.entries(entry[1] as {});
+        filterEntries.forEach((filterEntry) =>
+          mappedQueryParamsList.push(
+            `${index === 0 ? "/?" : "&"}${filterEntry[0]}=${filterEntry[1]}`
+          )
+        );
+      } else if (entry[0] === "sorter") {
+        const filterEntries = Object.entries(entry[1] as {});
+        filterEntries.forEach((filterEntry) =>
+          mappedQueryParamsList.push(
+            `${index === 0 ? "/?" : "&"}sortBy=${filterEntry[0]}&isAscSorting=${
+              filterEntry[1] === "ascend" ? 1 : -1
+            }`
+          )
+        );
+      } else
+        mappedQueryParamsList.push(
+          `${index === 0 ? "/?" : "&"}${entry[0]}=${entry[1]}`
+        );
+    });
+    const queryString = mappedQueryParamsList.join("");
 
     try {
       const { data }: { data: { data: any } } = await axios.post(
@@ -73,6 +104,23 @@ export function OGTable({ config }: OGTableProps) {
     } catch (error: any) {
       message.error(error.response.data.message);
     }
+  }
+
+  function handleSortTable(
+    pagi: TablePaginationConfig,
+    filter: Record<string, FilterValue | null>,
+    sorter: any,
+    extra: any
+  ) {
+    setQueryParams((prevQueryParams: any) => {
+      if (sorter.column === undefined) {
+        delete prevQueryParams.sorter;
+        return prevQueryParams;
+      }
+      return { ...prevQueryParams, sorter: { [sorter.field]: sorter.order } };
+    });
+
+    mutate();
   }
 
   if (!data) return null;
@@ -95,8 +143,10 @@ export function OGTable({ config }: OGTableProps) {
                 <Tag className="rounded-lg">{config.subTitle}</Tag>
               )}
             </Layout.Content>
-            <Layout.Content className="flex items-center">
+
+            <Layout.Content className="flex items-center space-x-2">
               {config.search && <SearchElement />}
+              {config.filter && <FilterElement config={config.filter} />}
               {config.extraComponent &&
                 config.extraComponent.map((component) =>
                   component({ href: url })
@@ -104,9 +154,14 @@ export function OGTable({ config }: OGTableProps) {
             </Layout.Content>
           </Layout.Content>
           <Table
+            loading={
+              (isLoading || isValidating) && { indicator: <LoadingOutlined /> }
+            }
+            pagination={{ pageSize: 10 }}
             bordered
             columns={config.table.columns}
-            dataSource={data.map((data: any, index: number) => {
+            onChange={handleSortTable}
+            dataSource={data.map((data: any, index: any) => {
               return {
                 key: index,
                 ...data,
