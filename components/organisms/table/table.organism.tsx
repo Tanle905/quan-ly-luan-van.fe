@@ -1,9 +1,6 @@
-import { Input, Layout, message, Table, Tag, Typography } from "antd";
+import { Layout, message, Table, Tag, Typography } from "antd";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { teacherListConfig } from "../../../config/student/teacher-list-config";
-import { TEACHER_ENDPOINT } from "../../../constants/endpoints";
-import { Teacher } from "../../../interfaces/teacher.interface";
 import useSWR from "swr";
 import {
   onSearchTableSubject,
@@ -13,15 +10,19 @@ import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
 import { Student } from "../../../interfaces/student.interface";
 import { SearchElement } from "./element/search-element.organism";
+import { TableConfig } from "../../../config/interface/table-config.interface";
 
-interface OGTeacherTableProps {}
+interface OGTableProps {
+  config: TableConfig;
+}
 
-export function OGTeacherTable({}: OGTeacherTableProps) {
+export function OGTable({ config }: OGTableProps) {
   const user = useRecoilValue<Student | null>(userState);
   const [msg, contextHolder] = message.useMessage();
   const [queryParams, setQueryParams] = useState<{}>({});
-  const { data, mutate } = useSWR<Teacher[] | undefined>(
-    user && process.env.NEXT_PUBLIC_BASE_URL + TEACHER_ENDPOINT.BASE,
+  const url = user && process.env.NEXT_PUBLIC_BASE_URL + config.apiEndpoint;
+  const { data, mutate } = useSWR(
+    user && process.env.NEXT_PUBLIC_BASE_URL + config.apiEndpoint,
     fetchData
   );
   const queryParamsRef = useRef({});
@@ -51,7 +52,7 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
     mutate();
   }, [queryParams]);
 
-  async function fetchData(value: any) {
+  async function fetchData(url: string) {
     const queryParamsList = Object.entries(queryParamsRef.current);
     const queryString =
       queryParamsList.length > 0
@@ -63,9 +64,9 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
           })
         : "";
 
-        try {
-      const { data }: { data: { data: Teacher[] } } = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${TEACHER_ENDPOINT.BASE}${queryString}`
+    try {
+      const { data }: { data: { data: any } } = await axios.post(
+        `${url}${queryString}`
       );
 
       return data.data;
@@ -88,22 +89,24 @@ export function OGTeacherTable({}: OGTeacherTableProps) {
                 style={{ marginBottom: 0 }}
                 className="m-0"
               >
-                {teacherListConfig.title}
+                {config.title}
               </Typography.Title>
-              {teacherListConfig.subTitle && (
-                <Tag className="rounded-lg">{teacherListConfig.subTitle}</Tag>
+              {config.subTitle && (
+                <Tag className="rounded-lg">{config.subTitle}</Tag>
               )}
             </Layout.Content>
             <Layout.Content className="flex items-center">
-              {teacherListConfig.search && <SearchElement />}
-              {teacherListConfig.extraComponent &&
-                teacherListConfig.extraComponent.map((component) => component)}
+              {config.search && <SearchElement />}
+              {config.extraComponent &&
+                config.extraComponent.map((component) =>
+                  component({ href: url })
+                )}
             </Layout.Content>
           </Layout.Content>
           <Table
             bordered
-            columns={teacherListConfig.table.columns}
-            dataSource={data.map((data, index) => {
+            columns={config.table.columns}
+            dataSource={data.map((data: any, index: number) => {
               return {
                 key: index,
                 ...data,

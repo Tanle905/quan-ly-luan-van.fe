@@ -7,8 +7,13 @@ export interface TableConfig {
   filter?: any;
   search?: any;
   sort?: any;
-  extraComponent?: any[];
+  extraComponent?: [(props: TableProps) => any];
+  query?: any,
   table: {
     columns: ColumnsType<object>;
   };
+}
+
+interface TableProps {
+  href?: string | null;
 }

@@ -1,11 +1,11 @@
 import { TableConfig } from "../interface/table-config.interface";
 import { AtomTeacherTableAction } from "../../components/atoms/action/teacher-table-action.atom";
+import { TEACHER_ENDPOINT } from "../../constants/endpoints";
 
 export const teacherListConfig: TableConfig = {
-  apiEndpoint: "",
+  apiEndpoint: TEACHER_ENDPOINT.BASE,
   title: "Danh sách giảng viên",
   search: true,
-  extraComponent: [],
   table: {
     columns: [
       {
