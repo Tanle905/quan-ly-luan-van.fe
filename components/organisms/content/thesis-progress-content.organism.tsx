@@ -1,12 +1,10 @@
-import { Layout, Tabs, TabsProps, Typography } from "antd";
+import { Button, Layout, Tabs, TabsProps, Typography } from "antd";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
 import { TopicStatus } from "../../../constants/enums";
-import { Student } from "../../../interfaces/student.interface";
 import { Topic } from "../../../interfaces/topic.interface";
-import { userState } from "../../../stores/auth.store";
 import { MCThesisProgressCalendar } from "../../molecules/calendar/thesis-progress-calendar.molecule";
 import { MCTopicForm } from "../../molecules/form/topic-form.molecule";
+import { MCFilesAndAssetsModal } from "../../molecules/modal/files-and-assets-modal.molecule";
 
 interface OGThesisProgressContentProps {
   MSSV?: string;
@@ -15,7 +13,6 @@ interface OGThesisProgressContentProps {
 export function OGThesisProgressContent({
   MSSV,
 }: OGThesisProgressContentProps) {
-  const user = useRecoilValue<Student | null>(userState);
   const [topic, setTopic] = useState<Topic | null>(null);
   const items: TabsProps["items"] = [
     {
@@ -36,7 +33,24 @@ export function OGThesisProgressContent({
       <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
         Báo cáo tiến độ luận văn
       </Typography.Title>
-      <Tabs items={items} className="p-5 bg-white rounded-md shadow-md" />
+      <Tabs
+        items={items}
+        className="p-5 bg-white rounded-md shadow-md"
+        tabBarExtraContent={{
+          right:
+            topic?.topicStatus === TopicStatus.Accepted ? (
+              <MCFilesAndAssetsModal>
+                {(openModal) => (
+                  <Button type="primary" onClick={openModal}>
+                    Files và Tài Liệu
+                  </Button>
+                )}
+              </MCFilesAndAssetsModal>
+            ) : (
+              <></>
+            ),
+        }}
+      />
     </Layout.Content>
   );
 }

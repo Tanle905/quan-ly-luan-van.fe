@@ -29,9 +29,12 @@ export function AtomExportButton({ href }: AtomExportButtonProps) {
   }
 
   return (
-    <AtomLoadingButton onClick={dataFetcher} buttonProps={{ type: "primary" }}>
+    <AtomLoadingButton
+      onClick={dataFetcher}
+      buttonProps={{ type: "primary", className: "flex items-center" }}
+    >
       <DownloadOutlined />
-      Xuất File
+      <span className="m-0 text-sm">Xuất File CSV</span>
     </AtomLoadingButton>
   );
 }

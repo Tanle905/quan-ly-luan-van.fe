@@ -25,7 +25,7 @@ export function OGTable({ config }: OGTableProps) {
   const [msg, contextHolder] = message.useMessage();
   const [queryParams, setQueryParams] = useState<{}>({});
   const url = user && process.env.NEXT_PUBLIC_BASE_URL + config.apiEndpoint;
-  const { data, isLoading, isValidating, mutate } = useSWR<>(
+  const { data, isLoading, isValidating, mutate } = useSWR(
     user && process.env.NEXT_PUBLIC_BASE_URL + config.apiEndpoint,
     fetchData
   );
@@ -147,8 +147,8 @@ export function OGTable({ config }: OGTableProps) {
             <Layout.Content className="flex items-center space-x-2">
               {config.search && <SearchElement />}
               {config.filter && <FilterElement config={config.filter} />}
-              {config.extraComponent &&
-                config.extraComponent.map((component) =>
+              {config.extraRightComponent &&
+                config.extraRightComponent.map((component) =>
                   component({ href: url })
                 )}
             </Layout.Content>

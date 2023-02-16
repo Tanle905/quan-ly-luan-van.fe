@@ -7,18 +7,22 @@ import { TableConfig } from "../interface/table-config.interface";
 export const studentListConfig: TableConfig = {
   apiEndpoint: STUDENT_ENDPOINT.BASE,
   title: "Quản lý sinh viên",
-  extraComponent: [({ href }) => href && <AtomExportButton href={href} />],
+  search: true,
+  extraRightComponent: [({ href }) => href && <AtomExportButton href={href} />],
   table: {
     columns: [
       {
         key: "MSSV",
         title: "MSSV",
         dataIndex: "MSSV",
+        sorter: true,
       },
       {
         key: "name",
         title: "Họ và Tên",
-        dataIndex: "name",
+        dataIndex: "firstName",
+        sorter: true,
+
         render: (text, record: any) => (
           <span>
             {record.lastName} {record.firstName}
@@ -29,6 +33,13 @@ export const studentListConfig: TableConfig = {
         key: "email",
         title: "Email",
         dataIndex: "email",
+        sorter: true,
+      },
+      {
+        key: "topicName",
+        title: "Tên đề tài",
+        dataIndex: "topicName",
+        sorter: true,
       },
       {
         key: "action",

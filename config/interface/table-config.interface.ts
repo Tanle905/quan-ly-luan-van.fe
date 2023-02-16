@@ -7,8 +7,7 @@ export interface TableConfig {
   subTitle?: string;
   filter?: FilterConfig[];
   search?: boolean;
-  sort?: any;
-  extraComponent?: [(props: TableProps) => any];
+  extraRightComponent?: [(props: TableProps) => any];
   query?: any;
   table: {
     columns: ColumnsType<object>;
