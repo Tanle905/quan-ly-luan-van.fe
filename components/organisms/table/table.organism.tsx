@@ -122,6 +122,8 @@ export function OGTable({ config }: OGTableProps) {
 
     mutate();
   }
+
+  if (config.apiEndpoint && !data) return null;
   
   return (
     <>
