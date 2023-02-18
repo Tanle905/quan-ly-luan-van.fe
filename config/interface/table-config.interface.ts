@@ -2,7 +2,8 @@ import { SelectProps } from "antd";
 import { ColumnsType } from "antd/es/table";
 
 export interface TableConfig {
-  apiEndpoint: string;
+  apiEndpoint?: string;
+  data?: any;
   title?: string;
   subTitle?: string;
   filter?: FilterConfig[];

@@ -24,9 +24,9 @@ export function OGTable({ config }: OGTableProps) {
   const user = useRecoilValue<Student | null>(userState);
   const [msg, contextHolder] = message.useMessage();
   const [queryParams, setQueryParams] = useState<{}>({});
-  const url = user && process.env.NEXT_PUBLIC_BASE_URL + config.apiEndpoint;
+  const url = user && `${process.env.NEXT_PUBLIC_BASE_URL}${config?.apiEndpoint}`;
   const { data, isLoading, isValidating, mutate } = useSWR(
-    user && process.env.NEXT_PUBLIC_BASE_URL + config.apiEndpoint,
+    config.apiEndpoint && url,
     fetchData
   );
   const queryParamsRef = useRef({});
@@ -122,13 +122,11 @@ export function OGTable({ config }: OGTableProps) {
 
     mutate();
   }
-
-  if (!data) return null;
-
+  
   return (
     <>
       {contextHolder}
-      <Layout.Content className="mx-20 px-5 bg-white rounded-md shadow-md">
+      <Layout.Content className="px-5 bg-white rounded-md shadow-md">
         <Layout.Content className="mt-20">
           <Layout.Content className="flex justify-between space-x-5 px-1 py-5">
             <Layout.Content className="flex items-center space-x-5">
@@ -161,12 +159,14 @@ export function OGTable({ config }: OGTableProps) {
             bordered
             columns={config.table.columns}
             onChange={handleSortTable}
-            dataSource={data.map((data: any, index: any) => {
-              return {
-                key: index,
-                ...data,
-              };
-            })}
+            dataSource={(config.apiEndpoint ? data : config.data).map(
+              (data: any, index: any) => {
+                return {
+                  key: index,
+                  ...data,
+                };
+              }
+            )}
           />
         </Layout.Content>
       </Layout.Content>

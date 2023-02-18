@@ -11,3 +11,11 @@ const app = initializeApp({
 });
 
 export const storage = getStorage(app);
+
+export function handleDownload(url: string) {
+  const a = document.createElement("a");
+  a.setAttribute("href", url);
+  a.setAttribute("download", "my_data.csv");
+
+  a.click();
+}

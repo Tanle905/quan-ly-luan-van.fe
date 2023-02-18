@@ -18,7 +18,7 @@ export default function Home() {
       </Head>
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <Content className="my-5">
+        <Content className="mx-20 my-5">
           <OGTable
             config={isTeacher() ? studentListConfig : teacherListConfig}
           />
