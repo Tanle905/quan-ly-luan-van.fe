@@ -19,6 +19,7 @@ import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { handleValidateOnFieldChange } from "../../../utils/validation.util";
 import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
+import { isAdmin } from "../../../utils/role.util";
 
 export function OGLoginContent() {
   const router = useRouter();
@@ -36,11 +37,13 @@ export function OGLoginContent() {
   async function handleLogin(form: FormInstance) {
     try {
       const { data } = await axios.post(
-        process.env.NEXT_PUBLIC_BASE_URL + AUTH_ENDPOINT.BASE + AUTH_ENDPOINT.LOGIN,
+        process.env.NEXT_PUBLIC_BASE_URL +
+          AUTH_ENDPOINT.BASE +
+          AUTH_ENDPOINT.LOGIN,
         form.getFieldsValue()
       );
       localStorage.setItem(LOCAL_STORAGE.USER_DATA, JSON.stringify(data));
-      router.push(SCREEN_ROUTE.BASE);
+      router.push(isAdmin() ? SCREEN_ROUTE.ADMIN : SCREEN_ROUTE.BASE);
     } catch (error: any) {
       message.error(error.response.data.message);
     }

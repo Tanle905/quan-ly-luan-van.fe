@@ -3,13 +3,13 @@ import { LOCAL_STORAGE } from "../constants/local_storage_key";
 import { SCREEN_ROUTE } from "../constants/screen-route";
 import { Student } from "../interfaces/student.interface";
 import { Teacher } from "../interfaces/teacher.interface";
-import { isStudent } from "./role.util";
+import { isAdmin, isStudent } from "./role.util";
 
 export function loginRouteProtection(router: NextRouter) {
   if (!localStorage.getItem(LOCAL_STORAGE.USER_DATA))
     router.push(SCREEN_ROUTE.LOGIN);
   else if (router.pathname === SCREEN_ROUTE.LOGIN)
-    router.push(SCREEN_ROUTE.BASE);
+    router.push(isAdmin() ? SCREEN_ROUTE.ADMIN : SCREEN_ROUTE.BASE);
 }
 
 export function calendarRouteProtection(router: NextRouter) {
@@ -25,10 +25,6 @@ export function calendarRouteProtection(router: NextRouter) {
   )
     router.push(SCREEN_ROUTE.BASE);
 
-  if (
-    router.pathname === SCREEN_ROUTE.BASE &&
-    isStudent() &&
-    userData.teacher
-  )
+  if (router.pathname === SCREEN_ROUTE.BASE && isStudent() && userData.teacher)
     router.push(SCREEN_ROUTE.THESIS_PROGRESS);
 }

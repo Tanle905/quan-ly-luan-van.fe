@@ -4,4 +4,5 @@ export const SCREEN_ROUTE = {
   PROFILE: "/profile",
   THESIS_PROGRESS: "/thesis",
   SCHEDULE: "/schedule",
+  ADMIN: "/admin"
 };
