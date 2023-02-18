@@ -1,6 +1,9 @@
 import { ArrowLeftOutlined, CloudUploadOutlined } from "@ant-design/icons";
 import { Divider, Layout, Modal, Upload } from "antd";
-import { ReactNode, useState } from "react";
+import { DragEvent, ReactNode, useEffect, useState } from "react";
+import { getStorage } from "firebase/storage";
+import firebase from "firebase/app";
+
 const { Dragger } = Upload;
 
 interface MCFilesAndAssetsModalProps {
@@ -11,6 +14,10 @@ export function MCFilesAndAssetsModal({
   children,
 }: MCFilesAndAssetsModalProps) {
   const [open, setOpen] = useState(false);
+
+  function handleUploadFile(event: DragEvent<HTMLDivElement>) {
+    console.log(event.dataTransfer.files);
+  }
 
   function handleOpenModal() {
     setOpen(true);
@@ -32,7 +39,7 @@ export function MCFilesAndAssetsModal({
         footer={[]}
       >
         <div className="rounded-md border-gray-700 border-2">
-          <Dragger>
+          <Dragger onDrop={handleUploadFile}>
             <p className="ant-upload-drag-icon">
               <CloudUploadOutlined />
             </p>
