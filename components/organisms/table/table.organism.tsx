@@ -24,7 +24,8 @@ export function OGTable({ config }: OGTableProps) {
   const user = useRecoilValue<Student | null>(userState);
   const [msg, contextHolder] = message.useMessage();
   const [queryParams, setQueryParams] = useState<{}>({});
-  const url = user && `${process.env.NEXT_PUBLIC_BASE_URL}${config?.apiEndpoint}`;
+  const url =
+    user && `${process.env.NEXT_PUBLIC_BASE_URL}${config?.apiEndpoint}`;
   const { data, isLoading, isValidating, mutate } = useSWR(
     config.apiEndpoint && url,
     fetchData
@@ -124,53 +125,50 @@ export function OGTable({ config }: OGTableProps) {
   }
 
   if (config.apiEndpoint && !data) return null;
-  
+
   return (
     <>
       {contextHolder}
       <Layout.Content className="px-5 bg-white rounded-md shadow-md">
-        <Layout.Content className="mt-20">
-          <Layout.Content className="flex justify-between space-x-5 px-1 py-5">
-            <Layout.Content className="flex items-center space-x-5">
-              <Typography.Title
-                level={5}
-                style={{ marginBottom: 0 }}
-                className="m-0"
-              >
-                {config.title}
-              </Typography.Title>
-              {config.subTitle && (
-                <Tag className="rounded-lg">{config.subTitle}</Tag>
-              )}
-            </Layout.Content>
-
-            <Layout.Content className="flex items-center space-x-2">
-              {config.search && <SearchElement />}
-              {config.filter && <FilterElement config={config.filter} />}
-              {config.extraRightComponent &&
-                config.extraRightComponent.map((component) =>
-                  component({ href: url })
-                )}
-            </Layout.Content>
-          </Layout.Content>
-          <Table
-            loading={
-              (isLoading || isValidating) && { indicator: <LoadingOutlined /> }
-            }
-            pagination={{ pageSize: 10 }}
-            bordered
-            columns={config.table.columns}
-            onChange={handleSortTable}
-            dataSource={(config.apiEndpoint ? data : config.data).map(
-              (data: any, index: any) => {
-                return {
-                  key: index,
-                  ...data,
-                };
-              }
+        <Layout.Content className="flex justify-between space-x-5 px-1 py-5">
+          <Layout.Content className="flex items-center space-x-5">
+            <Typography.Title
+              level={5}
+              style={{ marginBottom: 0 }}
+              className="m-0"
+            >
+              {config.title}
+            </Typography.Title>
+            {config.subTitle && (
+              <Tag className="rounded-lg">{config.subTitle}</Tag>
             )}
-          />
+          </Layout.Content>
+
+          <Layout.Content className="flex items-center space-x-2">
+            {config.search && <SearchElement />}
+            {config.filter && <FilterElement config={config.filter} />}
+            {config.extraRightComponent &&
+              config.extraRightComponent.map((component) =>
+                component({ href: url })
+              )}
+          </Layout.Content>
         </Layout.Content>
+        <Table
+          loading={
+            (isLoading || isValidating) && { indicator: <LoadingOutlined /> }
+          }
+          pagination={{ pageSize: 10 }}
+          columns={config.table.columns}
+          onChange={handleSortTable}
+          dataSource={(config.apiEndpoint ? data : config.data).map(
+            (data: any, index: any) => {
+              return {
+                key: index,
+                ...data,
+              };
+            }
+          )}
+        />
       </Layout.Content>
     </>
   );

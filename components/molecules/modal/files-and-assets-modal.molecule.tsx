@@ -3,7 +3,13 @@ import { Divider, Layout, message, Modal, Upload } from "antd";
 import { ReactNode, useEffect, useState } from "react";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { storage } from "../../../utils/firebase";
-import { getDownloadURL, list, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  getMetadata,
+  list,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { isTeacher } from "../../../utils/role.util";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
@@ -11,6 +17,8 @@ import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import { OGTable } from "../../organisms/table/table.organism";
 import { uploadFileListConfig } from "../../../config/file/upload-file-list.config";
+import { formatBytes } from "../../../utils/format.util";
+import dayjs from "dayjs";
 
 const { Dragger } = Upload;
 
@@ -97,9 +105,13 @@ function ModalContent() {
   async function handleSetFileList() {
     const uploadedFileList = (await list(curStorageRef)).items.map(
       async (file) => {
+        const metaData = await getMetadata(file);
+        console.log(metaData.timeCreated)
         return {
           fileName: file.name,
-          link: await getDownloadURL(file),
+          fileSize: formatBytes(metaData.size),
+          createdAt: dayjs(metaData.timeCreated).utc().format("LL"),
+          ref: file,
         };
       }
     );

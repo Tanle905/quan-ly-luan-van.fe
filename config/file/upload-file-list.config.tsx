@@ -1,5 +1,5 @@
 import { DownloadOutlined } from "@ant-design/icons";
-import { handleDownload } from "../../utils/firebase";
+import { handleDownloadFromFirebase } from "../../utils/firebase";
 import { TableConfig } from "../interface/table-config.interface";
 
 export function uploadFileListConfig(data: any): TableConfig {
@@ -26,12 +26,12 @@ export function uploadFileListConfig(data: any): TableConfig {
         {
           key: "action",
           width: "5%",
-          dataIndex: "link",
+          dataIndex: "ref",
           render: (value, record: any) => {
 
             return (
               <DownloadOutlined
-                onClick={() => handleDownload(value)}
+                onClick={() => handleDownloadFromFirebase(value)}
                 className="text-lg hover:text-indigo-600 cursor-pointer transition-all"
               />
             );

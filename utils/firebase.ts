@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
+import { getBlob, getStorage, StorageReference } from "firebase/storage";
+import axios from "axios";
 
 const app = initializeApp({
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,9 +13,16 @@ const app = initializeApp({
 
 export const storage = getStorage(app);
 
-export function handleDownload(url: string) {
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = url.split("/").pop() as string;
-  a.click();
+export async function handleDownloadFromFirebase(storageRef: StorageReference) {
+  const blob = await getBlob(storageRef);
+
+  const link = document.createElement("a");
+  const href = window.URL.createObjectURL(blob);
+  link.href = href;
+  link.download = storageRef.name;
+  link.click();
+
+  //Clean ups
+  link.remove();
+  URL.revokeObjectURL(href);
 }
