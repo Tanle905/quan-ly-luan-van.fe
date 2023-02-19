@@ -8,7 +8,9 @@ export const studentListConfig: TableConfig = {
   apiEndpoint: STUDENT_ENDPOINT.BASE,
   title: "Quản lý sinh viên",
   search: true,
-  extraRightComponent: [({ href }) => href && <AtomExportButton href={href} />],
+  extraRightComponent: [
+    ({ key, href }) => href && <AtomExportButton key={key} href={href} />,
+  ],
   table: {
     columns: [
       {

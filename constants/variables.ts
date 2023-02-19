@@ -1,0 +1,1 @@
+export const THESIS_UPLOAD_FILE_LIMIT = 5;

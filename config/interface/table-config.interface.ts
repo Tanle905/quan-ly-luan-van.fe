@@ -16,6 +16,7 @@ export interface TableConfig {
 }
 
 interface TableProps {
+  key: any;
   href?: string | null;
 }
 export interface FilterConfig {

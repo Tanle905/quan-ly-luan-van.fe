@@ -148,8 +148,8 @@ export function OGTable({ config }: OGTableProps) {
             {config.search && <SearchElement />}
             {config.filter && <FilterElement config={config.filter} />}
             {config.extraRightComponent &&
-              config.extraRightComponent.map((component) =>
-                component({ href: url })
+              config.extraRightComponent.map((component, index) =>
+                component({ key: index, href: url })
               )}
           </Layout.Content>
         </Layout.Content>

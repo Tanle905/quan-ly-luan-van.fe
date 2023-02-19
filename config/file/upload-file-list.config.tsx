@@ -1,11 +1,14 @@
-import { DownloadOutlined } from "@ant-design/icons";
-import { handleDownloadFromFirebase } from "../../utils/firebase";
+import { AtomUploadFileAction } from "../../components/atoms/action/upload-file-table-action.atom";
 import { TableConfig } from "../interface/table-config.interface";
 
-export function uploadFileListConfig(data: any): TableConfig {
+export function uploadFileListConfig(
+  configData: any,
+  tableData: any
+): TableConfig {
   return {
     title: "Danh sách file tải lên",
-    data,
+    subTitle: `${configData.totalFiles}/${configData.limit} Files đã được tải lên`,
+    data: tableData,
     table: {
       columns: [
         {
@@ -27,15 +30,9 @@ export function uploadFileListConfig(data: any): TableConfig {
           key: "action",
           width: "5%",
           dataIndex: "ref",
-          render: (value, record: any) => {
-
-            return (
-              <DownloadOutlined
-                onClick={() => handleDownloadFromFirebase(value)}
-                className="text-lg hover:text-indigo-600 cursor-pointer transition-all"
-              />
-            );
-          },
+          render: (value, record: any) => (
+            <AtomUploadFileAction storageRef={value} />
+          ),
         },
       ],
     },

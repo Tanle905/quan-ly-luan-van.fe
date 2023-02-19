@@ -1,4 +1,8 @@
-import { ArrowLeftOutlined, CloudUploadOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  CloseCircleOutlined,
+  CloudUploadOutlined,
+} from "@ant-design/icons";
 import { Divider, Layout, message, Modal, Upload } from "antd";
 import { ReactNode, useEffect, useState } from "react";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
@@ -10,7 +14,7 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { isTeacher } from "../../../utils/role.util";
+import { isStudent, isTeacher } from "../../../utils/role.util";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
 import { Student } from "../../../interfaces/student.interface";
@@ -19,14 +23,18 @@ import { OGTable } from "../../organisms/table/table.organism";
 import { uploadFileListConfig } from "../../../config/file/upload-file-list.config";
 import { formatBytes } from "../../../utils/format.util";
 import dayjs from "dayjs";
+import { onModifyFileListSubject } from "../../../constants/observables";
+import { THESIS_UPLOAD_FILE_LIMIT } from "../../../constants/variables";
 
 const { Dragger } = Upload;
 
 interface MCFilesAndAssetsModalProps {
+  MSSV?: string;
   children: (handleCloseModal: () => void) => ReactNode;
 }
 
 export function MCFilesAndAssetsModal({
+  MSSV,
   children,
 }: MCFilesAndAssetsModalProps) {
   const [open, setOpen] = useState(false);
@@ -51,7 +59,7 @@ export function MCFilesAndAssetsModal({
         onCancel={handleCloseModal}
         footer={[]}
       >
-        <ModalContent />
+        <ModalContent MSSV={MSSV} />
       </Modal>
       {children(handleOpenModal)}
     </>
@@ -69,20 +77,31 @@ function ModalTitle({ onBack }: { onBack: () => void }) {
         Quay trở về
       </span>
       <span className="text-xl font-semibold">Tài Liệu và File Báo Cáo</span>
-      <Divider className="pb-2" />
     </Layout.Content>
   );
 }
 
-function ModalContent() {
+function ModalContent({ MSSV }: { MSSV?: string }) {
   const [msg, contextHolder] = message.useMessage();
   const user = useRecoilValue<Student | Teacher | null>(userState);
-  const serialNumber = isTeacher() ? user?.MSCB : user?.MSSV;
-  const [fileList, setFileList] = useState<any>([]);
+  const serialNumber = isTeacher() ? MSSV : user?.MSSV;
+  const [fileList, setFileList] = useState<any[]>([]);
   const curStorageRef = ref(storage, serialNumber);
+  const fileLimit = THESIS_UPLOAD_FILE_LIMIT;
+  const isAtFileUploadLimit = fileList.length >= fileLimit;
 
   useEffect(() => {
+    const onModifyFileListSubscription = onModifyFileListSubject.subscribe({
+      next: () => {
+        handleSetFileList();
+      },
+    });
+
     handleSetFileList();
+
+    return () => {
+      onModifyFileListSubscription.unsubscribe();
+    };
   }, []);
 
   async function handleUploadFile(e: UploadChangeParam<UploadFile<any>>) {
@@ -106,7 +125,7 @@ function ModalContent() {
     const uploadedFileList = (await list(curStorageRef)).items.map(
       async (file) => {
         const metaData = await getMetadata(file);
-        console.log(metaData.timeCreated)
+
         return {
           fileName: file.name,
           fileSize: formatBytes(metaData.size),
@@ -121,31 +140,46 @@ function ModalContent() {
   return (
     <>
       {contextHolder}
-      <div className="rounded-md border-gray-700 border-2">
-        <Dragger
-          onChange={handleUploadFile}
-          multiple={false}
-          showUploadList={false}
-          progress={{
-            strokeColor: {
-              "0%": "#108ee9",
-              "100%": "#87d068",
-            },
-            strokeWidth: 3,
-            format: (percent) =>
-              percent && `${parseFloat(percent.toFixed(2))}%`,
-          }}
-        >
-          <p className="ant-upload-drag-icon">
-            <CloudUploadOutlined />
-          </p>
-          <p className="ant-upload-text">Kéo thả file vào đây để upload</p>
-        </Dragger>
-      </div>
-      <Divider className="py-2" />
+      {isStudent() && (
+        <>
+          <Divider className="pb-2" />
+          <div className="rounded-md border-gray-700 border-2">
+            <Dragger
+              className="bg-indigo-400"
+              disabled={isAtFileUploadLimit}
+              onChange={handleUploadFile}
+              multiple={false}
+              showUploadList={false}
+            >
+              <p className="ant-upload-drag-icon">
+                {isAtFileUploadLimit ? (
+                  <CloseCircleOutlined />
+                ) : (
+                  <CloudUploadOutlined />
+                )}
+              </p>
+              <p
+                className={`${
+                  isAtFileUploadLimit ? "text-red-500" : "text-gray-800"
+                }`}
+              >
+                {isAtFileUploadLimit
+                  ? "Đã đạt giới hạn file tải lên cho phép. Vui lòng xóa bớt file để tiếp tục tải lên."
+                  : "Kéo thả file vào đây để upload."}
+              </p>
+            </Dragger>
+          </div>
+          <Divider className="py-2" />
+        </>
+      )}
 
       <Layout.Content>
-        <OGTable config={uploadFileListConfig(fileList)} />
+        <OGTable
+          config={uploadFileListConfig(
+            { totalFiles: fileList.length, limit: fileLimit },
+            fileList
+          )}
+        />
       </Layout.Content>
     </>
   );

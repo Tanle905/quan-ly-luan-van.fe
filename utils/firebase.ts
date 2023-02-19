@@ -1,6 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { getBlob, getStorage, StorageReference } from "firebase/storage";
+import {
+  deleteObject,
+  getBlob,
+  getStorage,
+  StorageReference,
+} from "firebase/storage";
 import axios from "axios";
+import { message } from "antd";
+import { onModifyFileListSubject } from "../constants/observables";
 
 const app = initializeApp({
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,7 +20,9 @@ const app = initializeApp({
 
 export const storage = getStorage(app);
 
-export async function handleDownloadFromFirebase(storageRef: StorageReference) {
+export async function handleDownloadFileFromFirebase(
+  storageRef: StorageReference
+) {
   const blob = await getBlob(storageRef);
 
   const link = document.createElement("a");
@@ -25,4 +34,12 @@ export async function handleDownloadFromFirebase(storageRef: StorageReference) {
   //Clean ups
   link.remove();
   URL.revokeObjectURL(href);
+}
+
+export async function handleDeleteFileFromFirebase(
+  storageRef: StorageReference
+) {
+  await deleteObject(storageRef);
+  message.success("Xóa file thành công.");
+  onModifyFileListSubject.next(1);
 }

@@ -39,7 +39,7 @@ export function OGThesisProgressContent({
         tabBarExtraContent={{
           right:
             topic?.topicStatus === TopicStatus.Accepted ? (
-              <MCFilesAndAssetsModal>
+              <MCFilesAndAssetsModal MSSV={MSSV}>
                 {(openModal) => (
                   <Button type="primary" onClick={openModal}>
                     Files và Tài Liệu
