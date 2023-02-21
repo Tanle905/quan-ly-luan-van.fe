@@ -8,7 +8,6 @@ import { ReactNode, useEffect, useState } from "react";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { storage } from "../../../utils/firebase";
 import {
-  getDownloadURL,
   getMetadata,
   list,
   ref,
@@ -108,12 +107,12 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
     const { file } = e;
     const { originFileObj, name, status } = file;
     const fileRef = ref(storage, `${serialNumber}/${name}`);
-
     try {
       if (status !== "done") return;
-
-      await uploadBytes(fileRef, originFileObj as Blob);
-
+      
+      console.log('sdf')
+      const uploadedFile = await uploadBytes(fileRef, originFileObj as Blob);
+      console.log(uploadedFile.ref)
       handleSetFileList();
       message.success("Tải file lên thành công.");
     } catch (error: any) {
