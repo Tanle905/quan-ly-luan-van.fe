@@ -30,8 +30,8 @@ export function uploadFileListConfig(
           key: "action",
           width: "5%",
           dataIndex: "ref",
-          render: (value, record: any) => (
-            <AtomUploadFileAction storageRef={value} />
+          render: (storageRef, record: any) => (
+            <AtomUploadFileAction storageRef={storageRef} />
           ),
         },
       ],
