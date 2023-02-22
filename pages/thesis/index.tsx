@@ -6,10 +6,13 @@ import { OGHeader } from "../../components/organisms/header/header.organism";
 import { Student } from "../../interfaces/student.interface";
 import { Teacher } from "../../interfaces/teacher.interface";
 import { userState } from "../../stores/auth.store";
+import { isStudent, isTeacher } from "../../utils/role.util";
 
 const { Content } = Layout;
 export default function Home() {
   const user = useRecoilValue<(Student & Teacher) | null>(userState);
+
+  if (!isTeacher() && !isStudent()) return null;
 
   return (
     <>

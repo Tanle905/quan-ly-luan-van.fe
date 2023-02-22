@@ -20,6 +20,7 @@ import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { handleValidateOnFieldChange } from "../../../utils/validation.util";
 import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
 import { isAdmin } from "../../../utils/role.util";
+import Image from "next/image";
 
 export function OGLoginContent() {
   const router = useRouter();
@@ -113,7 +114,9 @@ export function OGLoginContent() {
             </Form>
           </Content>
         </Content>
-        <Content className="col-span-1 bg-gray-100">sdfsdf</Content>
+        <Content className="col-span-1 bg-gray-100 flex items-center shadow-2xl">
+          <Image alt="" src="/images/login.svg" className="w-full" width={500} height={500} />
+        </Content>
       </main>
     </>
   );

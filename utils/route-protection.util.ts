@@ -28,3 +28,15 @@ export function calendarRouteProtection(router: NextRouter) {
   if (router.pathname === SCREEN_ROUTE.BASE && isStudent() && userData.teacher)
     router.push(SCREEN_ROUTE.THESIS_PROGRESS);
 }
+
+export function adminRouteProtection(router: NextRouter) {
+  const exceptions = [SCREEN_ROUTE.PROFILE];
+
+  if (
+    isAdmin() &&
+    !exceptions.includes(router.pathname) &&
+    router.pathname !== SCREEN_ROUTE.ADMIN
+  ) {
+    router.push(SCREEN_ROUTE.ADMIN);
+  }
+}

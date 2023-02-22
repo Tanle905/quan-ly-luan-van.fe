@@ -8,7 +8,7 @@ const { Content } = Layout;
 export default function Home() {
   const router = useRouter();
 
-  if (!router.query.pid) return;
+  if (!router.query.pid) return null;
 
   return (
     <>

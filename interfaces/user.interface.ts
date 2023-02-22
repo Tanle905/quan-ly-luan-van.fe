@@ -3,7 +3,7 @@ export interface User {
   email: string;
   username: string;
   password: string;
-  roles?: string[];
+  roles: string[];
   MSSV?: string;
   MSCB?: string;
   firstName?: string;

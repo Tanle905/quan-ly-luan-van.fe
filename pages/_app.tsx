@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import {
   loginRouteProtection,
   calendarRouteProtection,
+  adminRouteProtection,
 } from "../utils/route-protection.util";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
@@ -30,6 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
     //route protection
     loginRouteProtection(router);
     calendarRouteProtection(router);
+    adminRouteProtection(router)
   }, [router.pathname]);
 
   return (

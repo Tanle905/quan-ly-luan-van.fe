@@ -9,7 +9,7 @@ import { useRecoilValue } from "recoil";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import { userState } from "../../../stores/auth.store";
-import { isTeacher } from "../../../utils/role.util";
+import { isAdmin, isStudent, isTeacher } from "../../../utils/role.util";
 import { AtomNotificationListDropDown } from "../../atoms/dropdown/notification-list-dropdown.atom";
 import { AtomRequestListDropdown } from "../../atoms/dropdown/request-list-dropdown.atom";
 import { AtomIconHeader } from "../../atoms/icon/icon-header.atom";
@@ -20,12 +20,12 @@ interface MCHeaderRightProps {
 }
 
 export function MCHeaderRight({ styles }: MCHeaderRightProps) {
-  const user = useRecoilValue<Student & Teacher | null>(userState);
+  const user = useRecoilValue<(Student & Teacher) | null>(userState);
   const [notificationCount, setNotificationCount] = useState(0);
   const [requestCount, setRequestCount] = useState(0);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || isAdmin()) return;
     setRequestCount(
       isTeacher()
         ? user.receivedRequestList.length
@@ -35,7 +35,10 @@ export function MCHeaderRight({ styles }: MCHeaderRightProps) {
   }, [user]);
 
   return (
-    <Layout.Content className="flex justify-end space-x-4 py-2 items-center" style={styles}>
+    <Layout.Content
+      className="flex justify-end space-x-4 py-2 items-center"
+      style={styles}
+    >
       <AtomIconHeader
         icon={
           <AtomNotificationListDropDown>
@@ -54,21 +57,23 @@ export function MCHeaderRight({ styles }: MCHeaderRightProps) {
       {user?.teacher ? (
         <></>
       ) : (
-        <AtomIconHeader
-          icon={
-            <AtomRequestListDropdown>
-              <Layout.Content className="relative">
-                <UnorderedListOutlined />
-                <Badge
-                  className="absolute -top-[0.4rem] right-[0.15rem] w-1"
-                  count={requestCount}
-                  showZero
-                  size="small"
-                />
-              </Layout.Content>
-            </AtomRequestListDropdown>
-          }
-        />
+        isStudent() && (
+          <AtomIconHeader
+            icon={
+              <AtomRequestListDropdown>
+                <Layout.Content className="relative">
+                  <UnorderedListOutlined />
+                  <Badge
+                    className="absolute -top-[0.4rem] right-[0.15rem] w-1"
+                    count={requestCount}
+                    showZero
+                    size="small"
+                  />
+                </Layout.Content>
+              </AtomRequestListDropdown>
+            }
+          />
+        )
       )}
       <AtomImageAvatar />
     </Layout.Content>

@@ -4,10 +4,12 @@ import { OGHeader } from "../components/organisms/header/header.organism";
 import { OGTable } from "../components/organisms/table/table.organism";
 import { teacherListConfig } from "../config/student/teacher-list-config";
 import { studentListConfig } from "../config/teacher/student-list.config";
-import { isTeacher } from "../utils/role.util";
+import { isStudent, isTeacher } from "../utils/role.util";
 
 const { Content } = Layout;
 export default function Home() {
+  if(!isTeacher() && !isStudent()) return null;
+
   return (
     <>
       <Head>

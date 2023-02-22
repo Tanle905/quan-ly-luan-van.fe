@@ -60,7 +60,22 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
         TAG_ENDPOINT.MAJOR_TAGS,
     tagsFetcher
   );
-  const isStudent = profile?.roles?.includes(Roles.STUDENT);
+  let roles = "";
+
+  switch (profile?.roles[0]) {
+    case Roles.STUDENT:
+      roles = "Sinh viên";
+      break;
+    case Roles.TEACHER:
+      roles = "Giảng viên";
+      break;
+    case Roles.ADMIN:
+      roles = "Quản trị viên";
+      break;
+
+    default:
+      break;
+  }
 
   useEffect(() => setMounted(true), []);
 
@@ -76,7 +91,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
   useEffect(() => {
     form.setFieldsValue({
       ...profile,
-      roles: isStudent ? "Sinh viên" : "Giảng viên",
+      roles,
     });
   }, [profile]);
 
@@ -109,7 +124,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
   function handleResetForm() {
     form.setFieldsValue({
       ...profile,
-      roles: isStudent ? "Sinh viên" : "Giảng viên",
+      roles,
     });
   }
 
@@ -141,10 +156,10 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
         )}
         <Form form={form} className="space-y-3">
           <div className="flex items-center">
-            <span className="w-52">{isStudent ? "MSSV: " : "MSCB: "}</span>
+            <span className="w-52">{roles ? "MSSV: " : "MSCB: "}</span>
             <Form.Item
               className="inline-block w-96"
-              name={isStudent ? "MSSV" : "MSCB"}
+              name={roles ? "MSSV" : "MSCB"}
               style={{ marginBottom: 0 }}
             >
               <Input type="text" disabled prefix={<NumberOutlined />} />
@@ -189,7 +204,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
               <Input type="text" disabled prefix={<MailOutlined />} />
             </Form.Item>
           </div>
-          {!isStudent && (
+          {!roles && (
             <div className="flex items-center">
               <span className="w-52">Tags: </span>
               <Form.Item
@@ -227,7 +242,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
               <Input type="text" disabled />
             </Form.Item>
           </div>
-          {isStudent && (
+          {roles && (
             <div className="flex items-center">
               <span className="w-52">Lớp: </span>
               <Form.Item

@@ -1,16 +1,9 @@
 import { Layout } from "antd";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import { OGAdminContent } from "../../components/organisms/content/admin-content.organism";
 import { OGHeader } from "../../components/organisms/header/header.organism";
-import { OGPRofileContent } from "../../components/organisms/content/profile-content.organism";
-const { Content } = Layout;
 
 export default function Home() {
-  const router = useRouter();
-  const { pid } = router.query;
-
-  if (!router.query.pid) return null;
-
   return (
     <>
       <Head>
@@ -19,10 +12,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Content className="h-screen overflow-auto bg-gray-100">
+      <Layout.Content className="overflow-hidden h-screen">
         <OGHeader />
-        <OGPRofileContent userId={pid as string} />
-      </Content>
+        <OGAdminContent />
+      </Layout.Content>
     </>
   );
 }

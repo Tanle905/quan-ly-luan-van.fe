@@ -17,6 +17,7 @@
     "@fullcalendar/moment": "^6.0.3",
     "@fullcalendar/react": "^6.0.4",
     "@fullcalendar/timegrid": "^6.0.3",
+    "@heroicons/react": "^2.0.16",
     "@next/font": "13.1.1",
     "@types/fullcalendar": "^3.8.0",
     "@types/node": "18.11.17",
