@@ -4,5 +4,13 @@ export const SCREEN_ROUTE = {
   PROFILE: "/profile",
   THESIS_PROGRESS: "/thesis",
   SCHEDULE: "/schedule",
-  ADMIN: "/admin"
+  ADMIN: {
+    BASE: "/admin",
+    SCHEDULE: "/schedule",
+    MANAGEMENT: {
+      STUDENT: "/student-management",
+      TEACHER: "/teacher-management",
+      TOPIC: "/topic-management",
+    },
+  },
 };

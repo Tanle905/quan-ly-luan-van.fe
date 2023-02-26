@@ -6,9 +6,11 @@ import {
   MenuUnfoldOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import type { MenuProps } from "antd";
+import { Layout, MenuProps } from "antd";
 import { Menu } from "antd";
 import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import { SCREEN_ROUTE } from "../../../constants/screen-route";
+import { useRouter } from "next/router";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -24,17 +26,29 @@ function items(collapsed: boolean, toggleCollapsed: () => void): MenuItem[] {
       expandIcon: <></>,
       children: [],
     },
-    { label: "Lịch biểu", key: "schedule", icon: <CalendarOutlined /> },
+    {
+      label: "Lịch biểu",
+      key: SCREEN_ROUTE.ADMIN.SCHEDULE,
+      icon: <CalendarOutlined />,
+    },
     {
       label: "Quản lý tài nguyên",
       key: "sub1",
       icon: <BookOutlined />,
       children: [
-        { label: "Sinh viên", key: "student-manager", icon: <UserOutlined /> },
-        { label: "Giảng viên", key: "teacher-manager", icon: <UserOutlined /> },
+        {
+          label: "Sinh viên",
+          key: SCREEN_ROUTE.ADMIN.MANAGEMENT.STUDENT,
+          icon: <UserOutlined />,
+        },
+        {
+          label: "Giảng viên",
+          key: SCREEN_ROUTE.ADMIN.MANAGEMENT.TEACHER,
+          icon: <UserOutlined />,
+        },
         {
           label: "Đề tài",
-          key: "thesis-manager",
+          key: SCREEN_ROUTE.ADMIN.MANAGEMENT.TOPIC,
           icon: <ArchiveBoxIcon className="w-4" />,
         },
       ],
@@ -44,9 +58,13 @@ function items(collapsed: boolean, toggleCollapsed: () => void): MenuItem[] {
 
 export function MCAdminSidebarMenu() {
   const [collapsed, setCollapsed] = useState(false);
+  const router = useRouter();
+  const currentSelectedKey = router.asPath.slice(
+    router.asPath.lastIndexOf("/")
+  );
 
   function handleSelectMenuItem({ key }: any) {
-    console.log(key);
+    router.push(SCREEN_ROUTE.ADMIN.BASE + key);
   }
 
   function toggleCollapsed() {
@@ -64,7 +82,19 @@ export function MCAdminSidebarMenu() {
         inlineCollapsed={collapsed}
         items={items(collapsed, toggleCollapsed)}
         onSelect={handleSelectMenuItem}
+        selectedKeys={[currentSelectedKey]}
       />
     </div>
   );
+}
+
+export function withAdminSideBar<Type>(Component: any) {
+  return (props: Type) => {
+    return (
+      <Layout.Content className="flex">
+        <MCAdminSidebarMenu />
+        <Component {...props} />
+      </Layout.Content>
+    );
+  };
 }

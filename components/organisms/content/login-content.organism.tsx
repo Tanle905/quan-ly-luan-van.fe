@@ -44,7 +44,7 @@ export function OGLoginContent() {
         form.getFieldsValue()
       );
       localStorage.setItem(LOCAL_STORAGE.USER_DATA, JSON.stringify(data));
-      router.push(isAdmin() ? SCREEN_ROUTE.ADMIN : SCREEN_ROUTE.BASE);
+      router.push(isAdmin() ? SCREEN_ROUTE.ADMIN.BASE : SCREEN_ROUTE.BASE);
     } catch (error: any) {
       message.error(error.response.data.message);
     }
@@ -115,7 +115,13 @@ export function OGLoginContent() {
           </Content>
         </Content>
         <Content className="col-span-1 bg-gray-100 flex items-center shadow-2xl">
-          <Image alt="" src="/images/login.svg" className="w-full" width={500} height={500} />
+          <Image
+            alt=""
+            src="/images/login.svg"
+            className="w-full"
+            width={500}
+            height={500}
+          />
         </Content>
       </main>
     </>
