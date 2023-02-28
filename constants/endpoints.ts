@@ -1,3 +1,6 @@
+export const COMMON_ENDPOINT = {
+  EXPORT: "/export",
+};
 export const AUTH_ENDPOINT = {
   BASE: "/auth",
   LOGIN: "/login",

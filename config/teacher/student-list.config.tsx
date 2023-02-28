@@ -40,8 +40,11 @@ export const studentListConfig: TableConfig = {
       {
         key: "topicName",
         title: "Tên đề tài",
-        dataIndex: "topicName",
+        dataIndex: "sentTopic",
         sorter: true,
+        render: (value, record, index) => {
+          return value.topicName;
+        },
       },
       {
         key: "action",

@@ -15,6 +15,7 @@ import { TableConfig } from "../../../config/interface/table-config.interface";
 import { LoadingOutlined } from "@ant-design/icons";
 import { FilterElement } from "./element/filter-element.organism";
 import { FilterValue, TablePaginationConfig } from "antd/es/table/interface";
+import { COMMON_ENDPOINT } from "../../../constants/endpoints";
 
 interface OGTableProps {
   config: TableConfig;
@@ -149,7 +150,7 @@ export function OGTable({ config }: OGTableProps) {
             {config.filter && <FilterElement config={config.filter} />}
             {config.extraRightComponent &&
               config.extraRightComponent.map((component, index) =>
-                component({ key: index, href: url })
+                component({ key: index, href: url + COMMON_ENDPOINT.EXPORT })
               )}
           </Layout.Content>
         </Layout.Content>

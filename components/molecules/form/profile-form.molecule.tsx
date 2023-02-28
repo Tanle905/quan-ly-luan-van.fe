@@ -24,6 +24,7 @@ import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 import axios from "axios";
 import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
 import { TagDetails } from "../../../interfaces/tag.interface";
+import { cloneDeep } from "lodash";
 
 interface MCProfileFormProps {
   readOnly?: boolean;
@@ -52,6 +53,8 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
   const [mounted, setMounted] = useState(false);
   const [options, setOptions] = useState([]);
   const [msg, contextHolder] = message.useMessage();
+  const [roles, setRoles] = useState<string | undefined>("");
+  const isStudent = roles === Roles.STUDENT;
   const { data } = useSWR(
     mounted &&
       isTeacher() &&
@@ -60,22 +63,6 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
         TAG_ENDPOINT.MAJOR_TAGS,
     tagsFetcher
   );
-  let roles = "";
-
-  switch (profile?.roles[0]) {
-    case Roles.STUDENT:
-      roles = "Sinh viên";
-      break;
-    case Roles.TEACHER:
-      roles = "Giảng viên";
-      break;
-    case Roles.ADMIN:
-      roles = "Quản trị viên";
-      break;
-
-    default:
-      break;
-  }
 
   useEffect(() => setMounted(true), []);
 
@@ -89,10 +76,28 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
   }, [data]);
 
   useEffect(() => {
+    let roles = "";
+
+    switch (profile?.roles[0]) {
+      case Roles.STUDENT:
+        roles = "Sinh viên";
+        break;
+      case Roles.TEACHER:
+        roles = "Giảng viên";
+        break;
+      case Roles.ADMIN:
+        roles = "Quản trị viên";
+        break;
+
+      default:
+        break;
+    }
+
     form.setFieldsValue({
       ...profile,
       roles,
     });
+    setRoles(profile?.roles[0]);
   }, [profile]);
 
   async function tagsFetcher() {
@@ -122,9 +127,11 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
   }
 
   function handleResetForm() {
+    const clonedProfile = cloneDeep(profile) as any;
+    if (clonedProfile) delete clonedProfile.roles;
+
     form.setFieldsValue({
-      ...profile,
-      roles,
+      ...clonedProfile,
     });
   }
 
@@ -156,10 +163,10 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
         )}
         <Form form={form} className="space-y-3">
           <div className="flex items-center">
-            <span className="w-52">{roles ? "MSSV: " : "MSCB: "}</span>
+            <span className="w-52">{isStudent ? "MSSV: " : "MSCB: "}</span>
             <Form.Item
               className="inline-block w-96"
-              name={roles ? "MSSV" : "MSCB"}
+              name={isStudent ? "MSSV" : "MSCB"}
               style={{ marginBottom: 0 }}
             >
               <Input type="text" disabled prefix={<NumberOutlined />} />
@@ -204,7 +211,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
               <Input type="text" disabled prefix={<MailOutlined />} />
             </Form.Item>
           </div>
-          {!roles && (
+          {!isStudent && (
             <div className="flex items-center">
               <span className="w-52">Tags: </span>
               <Form.Item
@@ -242,7 +249,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
               <Input type="text" disabled />
             </Form.Item>
           </div>
-          {roles && (
+          {isStudent && (
             <div className="flex items-center">
               <span className="w-52">Lớp: </span>
               <Form.Item
