@@ -24,9 +24,7 @@ export default function Home() {
       </Head>
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <Content className="my-5">
-          <OGThesisProgressContent />
-        </Content>
+        <OGThesisProgressContent />
       </Content>
     </>
   );

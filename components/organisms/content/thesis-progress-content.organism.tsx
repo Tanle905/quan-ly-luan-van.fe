@@ -29,7 +29,7 @@ export function OGThesisProgressContent({
   ];
 
   return (
-    <Layout.Content className="space-y-3 mx-20">
+    <Layout.Content className="space-y-3 my-5 mx-20">
       <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
         Báo cáo tiến độ luận văn
       </Typography.Title>

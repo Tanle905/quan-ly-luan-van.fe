@@ -1,15 +1,10 @@
 import { Layout } from "antd";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { OGThesisProgressContent } from "../../components/organisms/content/thesis-progress-content.organism";
+import { OGScheduleContent } from "../../components/organisms/content/schedule-content.organism";
 import { OGHeader } from "../../components/organisms/header/header.organism";
 
 const { Content } = Layout;
 export default function Home() {
-  const router = useRouter();
-
-  if (!router.query.pid) return null;
-
   return (
     <>
       <Head>
@@ -20,7 +15,8 @@ export default function Home() {
       </Head>
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <OGThesisProgressContent MSSV={router.query.pid as string} />
+        <OGScheduleContent />
+        <Content className="mx-20 my-5"></Content>
       </Content>
     </>
   );
