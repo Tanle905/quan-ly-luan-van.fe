@@ -10,14 +10,11 @@ export function AtomExportButton({ href }: AtomExportButtonProps) {
   async function dataFetcher() {
     const res = await axios.post(href);
     const data = res.data.data;
+    data.unshift(Object.keys(data[0]));
     const csvContent =
       "data:text/csv;charset=utf-8," +
       data
-        .map((row: any, index: any) => {
-          if (index === 0) {
-            return Object.keys(row);
-          } else return Object.values(row);
-        })
+        .map((row: any, index: any) => (index === 0 ? row : Object.values(row)))
         .map((e: any) => e.join(","))
         .join("\n");
     const encodedUri = encodeURI(csvContent);

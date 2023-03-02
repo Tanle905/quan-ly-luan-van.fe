@@ -1,4 +1,6 @@
+export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 export const COMMON_ENDPOINT = {
+  IMPORT: "/import",
   EXPORT: "/export",
 };
 export const AUTH_ENDPOINT = {
@@ -38,4 +40,10 @@ export const TOPIC_ENDPOINT = {
 export const TAG_ENDPOINT = {
   BASE: "/tag",
   MAJOR_TAGS: "/major",
+};
+export const THESIS_DEFENSE_SCHEDULE_ENDPOINT = {
+  BASE: "/thesis-schedule",
+  STUDENT_LIST: {
+    BASE: "/student-list",
+  },
 };

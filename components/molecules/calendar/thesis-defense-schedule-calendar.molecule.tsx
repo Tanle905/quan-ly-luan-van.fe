@@ -15,54 +15,50 @@ import useSWR from "swr";
 import moment from "@fullcalendar/moment";
 import { clearCache } from "../../../utils/swr.util";
 
-interface MCThesisDefenseScheduleCalendarProps {
-  MSSV?: string;
-}
+interface MCThesisDefenseScheduleCalendarProps {}
 
-export function MCThesisDefenseScheduleCalendar({
-  MSSV,
-}: MCThesisDefenseScheduleCalendarProps) {
+export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalendarProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentDateData, setCurrentDateData] = useState<any>(null);
   const [currentEventData, setCurrentEventData] = useState<any | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const { data, mutate } = useSWR(
-    isMounted &&
-      process.env.NEXT_PUBLIC_BASE_URL +
-        THESIS_PROGRESS_ENDPOINT.BASE +
-        THESIS_PROGRESS_ENDPOINT.EVENT,
-    thesisProgressEventFetcher
-  );
   const user = useRecoilValue<(Teacher & Student) | null>(userState);
   const [msg, contextHodler] = message.useMessage();
+  // const { data, mutate } = useSWR(
+  //   isMounted &&
+  //     process.env.NEXT_PUBLIC_BASE_URL +
+  //       THESIS_PROGRESS_ENDPOINT.BASE +
+  //       THESIS_PROGRESS_ENDPOINT.EVENT,
+  //   thesisProgressEventFetcher
+  // );
 
-  useEffect(() => {
-    setIsMounted(true);
-    const calendarEventSendSubscription = calendarEventSendSubject.subscribe({
-      next: () => {
-        mutate();
-      },
-    });
+  // useEffect(() => {
+  //   setIsMounted(true);
+  //   const calendarEventSendSubscription = calendarEventSendSubject.subscribe({
+  //     next: () => {
+  //       mutate();
+  //     },
+  //   });
 
-    return () => {
-      clearCache(mutate);
-      calendarEventSendSubscription.unsubscribe();
-    };
-  }, []);
+  //   return () => {
+  //     clearCache(mutate);
+  //     calendarEventSendSubscription.unsubscribe();
+  //   };
+  // }, []);
 
-  async function thesisProgressEventFetcher() {
-    if (!user) return;
-    try {
-      const { data } = await axios.post(
-        process.env.NEXT_PUBLIC_BASE_URL + THESIS_PROGRESS_ENDPOINT.BASE,
-        { MSSV: MSSV ? MSSV : user.MSSV }
-      );
+  // async function thesisProgressEventFetcher() {
+  //   if (!user) return;
+  //   try {
+  //     const { data } = await axios.post(
+  //       process.env.NEXT_PUBLIC_BASE_URL + THESIS_PROGRESS_ENDPOINT.BASE,
+  //       { MSSV: MSSV ? MSSV : user.MSSV }
+  //     );
 
-      return data.data;
-    } catch (error: any) {
-      message.error(error.response.data.message);
-    }
-  }
+  //     return data.data;
+  //   } catch (error: any) {
+  //     message.error(error.response.data.message);
+  //   }
+  // }
 
   return (
     <>
@@ -91,7 +87,7 @@ export function MCThesisDefenseScheduleCalendar({
               },
             },
           }}
-          events={data}
+          // events={data}
           weekNumbers
           weekText="Tuần "
           selectable
@@ -114,15 +110,6 @@ export function MCThesisDefenseScheduleCalendar({
             setIsModalVisible(true);
           }}
         />
-        {!MSSV && (
-          <MCAddEventModal
-            currentDateData={currentDateData}
-            currentEventData={currentEventData}
-            setCurrentEventData={setCurrentEventData}
-            isModalVisible={isModalVisible}
-            setIsModelVisible={setIsModalVisible}
-          />
-        )}
       </Layout.Content>
       <style>{`
 .fc .fc-daygrid-day.fc-day-today {

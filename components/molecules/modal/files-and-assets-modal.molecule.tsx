@@ -110,7 +110,6 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
     try {
       if (status !== "done") return;
       
-      console.log('sdf')
       const uploadedFile = await uploadBytes(fileRef, originFileObj as Blob);
       console.log(uploadedFile.ref)
       handleSetFileList();
