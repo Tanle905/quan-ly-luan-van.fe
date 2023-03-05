@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import useSWR from "swr";
-import { PROFILE_ENDPOINT } from "../../../constants/endpoints";
+import { baseURL, PROFILE_ENDPOINT } from "../../../constants/endpoints";
 import { User } from "../../../interfaces/user.interface";
 import { userState } from "../../../stores/auth.store";
 import { clearCache } from "../../../utils/swr.util";
@@ -20,7 +20,7 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
   const user = useRecoilValue<User | null>(userState);
   const isDifferentUser = userId ? true : false;
   const { data, mutate } = useSWR<User | undefined>(
-    userId && process.env.NEXT_PUBLIC_BASE_URL + PROFILE_ENDPOINT.BASE,
+    userId ? baseURL + PROFILE_ENDPOINT.BASE : null,
     userProfileFetcher
   );
 
@@ -30,21 +30,19 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
     };
   }, []);
 
-  async function userProfileFetcher() {
+  async function userProfileFetcher(url: string) {
     if (!user) return;
 
     try {
-      const { data }: { data: User } = await axios.get(
-        process.env.NEXT_PUBLIC_BASE_URL + PROFILE_ENDPOINT.BASE + "/" + userId
-      );
+      const { data }: { data: User } = await axios.get(url + "/" + userId);
 
       return data;
     } catch (error: any) {
       message.error(error.response.data.message);
     }
   }
-
   if (userId && !data) return null;
+
   return (
     <>
       {contextHolder}

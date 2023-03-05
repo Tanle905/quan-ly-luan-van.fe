@@ -1,13 +1,12 @@
+import { Student } from "./student.interface";
+import { Teacher } from "./teacher.interface";
+import { Topic } from "./topic.interface";
+
 export interface Request {
   _id: string;
-  MSSV: string;
-  MSCB: string;
-  studentId: string;
-  teacherId: string;
-  studentName: string;
-  teacherName: string;
-  studentEmail: string;
-  teacherEmail: string;
+  student: Student;
+  teacher: Teacher;
+  topic?: Topic;
   createdAt?: Date;
   updatedAt?: Date;
 }

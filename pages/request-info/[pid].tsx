@@ -1,8 +1,8 @@
 import { Layout } from "antd";
 import Head from "next/head";
-import { OGMainContent } from "../components/organisms/content/main-content.organism";
-import { OGHeader } from "../components/organisms/header/header.organism";
-import { isStudent, isTeacher } from "../utils/role.util";
+import { OGRequestInfoContent } from "../../components/organisms/content/request-info-content.organism";
+import { OGHeader } from "../../components/organisms/header/header.organism";
+import { isStudent, isTeacher } from "../../utils/role.util";
 
 const { Content } = Layout;
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
       </Head>
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <OGMainContent />
+        <OGRequestInfoContent />
       </Content>
     </>
   );

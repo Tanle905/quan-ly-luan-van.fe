@@ -7,9 +7,12 @@ import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { REQUEST_ENDPOINT } from "../../../constants/endpoints";
-import { requestSendSubject } from "../../../constants/observables";
+import {
+  reloadProfileSubject,
+  reloadTableSubject,
+} from "../../../constants/observables";
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
@@ -23,10 +26,10 @@ interface AtomTeacherTableActionProps {
 export function AtomTeacherTableAction({
   teacher,
 }: AtomTeacherTableActionProps) {
-  const [user, setUser] = useRecoilState<any>(userState);
+  const user = useRecoilValue<Student | null>(userState);
   const [isLoading, setIsLoading] = useState(false);
-  const isRequestSent = user?.sentRequestList?.find(
-    (request: any) => request.MSCB === teacher.MSCB
+  const isRequestSent = user?.sentRequestsList?.find(
+    (request: any) => request === teacher._id
   );
   const [msg, contextHolder] = message.useMessage();
   const router = useRouter();
@@ -35,24 +38,24 @@ export function AtomTeacherTableAction({
     if (isRequestSent || isLoading) return;
     setIsLoading(true);
     try {
-      const res = await axios.post(process.env.NEXT_PUBLIC_BASE_URL + REQUEST_ENDPOINT.BASE, {
-        MSSV: user?.MSSV,
-        MSCB: teacher.MSCB,
-      });
+      await axios.post(
+        process.env.NEXT_PUBLIC_BASE_URL +
+          REQUEST_ENDPOINT.BASE +
+          REQUEST_ENDPOINT.SEND,
+        {
+          MSSV: user?.MSSV,
+          MSCB: teacher.MSCB,
+        }
+      );
 
-      setUser((prevUser: Student) => {
-        return {
-          ...prevUser,
-          sentRequestList: res.data.studentData.sentRequestList,
-        };
-      });
-      requestSendSubject.next(1);
+      reloadProfileSubject.next(1);
+      reloadTableSubject.next(1);
       message.success("Gửi yêu cầu thành công");
 
       await NotificationService.sendNotification({
         user,
         receiver: teacher._id,
-        content: `Sinh viên ${user.lastName} ${user.firstName} (${user.email}) - ${user.MSSV} đã gửi yêu cầu xin hướng dẫn.`,
+        content: `Sinh viên ${user?.lastName} ${user?.firstName} (${user?.email}) - ${user?.MSSV} đã gửi yêu cầu xin hướng dẫn.`,
       });
     } catch (error: any) {
       message.error(error.message);

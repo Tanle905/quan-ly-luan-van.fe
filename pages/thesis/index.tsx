@@ -10,7 +10,7 @@ import { isStudent, isTeacher } from "../../utils/role.util";
 
 const { Content } = Layout;
 export default function Home() {
-  const user = useRecoilValue<(Student & Teacher) | null>(userState);
+  const user = useRecoilValue<Student | null>(userState);
 
   if (!isTeacher() && !isStudent()) return null;
 
@@ -24,7 +24,7 @@ export default function Home() {
       </Head>
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <OGThesisProgressContent />
+        <OGThesisProgressContent MSSV={user?.MSSV} data={user} />
       </Content>
     </>
   );

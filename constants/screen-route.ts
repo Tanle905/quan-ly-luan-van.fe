@@ -1,6 +1,7 @@
 export const SCREEN_ROUTE = {
   BASE: "/",
   LOGIN: "/login",
+  REQUEST_INFO: "/request-info",
   PROFILE: "/profile",
   THESIS_PROGRESS: "/thesis",
   SCHEDULE: "/schedule",

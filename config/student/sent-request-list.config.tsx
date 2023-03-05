@@ -1,12 +1,12 @@
 import { TableConfig } from "../interface/table-config.interface";
-import { AtomTeacherTableAction } from "../../components/atoms/action/teacher-table-action.atom";
-import { TEACHER_ENDPOINT } from "../../constants/endpoints";
-import { Tag } from "antd";
+import { REQUEST_ENDPOINT } from "../../constants/endpoints";
 import { TAG_ENDPOINT } from "../../constants/endpoints";
 import { MajorTag } from "../../components/molecules/form/profile-form.molecule";
+import { AtomSentRequestTableAction } from "../../components/atoms/action/sent-request-table-action.atom";
+import { Tag } from "antd";
 
-export const teacherListConfig: TableConfig = {
-  apiEndpoint: TEACHER_ENDPOINT.BASE,
+export const sentRequestListConfig: TableConfig = {
+  apiEndpoint: REQUEST_ENDPOINT.BASE,
   search: true,
   filter: [
     {
@@ -22,29 +22,29 @@ export const teacherListConfig: TableConfig = {
         key: "MSCB",
         title: "MSCB",
         dataIndex: "MSCB",
+        render: (value, record: any) => record.teacher.MSCB,
       },
       {
         key: "name",
         title: "Họ và Tên",
         dataIndex: "firstName",
-        render: (text, record: any) => (
-          <span>
-            {record.lastName} {record.firstName}
-          </span>
-        ),
+        sorter: true,
+        render: (value, record: any) =>
+          `${record.teacher.lastName} ${record.teacher.firstName}`,
       },
       {
         key: "email",
         title: "Email",
-        sorter: true,
         dataIndex: "email",
+        sorter: true,
+        render: (value, record: any) => record.teacher.email,
       },
       {
-        key: "majorTags",
+        key: "major",
         title: "Chuyên ngành",
         dataIndex: "majorTags",
-        render: (majorTags: any, row: any) => {
-          return majorTags.map((tag: string, index: number) => (
+        render: (majorTags: any, record: any) => {
+          return record.teacher.majorTags?.map((tag: string, index: number) => (
             <Tag key={index}>{tag}</Tag>
           ));
         },
@@ -53,8 +53,8 @@ export const teacherListConfig: TableConfig = {
         key: "action",
         width: "10%",
         title: "Hành động",
-        render: (text, teacher: any) => (
-          <AtomTeacherTableAction teacher={teacher} />
+        render: (text, request: any) => (
+          <AtomSentRequestTableAction request={request} />
         ),
       },
     ],

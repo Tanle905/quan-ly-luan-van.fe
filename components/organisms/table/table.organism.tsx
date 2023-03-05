@@ -5,7 +5,7 @@ import useSWR from "swr";
 import {
   onFilterTableSubject,
   onSearchTableSubject,
-  requestSendSubject,
+  reloadTableSubject,
 } from "../../../constants/observables";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
@@ -34,7 +34,7 @@ export function OGTable({ config }: OGTableProps) {
   const queryParamsRef = useRef({});
 
   useEffect(() => {
-    const requestSendSubscription = requestSendSubject.subscribe({
+    const requestSendSubscription = reloadTableSubject.subscribe({
       next: () => {
         mutate();
       },
@@ -158,6 +158,7 @@ export function OGTable({ config }: OGTableProps) {
           loading={
             (isLoading || isValidating) && { indicator: <LoadingOutlined /> }
           }
+          scroll={{x: 500}}
           pagination={{ pageSize: 10 }}
           columns={config.table.columns}
           onChange={handleSortTable}

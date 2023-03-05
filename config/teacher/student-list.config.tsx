@@ -38,9 +38,15 @@ export const studentListConfig: TableConfig = {
         sorter: true,
       },
       {
+        key: "major",
+        title: "Chuyên ngành",
+        dataIndex: "major",
+        sorter: true,
+      },
+      {
         key: "topicName",
         title: "Tên đề tài",
-        dataIndex: "sentTopic",
+        dataIndex: "topic",
         sorter: true,
         render: (value, record, index) => {
           return value.topicName;

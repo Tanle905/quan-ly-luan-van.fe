@@ -5,6 +5,7 @@ import {
   Input,
   Layout,
   message,
+  Select,
   StepProps,
   Steps,
   StepsProps,
@@ -12,16 +13,24 @@ import {
 } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import useSWR from "swr";
-import { TOPIC_ENDPOINT } from "../../../constants/endpoints";
+import {
+  baseURL,
+  TAG_ENDPOINT,
+  TOPIC_ENDPOINT,
+} from "../../../constants/endpoints";
 import { TopicStatus } from "../../../constants/enums";
+import { Student } from "../../../interfaces/student.interface";
+import { TagDetails } from "../../../interfaces/tag.interface";
+import { Teacher } from "../../../interfaces/teacher.interface";
 import { Topic } from "../../../interfaces/topic.interface";
 import { userState } from "../../../stores/auth.store";
 import { isStudent, isTeacher } from "../../../utils/role.util";
 import { clearCache } from "../../../utils/swr.util";
 import { handleValidateOnFieldChange } from "../../../utils/validation.util";
 import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
+import { MajorTag } from "./profile-form.molecule";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -29,23 +38,31 @@ const { Item } = Form;
 const { TextArea } = Input;
 
 interface MCTopicFormProps {
-  MSSV?: string;
+  topicId: string | undefined;
   topic: any;
   setTopic: any;
 }
 
-export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
+export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
   const [mounted, setMounted] = useState(false);
-  const [user, setUser] = useRecoilState<any>(userState);
+  const user = useRecoilValue<(Student & Teacher) | null>(userState);
   const [form] = Form.useForm();
   const [msg, contextHolder] = message.useMessage();
   const [isValid, setIsValid] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
-  const isTopicExist = topic ? true : false;
-  const { data, mutate } = useSWR(
-    isTeacher() && mounted && TOPIC_ENDPOINT.BASE,
+  const [options, setOptions] = useState([]);
+  const { data: topicData, mutate } = useSWR(
+    mounted && baseURL + TOPIC_ENDPOINT.BASE + "/" + topicId,
     topicFetcher
   );
+  const { data: tagData } = useSWR(
+    mounted &&
+      process.env.NEXT_PUBLIC_BASE_URL +
+        TAG_ENDPOINT.BASE +
+        TAG_ENDPOINT.MAJOR_TAGS,
+    tagsFetcher
+  );
+  const isTopicExist = topicData?.topicName?.length > 0 ? true : false;
   let steps: StepsProps["items"] = [
     { title: "Tạo chủ đề" },
     { title: "Chờ duyệt" },
@@ -61,54 +78,51 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
   }, []);
 
   useEffect(() => {
-    if (!data) return;
+    if (!topicData) return;
 
-    setTopic(data);
-  }, [data]);
+    setTopic(topicData);
+    form.setFieldsValue(topicData);
+  }, [topicData]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!tagData) return;
 
-    if (user?.sentTopic) setTopic(user.sentTopic);
-  }, [user]);
+    const mappedTagData = tagData.map((tag: TagDetails) => {
+      return { value: tag.value, color: tag.color };
+    });
 
-  useEffect(
-    () =>
-      form.setFieldsValue({
-        topicName: topic?.topicName,
-        topicDescription: topic?.topicDescription,
-      }),
-    [topic]
-  );
+    setOptions(mappedTagData);
+  }, [tagData]);
 
-  async function topicFetcher() {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}?MSSV=${MSSV}&MSCB=${user.MSCB}`
-    );
+  async function topicFetcher(url: string) {
+    const res = await axios.get(url);
+
     return res.data.data;
   }
 
   async function handleSendTopic() {
     if (!user) return;
 
-    const topicDescription = form.getFieldValue("topicDescription");
     const topicName = form.getFieldValue("topicName");
+    const topicEnglishName = form.getFieldValue("topicEnglishName");
+    const majorTag = form.getFieldValue("majorTag");
+    const topicDescription = form.getFieldValue("topicDescription");
     try {
-      const res = await axios.post<any, any, Topic>(
-        process.env.NEXT_PUBLIC_BASE_URL + TOPIC_ENDPOINT.BASE,
+      await axios.post<any, any, Topic>(
+        `${baseURL}${TOPIC_ENDPOINT.BASE}/${topicId}${TOPIC_ENDPOINT.SEND}`,
         {
           MSSV: user.MSSV,
           MSCB: user.teacher?.MSCB as string,
           studentName: `${user.lastName} ${user.firstName}`,
-          topicDescription,
           topicName,
+          majorTag: majorTag,
+          topicEnglishName,
+          topicDescription,
         }
       );
 
       message.success("Gửi chủ đề thành công !");
-      setUser((prevUser: any) => {
-        return { ...prevUser, sentTopic: res.data.data };
-      });
+      mutate();
     } catch (error: any) {
       message.error(error.response.data.message);
     } finally {
@@ -121,9 +135,7 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
     if (!topic) return;
 
     try {
-      const res = await axios.put(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}/${topic._id}`
-      );
+      await axios.put(`${baseURL}${TOPIC_ENDPOINT.BASE}/${topic._id}`);
 
       message.success("Yêu cầu chỉnh sửa thành công !");
       mutate();
@@ -136,9 +148,7 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
     if (!topic) return;
 
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${TOPIC_ENDPOINT.BASE}/${topic._id}`
-      );
+      await axios.post(`${baseURL}${TOPIC_ENDPOINT.BASE}/${topic._id}`);
 
       message.success("Chấp nhận chủ đề thành công !");
       mutate();
@@ -147,13 +157,19 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
     }
   }
 
+  async function tagsFetcher(url: string) {
+    const { data } = await axios.get(url);
+
+    return data.data;
+  }
+
   function calculateSteps() {
     if (!topic) {
       return 0;
     }
 
     const errorStep: StepProps = {
-      title: "Yêu câu chỉnh sửa",
+      title: "Yêu cầu chỉnh sửa",
       status: "error",
     };
 
@@ -177,7 +193,7 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
     setIsValid(false);
   }
 
-  if(!mounted) return null;
+  if (!mounted) return null;
 
   return (
     <>
@@ -192,13 +208,17 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
           onFieldsChange={() => setIsValid(handleValidateOnFieldChange(form))}
         >
           <Content className="flex items-center">
-            <span className="w-20">Trạng thái: </span>
-            <Steps items={steps} current={calculateSteps()} className="w-1/2" />
+            <span className="w-52">Trạng thái: </span>
+            <Steps
+              items={steps}
+              current={calculateSteps()}
+              className="w-full"
+            />
           </Content>
           <Content className="flex items-center">
-            <span className="w-20">Tên đề tài: </span>
+            <span className="w-52">Tên đề tài: </span>
             <Item
-              className="w-1/4"
+              className="w-full"
               name="topicName"
               style={{ marginBottom: 0 }}
               rules={[{ required: true, max: 100 }]}
@@ -210,9 +230,38 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
             </Item>
           </Content>
           <Content className="flex items-center">
-            <span className="w-20">Nội dung: </span>
+            <span className="w-52">Tên đề tài bằng tiếng Anh: </span>
             <Item
-              className="w-1/2"
+              className="w-full"
+              name="topicEnglishName"
+              style={{ marginBottom: 0 }}
+              rules={[{ required: true, max: 100 }]}
+            >
+              <Input
+                type="text"
+                disabled={isTeacher() || (isTopicExist && !canEdit)}
+              />
+            </Item>
+          </Content>
+          <Content className="flex items-center">
+            <span className="w-52">Chủ đề: </span>
+            <Item
+              name={"majorTag"}
+              className="w-full"
+              style={{ marginBottom: 0 }}
+            >
+              <Select
+                disabled={isTeacher() || (isTopicExist && !canEdit)}
+                tagRender={MajorTag}
+                options={options}
+                showArrow
+              />
+            </Item>
+          </Content>
+          <Content className="flex items-center">
+            <span className="w-52">Nội dung: </span>
+            <Item
+              className="w-full"
               name="topicDescription"
               style={{ marginBottom: 0 }}
               rules={[{ required: true, max: 300 }]}
@@ -229,7 +278,7 @@ export function MCTopicForm({ MSSV, topic, setTopic }: MCTopicFormProps) {
             <>
               <Divider />
               <Content className="flex justify-end space-x-2">
-                {user?.sentTopic && (
+                {isTopicExist && (
                   <Button onClick={() => setCanEdit(true)} type="dashed">
                     Chỉnh sửa chủ đề
                   </Button>

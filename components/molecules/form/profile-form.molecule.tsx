@@ -63,11 +63,11 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
         TAG_ENDPOINT.MAJOR_TAGS,
     tagsFetcher
   );
-
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!data) return;
+
     const mappedData = data.map((tag: TagDetails) => {
       return { value: tag.value, color: tag.color };
     });
@@ -76,9 +76,11 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
   }, [data]);
 
   useEffect(() => {
+    if (!profile?.roles) return;
+
     let roles = "";
 
-    switch (profile?.roles[0]) {
+    switch (profile.roles[0]) {
       case Roles.STUDENT:
         roles = "Sinh viên";
         break;

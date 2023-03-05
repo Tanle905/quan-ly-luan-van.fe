@@ -1,4 +1,5 @@
-export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+export const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:13000";
 export const COMMON_ENDPOINT = {
   IMPORT: "/import",
   EXPORT: "/export",
@@ -21,6 +22,7 @@ export const TEACHER_ENDPOINT = {
 };
 export const REQUEST_ENDPOINT = {
   BASE: "/request",
+  SEND: "/send",
   ACCEPT: "/accept",
   REJECT: "/reject",
 };
@@ -36,6 +38,7 @@ export const THESIS_PROGRESS_ENDPOINT = {
 };
 export const TOPIC_ENDPOINT = {
   BASE: "/topic",
+  SEND: "/send",
 };
 export const TAG_ENDPOINT = {
   BASE: "/tag",

@@ -5,13 +5,14 @@ import { useRecoilState } from "recoil";
 import useSWR from "swr";
 import { PROFILE_ENDPOINT } from "../../../constants/endpoints";
 import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
+import { reloadProfileSubject } from "../../../constants/observables";
 import { userState } from "../../../stores/auth.store";
 import { MCHeaderLeft } from "../../molecules/header/header-left.molecule";
 import { MCHeaderRight } from "../../molecules/header/header-right.module";
 
 export function OGHeader({}) {
   const [user, setUser] = useRecoilState<any>(userState);
-  const { data } = useSWR(PROFILE_ENDPOINT.BASE, profileFetcher);
+  const { data, mutate } = useSWR(PROFILE_ENDPOINT.BASE, profileFetcher);
 
   useEffect(() => {
     if (!localStorage.getItem(LOCAL_STORAGE.USER_DATA)) return;
@@ -19,6 +20,18 @@ export function OGHeader({}) {
       localStorage.getItem(LOCAL_STORAGE.USER_DATA) as string
     );
     setUser(userData);
+  }, []);
+
+  useEffect(() => {
+    const reloadProfileSubscription = reloadProfileSubject.subscribe({
+      next: () => {
+        mutate();
+      },
+    });
+
+    return () => {
+      reloadProfileSubscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
