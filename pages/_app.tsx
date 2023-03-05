@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, message } from "antd";
 import { INDIGO_600 } from "../constants/colors";
 import { RecoilRoot } from "recoil";
 import { useEffect } from "react";
@@ -22,6 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
   dayjs.extend(utc);
   dayjs.locale(vi);
   const router = useRouter();
+  const [msg, contextHolder] = message.useMessage();
 
   useEffect(() => {
     //attach token if exist
@@ -31,14 +32,17 @@ export default function App({ Component, pageProps }: AppProps) {
     //route protection
     loginRouteProtection(router);
     calendarRouteProtection(router);
-    adminRouteProtection(router)
+    adminRouteProtection(router);
   }, [router.pathname]);
 
   return (
-    <ConfigProvider theme={{ token: { colorPrimary: INDIGO_600 } }}>
-      <RecoilRoot>
-        <Component {...pageProps} />
-      </RecoilRoot>
-    </ConfigProvider>
+    <>
+      {contextHolder}
+      <ConfigProvider theme={{ token: { colorPrimary: INDIGO_600 } }}>
+        <RecoilRoot>
+          <Component {...pageProps} />
+        </RecoilRoot>
+      </ConfigProvider>
+    </>
   );
 }

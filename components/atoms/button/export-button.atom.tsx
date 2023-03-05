@@ -4,9 +4,10 @@ import { AtomLoadingButton } from "./loading-button.atom";
 
 interface AtomExportButtonProps {
   href: string;
+  title?: string;
 }
 
-export function AtomExportButton({ href }: AtomExportButtonProps) {
+export function AtomExportButton({ href, title }: AtomExportButtonProps) {
   async function dataFetcher() {
     const res = await axios.post(href);
     const data = res.data.data;
@@ -31,7 +32,7 @@ export function AtomExportButton({ href }: AtomExportButtonProps) {
       buttonProps={{ type: "primary", className: "flex items-center" }}
     >
       <DownloadOutlined />
-      <span className="m-0 text-sm">Xuất File CSV</span>
+      <span className="m-0 text-sm">{title || "Xuất File CSV"}</span>
     </AtomLoadingButton>
   );
 }

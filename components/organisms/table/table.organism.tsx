@@ -1,4 +1,4 @@
-import { Layout, message, Table, Tag, Typography } from "antd";
+import { Layout, message, Table, TableProps, Tag, Typography } from "antd";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
@@ -17,13 +17,12 @@ import { FilterElement } from "./element/filter-element.organism";
 import { FilterValue, TablePaginationConfig } from "antd/es/table/interface";
 import { COMMON_ENDPOINT } from "../../../constants/endpoints";
 
-interface OGTableProps {
+interface OGTableProps extends TableProps<any> {
   config: TableConfig;
 }
 
-export function OGTable({ config }: OGTableProps) {
+export function OGTable({ config, ...props }: OGTableProps) {
   const user = useRecoilValue<Student | null>(userState);
-  const [msg, contextHolder] = message.useMessage();
   const [queryParams, setQueryParams] = useState<{}>({});
   const url =
     user && `${process.env.NEXT_PUBLIC_BASE_URL}${config?.apiEndpoint}`;
@@ -129,7 +128,6 @@ export function OGTable({ config }: OGTableProps) {
 
   return (
     <>
-      {contextHolder}
       <Layout.Content className="px-5 bg-white rounded-md shadow-md">
         <Layout.Content className="flex justify-between space-x-5 px-1 py-5">
           <Layout.Content className="flex items-center space-x-5">
@@ -155,10 +153,11 @@ export function OGTable({ config }: OGTableProps) {
           </Layout.Content>
         </Layout.Content>
         <Table
+          {...props}
           loading={
             (isLoading || isValidating) && { indicator: <LoadingOutlined /> }
           }
-          scroll={{x: 500}}
+          scroll={{ x: 500 }}
           pagination={{ pageSize: 10 }}
           columns={config.table.columns}
           onChange={handleSortTable}

@@ -16,7 +16,6 @@ interface OGPRofileContentProps {
 }
 
 export function OGPRofileContent({ userId }: OGPRofileContentProps) {
-  const [msg, contextHolder] = message.useMessage();
   const user = useRecoilValue<User | null>(userState);
   const isDifferentUser = userId ? true : false;
   const { data, mutate } = useSWR<User | undefined>(
@@ -45,7 +44,6 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
 
   return (
     <>
-      {contextHolder}
       <Content className="mx-16 mt-2 space-y-2">
         <span className="text-2xl font-semibold text-gray-800">
           Trang cá nhân

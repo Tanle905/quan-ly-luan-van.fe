@@ -1,3 +1,4 @@
+import { Tag } from "antd";
 import { AtomStudentTableAction } from "../../components/atoms/action/student-table-action.atom";
 import {} from "../../components/atoms/action/teacher-table-action.atom";
 import { AtomExportButton } from "../../components/atoms/button/export-button.atom";
@@ -50,6 +51,14 @@ export const studentListConfig: TableConfig = {
         sorter: true,
         render: (value, record, index) => {
           return value.topicName;
+        },
+      },
+      {
+        key: "majorTag",
+        title: "Chủ đề đề tài",
+        dataIndex: "topic",
+        render: (value, record, index) => {
+          return <Tag>{value.majorTag}</Tag>;
         },
       },
       {

@@ -1,25 +1,29 @@
-import { Layout, Tabs, TabsProps, Typography } from "antd";
+import {
+  Layout,
+  message,
+  RadioChangeEvent,
+  Tabs,
+  TabsProps,
+  Typography,
+} from "antd";
+import axios from "axios";
+import { cloneDeep } from "lodash";
+import { useState } from "react";
 import { sentRequestListConfig } from "../../../config/student/sent-request-list.config";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
 import { receivedRequestListConfig } from "../../../config/teacher/received-request-list.config";
 import { studentListConfig } from "../../../config/teacher/student-list.config";
+import { thesisDefenseStudentListConfig } from "../../../config/teacher/thesis-defense-student-list.config";
+import {
+  baseURL,
+  THESIS_DEFENSE_SCHEDULE_ENDPOINT,
+  COMMON_ENDPOINT,
+} from "../../../constants/endpoints";
 import { isTeacher } from "../../../utils/role.util";
 import { OGTable } from "../table/table.organism";
 
 interface OGMainContentProps {}
 
-const teacherContentItems: TabsProps["items"] = [
-  {
-    key: "1",
-    label: `Chờ xác nhận`,
-    children: <OGTable config={receivedRequestListConfig} key={1} />,
-  },
-  {
-    key: "2",
-    label: `Đang thực hiện luận văn`,
-    children: <OGTable config={studentListConfig} key={2} />,
-  },
-];
 const studentContentItems: TabsProps["items"] = [
   {
     key: "1",
@@ -37,7 +41,7 @@ export function OGMainContent({}: OGMainContentProps) {
   return (
     <Layout.Content className="mx-20 my-5 space-y-3">
       <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
-        Danh sách giảng viên
+        Danh sách {isTeacher() ? "sinh viên" : "giảng viên"}
       </Typography.Title>
       {isTeacher() ? <TeacherContent /> : <StudentContent />}
     </Layout.Content>
@@ -45,6 +49,86 @@ export function OGMainContent({}: OGMainContentProps) {
 }
 
 function TeacherContent() {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [selectedRowStatuses, setSelectedRowStatuses] = useState<any[]>([]);
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+  const teacherContentItems: TabsProps["items"] = [
+    {
+      key: "1",
+      label: `Chờ xác nhận`,
+      children: <OGTable config={receivedRequestListConfig} key={1} />,
+    },
+    {
+      key: "2",
+      label: `Đang thực hiện luận văn`,
+      children: <OGTable config={studentListConfig} key={2} />,
+    },
+    {
+      key: "3",
+      label: `Danh sách báo cáo`,
+      children: (
+        <OGTable
+          rowSelection={rowSelection}
+          config={thesisDefenseStudentListConfig(handleSubmit, handleSetStatus)}
+          key={3}
+          size="small"
+        />
+      ),
+    },
+  ];
+
+  function onSelectChange(newSelectedRowKeys: React.Key[], selectedRows: any) {
+    setSelectedRowKeys(newSelectedRowKeys);
+    setSelectedRows(selectedRows);
+  }
+
+  function handleSetStatus(e: RadioChangeEvent, index: number) {
+    if (selectedRowStatuses.find((row) => row.index === index)) {
+      setSelectedRowStatuses((prev: any) => {
+        prev[index] = { index, value: e.target.value };
+
+        return prev;
+      });
+    } else
+      setSelectedRowStatuses((prev: any) => {
+        prev.push({ index, value: e.target.value });
+        return prev;
+      });
+  }
+
+  async function handleSubmit() {
+    const clonedSelectedRows = cloneDeep(selectedRows);
+    selectedRowStatuses.forEach(
+      (row) =>
+        selectedRowKeys.includes(row.index) &&
+        (clonedSelectedRows[row.index] = {
+          ...clonedSelectedRows[row.index],
+          status: row.value,
+        })
+    );
+
+    if (clonedSelectedRows.length === 0)
+      return message.error("Danh sách báo cáo trống.");
+
+    try {
+      await axios.post(
+        baseURL +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.STUDENT_LIST.BASE +
+          COMMON_ENDPOINT.IMPORT,
+        { data: selectedRows }
+      );
+
+      message.success("Nộp danh sách báo cáo thành công.");
+    } catch (error: any) {
+      message.error(error.response.data.message);
+    }
+  }
+
   return (
     <Tabs
       items={teacherContentItems}

@@ -4,7 +4,6 @@ import { useRecoilValue } from "recoil";
 import { OGThesisProgressContent } from "../../components/organisms/content/thesis-progress-content.organism";
 import { OGHeader } from "../../components/organisms/header/header.organism";
 import { Student } from "../../interfaces/student.interface";
-import { Teacher } from "../../interfaces/teacher.interface";
 import { userState } from "../../stores/auth.store";
 import { isStudent, isTeacher } from "../../utils/role.util";
 

@@ -52,7 +52,6 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
   const [form] = Form.useForm();
   const [mounted, setMounted] = useState(false);
   const [options, setOptions] = useState([]);
-  const [msg, contextHolder] = message.useMessage();
   const [roles, setRoles] = useState<string | undefined>("");
   const isStudent = roles === Roles.STUDENT;
   const { data } = useSWR(
@@ -141,7 +140,6 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
 
   return (
     <>
-      {contextHolder}
       <Layout.Content className="rounded-md shadow-md bg-white p-5 space-y-5">
         {!readOnly && (
           <>

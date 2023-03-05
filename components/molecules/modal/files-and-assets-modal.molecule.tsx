@@ -7,12 +7,7 @@ import { Divider, Layout, message, Modal, Upload } from "antd";
 import { ReactNode, useEffect, useState } from "react";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { storage } from "../../../utils/firebase";
-import {
-  getMetadata,
-  list,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
+import { getMetadata, list, ref, uploadBytes } from "firebase/storage";
 import { isStudent, isTeacher } from "../../../utils/role.util";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
@@ -81,7 +76,6 @@ function ModalTitle({ onBack }: { onBack: () => void }) {
 }
 
 function ModalContent({ MSSV }: { MSSV?: string }) {
-  const [msg, contextHolder] = message.useMessage();
   const user = useRecoilValue<Student | Teacher | null>(userState);
   const serialNumber = isTeacher() ? MSSV : user?.MSSV;
   const [fileList, setFileList] = useState<any[]>([]);
@@ -109,9 +103,9 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
     const fileRef = ref(storage, `${serialNumber}/${name}`);
     try {
       if (status !== "done") return;
-      
+
       const uploadedFile = await uploadBytes(fileRef, originFileObj as Blob);
-      console.log(uploadedFile.ref)
+      console.log(uploadedFile.ref);
       handleSetFileList();
       message.success("Tải file lên thành công.");
     } catch (error: any) {
@@ -137,7 +131,6 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
 
   return (
     <>
-      {contextHolder}
       {isStudent() && (
         <>
           <Divider className="pb-2" />

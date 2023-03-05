@@ -27,7 +27,6 @@ export function OGLoginContent() {
   const { Content } = Layout;
   const { Paragraph, Title, Link } = Typography;
   const [loginForm] = Form.useForm();
-  const [msg, contextHolder] = message.useMessage();
   const [isLoginFormValid, setIsLoginFormValid] = useState(false);
   const [isRememberPassword, setIsRememberPassword] = useState(false);
 
@@ -52,7 +51,6 @@ export function OGLoginContent() {
 
   return (
     <>
-      {contextHolder}
       <main className="h-screen grid grid-cols-2">
         <Content className="col-span-1 flex justify-center items-center w-full">
           <Content className="m-auto w-4/6">

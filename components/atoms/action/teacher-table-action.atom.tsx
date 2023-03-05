@@ -31,7 +31,6 @@ export function AtomTeacherTableAction({
   const isRequestSent = user?.sentRequestsList?.find(
     (request: any) => request === teacher._id
   );
-  const [msg, contextHolder] = message.useMessage();
   const router = useRouter();
 
   async function handleSendRequest() {
@@ -68,7 +67,6 @@ export function AtomTeacherTableAction({
 
   return (
     <>
-      {contextHolder}
       <Layout.Content className="flex justify-end space-x-1">
         <Tooltip title="Gửi tin cho giảng viên">
           <MessageOutlined className="cursor-pointer p-2 hover:bg-indigo-600 hover:text-white rounded-md transition-all" />

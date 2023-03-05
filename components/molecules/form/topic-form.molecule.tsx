@@ -47,7 +47,6 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
   const [mounted, setMounted] = useState(false);
   const user = useRecoilValue<(Student & Teacher) | null>(userState);
   const [form] = Form.useForm();
-  const [msg, contextHolder] = message.useMessage();
   const [isValid, setIsValid] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [options, setOptions] = useState([]);
@@ -197,7 +196,6 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
 
   return (
     <>
-      {contextHolder}
       <Content>
         <Title level={4} style={{ marginTop: 0 }}>
           Chủ đề luận văn

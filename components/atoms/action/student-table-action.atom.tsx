@@ -1,7 +1,7 @@
 import { InfoCircleOutlined, MessageOutlined } from "@ant-design/icons";
-import { Layout, message, Tooltip } from "antd";
+import { Layout, Tooltip } from "antd";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { Student } from "../../../interfaces/student.interface";
 import { userState } from "../../../stores/auth.store";
@@ -13,9 +13,8 @@ interface AtomStudentTableActionProps {
 export function AtomStudentTableAction({
   student,
 }: AtomStudentTableActionProps) {
-  const [user, setUser] = useRecoilState<any>(userState);
+  const user = useRecoilValue<any>(userState);
   const router = useRouter();
-  const [msg, contextHolder] = message.useMessage();
 
   function handleThesisProgressRedirect() {
     router.push(`${SCREEN_ROUTE.THESIS_PROGRESS}/${student.MSSV}`);
@@ -25,7 +24,6 @@ export function AtomStudentTableAction({
 
   return (
     <>
-      {contextHolder}
       <Layout.Content className="flex justify-end space-x-1">
         <Tooltip title="Gửi tin cho sinh viên">
           <MessageOutlined className="cursor-pointer p-2 hover:bg-indigo-600 hover:text-white rounded-md transition-all" />
