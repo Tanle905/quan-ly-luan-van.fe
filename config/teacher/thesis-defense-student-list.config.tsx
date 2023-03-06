@@ -2,6 +2,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, Radio, RadioChangeEvent, Tag } from "antd";
 import {} from "../../components/atoms/action/teacher-table-action.atom";
 import { STUDENT_ENDPOINT } from "../../constants/endpoints";
+import { ThesisStatus } from "../../constants/enums";
 import { TableConfig } from "../interface/table-config.interface";
 
 export const thesisDefenseStudentListConfig: (
@@ -87,8 +88,12 @@ export const thesisDefenseStudentListConfig: (
               onChange={(e: RadioChangeEvent) => handleSetStatus(e, index)}
               defaultValue="isReadyForThesisDefense"
             >
-              <Radio value="isReadyForThesisDefense">Được báo cáo</Radio>
-              <Radio value="isMarkedForIncomplete">Cho điểm I</Radio>
+              <Radio value={ThesisStatus.IsReadyForThesisDefense}>
+                Được báo cáo
+              </Radio>
+              <Radio value={ThesisStatus.IsMarkedForIncomplete}>
+                Cho điểm I
+              </Radio>
             </Radio.Group>
           ),
         },

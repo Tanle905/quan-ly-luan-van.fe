@@ -9,6 +9,7 @@ import {
 import axios from "axios";
 import { cloneDeep } from "lodash";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
 import { sentRequestListConfig } from "../../../config/student/sent-request-list.config";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
 import { receivedRequestListConfig } from "../../../config/teacher/received-request-list.config";
@@ -19,6 +20,11 @@ import {
   THESIS_DEFENSE_SCHEDULE_ENDPOINT,
   COMMON_ENDPOINT,
 } from "../../../constants/endpoints";
+import { ThesisStatus } from "../../../constants/enums";
+import { StudentList } from "../../../interfaces/schedule.interface";
+import { Student } from "../../../interfaces/student.interface";
+import { Teacher } from "../../../interfaces/teacher.interface";
+import { userState } from "../../../stores/auth.store";
 import { isTeacher } from "../../../utils/role.util";
 import { OGTable } from "../table/table.organism";
 
@@ -49,6 +55,7 @@ export function OGMainContent({}: OGMainContentProps) {
 }
 
 function TeacherContent() {
+  const user = useRecoilValue<Teacher | null>(userState);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [selectedRowStatuses, setSelectedRowStatuses] = useState<any[]>([]);
@@ -113,20 +120,37 @@ function TeacherContent() {
 
     if (clonedSelectedRows.length === 0)
       return message.error("Danh sách báo cáo trống.");
+    if (!user) return;
 
     try {
+      const studentList: StudentList = {
+        MSCB: user.MSCB,
+        teacherName: `${user.lastName} ${user.firstName}`,
+        students: handleSeperateStudentList(
+          clonedSelectedRows,
+          ThesisStatus.IsReadyForThesisDefense
+        ),
+        incompleteStudents: handleSeperateStudentList(
+          clonedSelectedRows,
+          ThesisStatus.IsMarkedForIncomplete
+        ),
+      };
       await axios.post(
         baseURL +
           THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
           THESIS_DEFENSE_SCHEDULE_ENDPOINT.STUDENT_LIST.BASE +
           COMMON_ENDPOINT.IMPORT,
-        { data: selectedRows }
+        { data: studentList }
       );
 
       message.success("Nộp danh sách báo cáo thành công.");
     } catch (error: any) {
       message.error(error.response.data.message);
     }
+  }
+
+  function handleSeperateStudentList(list: Student[], status: ThesisStatus) {
+    return list.filter((student) => student.status === status);
   }
 
   return (

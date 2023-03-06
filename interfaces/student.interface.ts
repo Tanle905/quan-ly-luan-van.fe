@@ -1,3 +1,4 @@
+import { ThesisStatus } from "../constants/enums";
 import { Teacher } from "./teacher.interface";
 import { Topic } from "./topic.interface";
 import { User } from "./user.interface";
@@ -13,4 +14,5 @@ export interface Student extends User {
   sentTopic?: Topic;
   thesisProgress?: any;
   reportSchedule?: any;
+  status?: ThesisStatus;
 }
