@@ -7,4 +7,5 @@ export interface Teacher extends User {
   majorTags: any;
   studentList: Student[];
   reportSchedule: any[];
+  isImportedStudentListToSystem?: boolean;
 }

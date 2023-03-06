@@ -165,7 +165,7 @@ export function OGTable({ config, ...props }: OGTableProps) {
             (data: any, index: any) => {
               return {
                 key: index,
-                ...data,
+                ...(config.table.transform ? config.table.transform(data) : data),
               };
             }
           )}

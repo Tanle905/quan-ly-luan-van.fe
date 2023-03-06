@@ -12,6 +12,7 @@ export interface TableConfig {
   query?: any;
   table: {
     columns: ColumnsType<object>;
+    transform?: (data: any) => any;
   };
 }
 

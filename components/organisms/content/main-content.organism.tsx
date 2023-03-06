@@ -2,13 +2,15 @@ import {
   Layout,
   message,
   RadioChangeEvent,
+  TableProps,
   Tabs,
   TabsProps,
   Typography,
 } from "antd";
+import { TableRowSelection } from "antd/es/table/interface";
 import axios from "axios";
 import { cloneDeep } from "lodash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { sentRequestListConfig } from "../../../config/student/sent-request-list.config";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
@@ -21,6 +23,7 @@ import {
   COMMON_ENDPOINT,
 } from "../../../constants/endpoints";
 import { ThesisStatus } from "../../../constants/enums";
+import { reloadProfileSubject } from "../../../constants/observables";
 import { StudentList } from "../../../interfaces/schedule.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
@@ -59,9 +62,12 @@ function TeacherContent() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [selectedRowStatuses, setSelectedRowStatuses] = useState<any[]>([]);
-  const rowSelection = {
+  const rowSelection: TableRowSelection<any> = {
     selectedRowKeys,
     onChange: onSelectChange,
+    getCheckboxProps: (record: any) => ({
+      disabled: user?.isImportedStudentListToSystem,
+    }),
   };
   const teacherContentItems: TabsProps["items"] = [
     {
@@ -80,13 +86,20 @@ function TeacherContent() {
       children: (
         <OGTable
           rowSelection={rowSelection}
-          config={thesisDefenseStudentListConfig(handleSubmit, handleSetStatus)}
+          config={thesisDefenseStudentListConfig(
+            handleSubmit,
+            handleSetStatus,
+            selectedRowKeys,
+            user?.isImportedStudentListToSystem
+          )}
           key={3}
           size="small"
         />
       ),
     },
   ];
+
+  useEffect(() => {}, []);
 
   function onSelectChange(newSelectedRowKeys: React.Key[], selectedRows: any) {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -117,8 +130,12 @@ function TeacherContent() {
           status: row.value,
         })
     );
+    //Filter out incorrect data
+    const filteredClonedSelectedRows = clonedSelectedRows.filter(
+      (row) => row.MSSV
+    );
 
-    if (clonedSelectedRows.length === 0)
+    if (filteredClonedSelectedRows.length === 0)
       return message.error("Danh sách báo cáo trống.");
     if (!user) return;
 
@@ -127,11 +144,11 @@ function TeacherContent() {
         MSCB: user.MSCB,
         teacherName: `${user.lastName} ${user.firstName}`,
         students: handleSeperateStudentList(
-          clonedSelectedRows,
+          filteredClonedSelectedRows,
           ThesisStatus.IsReadyForThesisDefense
         ),
         incompleteStudents: handleSeperateStudentList(
-          clonedSelectedRows,
+          filteredClonedSelectedRows,
           ThesisStatus.IsMarkedForIncomplete
         ),
       };
@@ -143,6 +160,8 @@ function TeacherContent() {
         { data: studentList }
       );
 
+      setSelectedRowKeys([]);
+      reloadProfileSubject.next(1);
       message.success("Nộp danh sách báo cáo thành công.");
     } catch (error: any) {
       message.error(error.response.data.message);
