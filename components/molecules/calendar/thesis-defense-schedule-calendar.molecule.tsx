@@ -14,11 +14,17 @@ import { MCAddEventModal } from "../modal/add-event-modal.molecule";
 import useSWR from "swr";
 import moment from "@fullcalendar/moment";
 import { clearCache } from "../../../utils/swr.util";
+import { MCAddScheduleEventModal } from "../modal/add-schedule-event-modal.molecule";
 
-interface MCThesisDefenseScheduleCalendarProps {}
+interface MCThesisDefenseScheduleCalendarProps {
+  isModalVisible: boolean;
+  setIsModalVisible: any;
+}
 
-export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalendarProps) {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+export function MCThesisDefenseScheduleCalendar({
+  isModalVisible,
+  setIsModalVisible,
+}: MCThesisDefenseScheduleCalendarProps) {
   const [currentDateData, setCurrentDateData] = useState<any>(null);
   const [currentEventData, setCurrentEventData] = useState<any | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -63,6 +69,13 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
   return (
     <>
       {contextHodler}
+      <MCAddScheduleEventModal
+        isModalVisible={isModalVisible}
+        setIsModelVisible={setIsModalVisible}
+        currentDateData={currentDateData}
+        currentEventData={currentEventData}
+        setCurrentEventData={setCurrentEventData}
+      />
       <Layout.Content className="p-5 bg-white rounded-md shadow-md">
         <FullCalendar
           plugins={[daygrid, interaction, moment]}
