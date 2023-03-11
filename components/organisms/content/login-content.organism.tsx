@@ -51,7 +51,7 @@ export function OGLoginContent() {
 
   return (
     <>
-      <main className="h-screen grid grid-cols-2">
+      <div className="h-screen grid grid-cols-2">
         <Content className="col-span-1 flex justify-center items-center w-full">
           <Content className="m-auto w-4/6">
             <Title>Chào Mừng</Title>
@@ -121,7 +121,7 @@ export function OGLoginContent() {
             height={500}
           />
         </Content>
-      </main>
+      </div>
     </>
   );
 }

@@ -1,7 +1,6 @@
 import { Button, Layout, Typography } from "antd";
 import { useState } from "react";
 import { MCThesisDefenseScheduleCalendar } from "../../molecules/calendar/thesis-defense-schedule-calendar.molecule";
-import { MCAddEventModal } from "../../molecules/modal/add-event-modal.molecule";
 
 export function OGScheduleContent() {
   const [isModalVisible, setIsModalVisible] = useState(false);

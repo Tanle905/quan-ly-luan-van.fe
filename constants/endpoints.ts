@@ -49,4 +49,9 @@ export const THESIS_DEFENSE_SCHEDULE_ENDPOINT = {
   STUDENT_LIST: {
     BASE: "/student-list",
   },
+  CALENDAR: {
+    BASE: "/calendar",
+    BUSY_LIST: "/busy-time",
+    THESIS_DEFENSE_TIME: "/thesis-defense-time",
+  },
 };

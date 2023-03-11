@@ -8,10 +8,8 @@ import { Slot } from "../../../constants/enums";
 
 interface MCAddScheduleEventFormProps {
   currentDateData: (DateSelectArg & DateClickArg) | null;
-  currentEventData: any | null;
   form: FormInstance;
   isFormEditable: boolean;
-  setIsValid: any;
 }
 
 const slotsData: { name: string; value: Slot }[] = [
@@ -28,20 +26,14 @@ const slotsData: { name: string; value: Slot }[] = [
 ];
 
 export function MCAddScheduleEventForm({
-  currentDateData,
   form,
+  currentDateData,
   isFormEditable,
-  setIsValid,
 }: MCAddScheduleEventFormProps) {
   const [selectedSlots, setSelectedSlots] = useState<
     { name: string; value: Slot }[]
   >([]);
-  const selectedDateRange = currentDateData?.date
-    ? [dayjs(currentDateData.date), dayjs(currentDateData.date)]
-    : [
-        dayjs(currentDateData?.start),
-        dayjs(currentDateData?.end).subtract(1, "day"),
-      ];
+  const selectedDateRange = dayjs(currentDateData?.date);
 
   useEffect(() => {
     form.setFieldsValue({ date: selectedDateRange });
@@ -55,18 +47,16 @@ export function MCAddScheduleEventForm({
       );
     } else newSelectedSlots.push(curSlot);
     setSelectedSlots(newSelectedSlots);
+    form.setFieldValue("slot", newSelectedSlots);
   }
 
   return (
-    <Form
-      form={form}
-      onFieldsChange={() => setIsValid(handleValidateOnFieldChange(form))}
-      layout="vertical"
-    >
+    <Form form={form} layout="vertical">
       <span>Chọn buổi bận</span>
       <div className="mt-2 grid grid-cols-5 gap-2">
-        {slotsData.map((curSlot) => (
+        {slotsData.map((curSlot, index) => (
           <SlotElement
+            key={index}
             slot={curSlot}
             onclick={() => handleSelectSlot(curSlot)}
             selected={
@@ -77,10 +67,10 @@ export function MCAddScheduleEventForm({
           />
         ))}
       </div>
-      <Form.Item label={"Thời gian"} name="date" required>
-        <DatePicker.RangePicker
+      <Form.Item label={"Thời gian"} name="date" required className="mt-2">
+        <DatePicker
           format={"DD-MM-YYYY"}
-          className="w-full"
+          className="w-2/3"
           disabled={!isFormEditable}
         />
       </Form.Item>

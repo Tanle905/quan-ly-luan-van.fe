@@ -5,9 +5,19 @@ import axios from "axios";
 import { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { THESIS_PROGRESS_ENDPOINT } from "../../../constants/endpoints";
+import {
+  COMMON_ENDPOINT,
+  THESIS_DEFENSE_SCHEDULE_ENDPOINT,
+  THESIS_PROGRESS_ENDPOINT,
+} from "../../../constants/endpoints";
+import {
+  ScheduleEventType,
+  Slot,
+  ThesisStatus,
+} from "../../../constants/enums";
 import { calendarEventSendSubject } from "../../../constants/observables";
 import { CalendarEvent } from "../../../interfaces/calendar.interface";
+import { ScheduleEventTime } from "../../../interfaces/schedule.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { userState } from "../../../stores/auth.store";
 import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
@@ -28,7 +38,6 @@ export function MCAddScheduleEventModal({
   currentEventData,
   setCurrentEventData,
 }: MCAddScheduleEventModalProps) {
-  const [isValid, setIsValid] = useState(false);
   const [isFormEditable, setIsFormEditable] = useState(true);
   const [msg, contextHodler] = message.useMessage();
   const [addEventForm] = Form.useForm();
@@ -39,39 +48,40 @@ export function MCAddScheduleEventModal({
   }, [currentEventData]);
 
   function handleCloseModal() {
-    setIsValid(false);
     addEventForm.resetFields();
     setIsModelVisible(false);
     setCurrentEventData(null);
   }
 
   async function handleSaveEvent() {
-    const startDate: Dayjs = addEventForm.getFieldValue("date")[0];
-    const endDate: Dayjs = addEventForm.getFieldValue("date")[1];
-    const title = addEventForm.getFieldValue("title");
-    const description = addEventForm.getFieldValue("description");
+    if (!user?.MSCB) return;
 
-    if (!user) return;
+    const startDate: Dayjs = addEventForm.getFieldValue("date");
+    const slots: { name: string; value: Slot }[] =
+      addEventForm.getFieldValue("slot");
+    const mappedSlots: Slot[] = slots.map((slot) => slot.value);
+    const payload: ScheduleEventTime = {
+      type: ScheduleEventType.BusyEvent,
+      busyTimeData: {
+        start: startDate.toDate(),
+        MSCB: user.MSCB,
+        teacherName: `${user.lastName} ${user.firstName}`,
+        slots: mappedSlots,
+      },
+    };
 
     try {
       await axios[currentEventData ? "put" : "post"](
         process.env.NEXT_PUBLIC_BASE_URL +
-          THESIS_PROGRESS_ENDPOINT.BASE +
-          THESIS_PROGRESS_ENDPOINT.EVENT.BASE,
-        {
-          ...(currentEventData ? { id: currentEventData?.id } : {}),
-          MSSV: user?.MSSV,
-          MSCB: user.teacher?.MSCB,
-          start: startDate.toISOString(),
-          end: endDate.add(1, "day").toISOString(),
-          title,
-          description,
-        }
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BUSY_LIST + COMMON_ENDPOINT.IMPORT,
+        payload
       );
       calendarEventSendSubject.next(1);
       currentEventData
-        ? message.success("Chỉnh sửa sự kiện thành công")
-        : message.success("Thêm sự kiện thành công !");
+        ? message.success("Chỉnh sửa ngày bận thành công")
+        : message.success("Thêm ngày bận thành công !");
       handleCloseModal();
     } catch (error: any) {
       message.error(error.response.data.message);
@@ -105,7 +115,7 @@ export function MCAddScheduleEventModal({
       {contextHodler}
       <Modal
         open={isModalVisible}
-        title={currentEventData ? "Chỉnh sửa sự kiện" : "Thêm sự kiện"}
+        title={currentEventData ? "Chỉnh sửa ngày bận" : "Thêm ngày bận"}
         destroyOnClose={true}
         closable
         onCancel={handleCloseModal}
@@ -135,7 +145,6 @@ export function MCAddScheduleEventModal({
             <></>
           ),
           <AtomLoadingButton
-            disabled={!isValid}
             onClick={handleSaveEvent}
             buttonProps={{ type: "primary" }}
           >
@@ -146,9 +155,7 @@ export function MCAddScheduleEventModal({
         <MCAddScheduleEventForm
           isFormEditable={isFormEditable}
           currentDateData={currentDateData}
-          currentEventData={currentEventData}
           form={addEventForm}
-          setIsValid={setIsValid}
         />
       </Modal>
     </>

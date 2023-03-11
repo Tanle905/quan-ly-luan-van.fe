@@ -1,26 +1,11 @@
+import { ScheduleEventType, Slot, ThesisStatus } from "../constants/enums";
 import { CalendarEvent } from "./calendar.interface";
 import { Student } from "./student.interface";
-import { Teacher } from "./teacher.interface";
-
-export interface StudentList {
-  MSCB: string;
-  teacherName: string;
-  students: Student[];
-  incompleteStudents: Student[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface FreeTime extends CalendarEvent {
-  /**
-   * Data needed for calculation: busyTimesList & thesisDefenseTimesList.
-   */
-  calculatedFreeTeachersList: Teacher[];
-}
 
 export interface BusyTime extends CalendarEvent {
   MSCB: string;
   teacherName: string;
+  slots: Slot[];
 }
 
 export interface ThesisDefenseTime extends CalendarEvent {
@@ -31,18 +16,16 @@ export interface ThesisDefenseTime extends CalendarEvent {
   topicName: string;
 }
 
-export interface ScheduleCalendar {
-  busyTimesList: BusyTime[];
-  thesisDefenseTimesList: ThesisDefenseTime[];
-  reportPrepareWeek: CalendarEvent;
-  thesisDefenseWeek: CalendarEvent;
+export interface ScheduleEventTime {
+  type: ScheduleEventType;
+  busyTimeData?: BusyTime;
+  thesisDefenseTimeData?: ThesisDefenseTime;
 }
 
-export interface CalculatedCalendar {
-    /**
-     * time that have 3 or more teachers.
-     */
-  calculatedFreeTimesList: FreeTime[];
+export interface ScheduleCalendar {
+  scheduleEventList: ScheduleEventTime[];
+  reportPrepareWeek: CalendarEvent;
+  thesisDefenseWeek: CalendarEvent;
 }
 
 export interface ThesisDefenseSchedule {
@@ -51,5 +34,13 @@ export interface ThesisDefenseSchedule {
    * Data for client rendering.
    */
   calendar?: ScheduleCalendar;
-  calculatedCalendar?: CalculatedCalendar;
+}
+
+export interface StudentList {
+  MSCB: string;
+  teacherName: string;
+  students: Student[];
+  incompleteStudents: Student[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }

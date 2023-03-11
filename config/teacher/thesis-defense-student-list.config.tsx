@@ -110,7 +110,7 @@ export const thesisDefenseStudentListConfig: (
           },
         },
         {
-          key: "isReadyForThesisDefense",
+          key: "status",
           width: "20%",
           title: "Trạng thái",
           render: (text, student: any, index) => (

@@ -24,6 +24,7 @@ import {
 } from "../../../constants/endpoints";
 import { ThesisStatus } from "../../../constants/enums";
 import { reloadProfileSubject } from "../../../constants/observables";
+import { useMount } from "../../../hooks/use-mount";
 import { StudentList } from "../../../interfaces/schedule.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
@@ -47,12 +48,14 @@ const studentContentItems: TabsProps["items"] = [
 ];
 
 export function OGMainContent({}: OGMainContentProps) {
+  const isMounted = useMount();
+
   return (
     <Layout.Content className="mx-20 my-5 space-y-3">
       <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
-        Danh sách {isTeacher() ? "sinh viên" : "giảng viên"}
+        Danh sách {isMounted && isTeacher() ? "sinh viên" : "giảng viên"}
       </Typography.Title>
-      {isTeacher() ? <TeacherContent /> : <StudentContent />}
+      {isMounted && isTeacher() ? <TeacherContent /> : <StudentContent />}
     </Layout.Content>
   );
 }

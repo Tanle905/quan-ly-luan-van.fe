@@ -6,7 +6,6 @@ import { isStudent, isTeacher } from "../utils/role.util";
 
 const { Content } = Layout;
 export default function Home() {
-  if (!isTeacher() && !isStudent()) return null;
 
   return (
     <>

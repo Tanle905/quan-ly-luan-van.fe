@@ -103,17 +103,13 @@ export function MCThesisDefenseScheduleCalendar({
           // events={data}
           weekNumbers
           weekText="Tuần "
-          selectable
+          selectable={false}
           selectMirror
           locale="vi"
           firstDay={1}
           height={500}
           eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
           dateClick={(data) => {
-            setCurrentDateData(data);
-            setIsModalVisible(true);
-          }}
-          select={(data) => {
             setCurrentDateData(data);
             setIsModalVisible(true);
           }}
@@ -124,11 +120,15 @@ export function MCThesisDefenseScheduleCalendar({
           }}
         />
       </Layout.Content>
-      <style>{`
-.fc .fc-daygrid-day.fc-day-today {
-    color: white;
-    background-color: rgb(99 102 241);
-}
+      <style global>{`
+      .fc-daygrid-day:hover {
+        cursor: pointer;
+        background-color: rgb(230 230 230);
+      }
+      .fc .fc-daygrid-day.fc-day-today {
+          color: white;
+          background-color: rgb(99 102 241);
+      }
   `}</style>
     </>
   );

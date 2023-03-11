@@ -1,21 +1,12 @@
 import { TableConfig } from "../interface/table-config.interface";
 import { REQUEST_ENDPOINT } from "../../constants/endpoints";
-import { TAG_ENDPOINT } from "../../constants/endpoints";
-import { MajorTag } from "../../components/molecules/form/profile-form.molecule";
 import { AtomSentRequestTableAction } from "../../components/atoms/action/sent-request-table-action.atom";
-import { Tag } from "antd";
+import { Tag, Typography } from "antd";
+import dayjs from "dayjs";
 
 export const sentRequestListConfig: TableConfig = {
   apiEndpoint: REQUEST_ENDPOINT.BASE,
   search: true,
-  filter: [
-    {
-      key: "majorTags",
-      label: "Chủ đề",
-      endpoint: TAG_ENDPOINT.BASE + TAG_ENDPOINT.MAJOR_TAGS,
-      selectProps: { mode: "multiple", showArrow: true, tagRender: MajorTag },
-    },
-  ],
   table: {
     columns: [
       {
@@ -47,6 +38,16 @@ export const sentRequestListConfig: TableConfig = {
           return record.teacher.majorTags?.map((tag: string, index: number) => (
             <Tag key={index}>{tag}</Tag>
           ));
+        },
+      },
+      {
+        key: "createdAt",
+        title: "Ngày gửi",
+        dataIndex: "createdAt",
+        render: (date: any, record: any) => {
+          return (
+            <Typography.Text>{dayjs(date).format("LLLL A")}</Typography.Text>
+          );
         },
       },
       {
