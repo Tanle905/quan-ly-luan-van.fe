@@ -2,6 +2,7 @@ import {
   MessageOutlined,
   InfoCircleOutlined,
   CloseOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
@@ -28,6 +29,8 @@ export function AtomSentRequestTableAction({
   const router = useRouter();
 
   async function handleAcceptRequest() {
+    if (!user || request.isStudentAccepted) return null;
+
     try {
       await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL +
@@ -35,6 +38,7 @@ export function AtomSentRequestTableAction({
           REQUEST_ENDPOINT.ACCEPT,
         {
           id: request._id,
+          role: user.roles[0],
         }
       );
 
@@ -68,6 +72,22 @@ export function AtomSentRequestTableAction({
   }
   return (
     <Layout.Content className="flex justify-end space-x-1">
+      <Tooltip
+        title={
+          request.isStudentAccepted
+            ? "Bạn đã chấp nhận yêu cầu"
+            : "Chấp nhận yêu cầu"
+        }
+      >
+        <CheckOutlined
+          onClick={handleAcceptRequest}
+          className={`p-2 rounded-md transition-all ${
+            request.isStudentAccepted
+              ? "bg-gray-300 text-gray-800"
+              : "text-green-600 hover:bg-indigo-600 hover:text-white"
+          }`}
+        />
+      </Tooltip>
       <Tooltip title="Xóa yêu cầu">
         <CloseOutlined
           onClick={handleDeleteRequest}

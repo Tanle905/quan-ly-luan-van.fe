@@ -2,6 +2,8 @@ import { TableConfig } from "../interface/table-config.interface";
 import { REQUEST_ENDPOINT } from "../../constants/endpoints";
 import { AtomSentRequestTableAction } from "../../components/atoms/action/sent-request-table-action.atom";
 import { AtomReceivedRequestTableAction } from "../../components/atoms/action/received-request-table-action.atom";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Layout, Typography, Divider } from "antd";
 
 export const receivedRequestListConfig: TableConfig = {
   apiEndpoint: REQUEST_ENDPOINT.BASE,
@@ -44,6 +46,33 @@ export const receivedRequestListConfig: TableConfig = {
         dataIndex: "topic",
         render: (topic: any, record: any) => {
           return topic.topicName;
+        },
+      },
+      {
+        key: "requestStatus",
+        title: "Trạng thái yêu cầu",
+        render: (date: any, record: any) => {
+          return (
+            <Layout.Content className="flex items-center">
+              <Typography.Text>
+                Sinh viên{" "}
+                {record.isStudentAccepted ? (
+                  <CheckOutlined className="text-green-600" />
+                ) : (
+                  <CloseOutlined className="text-red-600" />
+                )}
+              </Typography.Text>
+              <Divider type="vertical" />
+              <Typography.Text>
+                Giảng viên{" "}
+                {record.isTeacherAccepted ? (
+                  <CheckOutlined className="text-green-600" />
+                ) : (
+                  <CloseOutlined className="text-red-600" />
+                )}
+              </Typography.Text>
+            </Layout.Content>
+          );
         },
       },
       {

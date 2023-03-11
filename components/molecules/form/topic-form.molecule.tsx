@@ -54,7 +54,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
     mounted && baseURL + TOPIC_ENDPOINT.BASE + "/" + topicId,
     topicFetcher
   );
-  const { data: tagData } = useSWR(
+  const { data: tagData, isLoading } = useSWR(
     mounted &&
       process.env.NEXT_PUBLIC_BASE_URL +
         TAG_ENDPOINT.BASE +
@@ -67,6 +67,11 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
     { title: "Chờ duyệt" },
     { title: "Đã duyệt", status: "finish" },
   ];
+  const disabledInputRules =
+    !canEdit ||
+    (!canEdit &&
+      ((isTeacher() && topic?.topicStatus !== TopicStatus.Accepted) ||
+        (isStudent() && isTopicExist)));
 
   useEffect(() => {
     setMounted(true);
@@ -107,7 +112,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
     const majorTag = form.getFieldValue("majorTag");
     const topicDescription = form.getFieldValue("topicDescription");
     try {
-      await axios.post<any, any, Topic>(
+      await axios.post<any, any, any>(
         `${baseURL}${TOPIC_ENDPOINT.BASE}/${topicId}${TOPIC_ENDPOINT.SEND}`,
         {
           MSSV: user.MSSV,
@@ -117,6 +122,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
           majorTag: majorTag,
           topicEnglishName,
           topicDescription,
+          role: user.roles[0],
         }
       );
 
@@ -194,6 +200,9 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
 
   if (!mounted) return null;
 
+  if (!topicData && isLoading)
+    return <Typography.Text>Loading...</Typography.Text>;
+
   return (
     <>
       <Content>
@@ -203,7 +212,9 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
         <Form
           form={form}
           className="space-y-5"
-          onFieldsChange={() => setIsValid(handleValidateOnFieldChange(form))}
+          onFieldsChange={() =>
+            setIsValid(handleValidateOnFieldChange(form, true))
+          }
         >
           <Content className="flex items-center">
             <span className="w-52">Trạng thái: </span>
@@ -216,15 +227,13 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
           <Content className="flex items-center">
             <span className="w-52">Tên đề tài: </span>
             <Item
+              required
               className="w-full"
               name="topicName"
               style={{ marginBottom: 0 }}
               rules={[{ required: true, max: 100 }]}
             >
-              <Input
-                type="text"
-                disabled={isTeacher() || (isTopicExist && !canEdit)}
-              />
+              <Input required type="text" disabled={disabledInputRules} />
             </Item>
           </Content>
           <Content className="flex items-center">
@@ -235,10 +244,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
               style={{ marginBottom: 0 }}
               rules={[{ required: true, max: 100 }]}
             >
-              <Input
-                type="text"
-                disabled={isTeacher() || (isTopicExist && !canEdit)}
-              />
+              <Input type="text" disabled={disabledInputRules} />
             </Item>
           </Content>
           <Content className="flex items-center">
@@ -249,7 +255,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
               style={{ marginBottom: 0 }}
             >
               <Select
-                disabled={isTeacher() || (isTopicExist && !canEdit)}
+                disabled={disabledInputRules}
                 tagRender={MajorTag}
                 options={options}
                 showArrow
@@ -264,10 +270,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
               style={{ marginBottom: 0 }}
               rules={[{ required: true, max: 300 }]}
             >
-              <TextArea
-                rows={4}
-                disabled={isTeacher() || (isTopicExist && !canEdit)}
-              />
+              <TextArea rows={4} disabled={disabledInputRules} />
             </Item>
           </Content>
         </Form>
@@ -276,11 +279,6 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
             <>
               <Divider />
               <Content className="flex justify-end space-x-2">
-                {isTopicExist && (
-                  <Button onClick={() => setCanEdit(true)} type="dashed">
-                    Chỉnh sửa chủ đề
-                  </Button>
-                )}
                 <Button
                   disabled={isTopicExist && !canEdit}
                   onClick={handleResetField}
@@ -289,45 +287,70 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
                 >
                   Đặt lại
                 </Button>
+                <Button onClick={() => setCanEdit(true)} type="dashed">
+                  Chỉnh sửa đề tài
+                </Button>
                 <AtomLoadingButton
                   disabled={!isValid}
                   onClick={handleSendTopic}
                   buttonProps={{ type: "primary" }}
                 >
-                  Gửi đề tài
+                  Lưu đề tài
                 </AtomLoadingButton>
               </Content>
             </>
           )}
         </>
         <>
-          {isTeacher() && !(topic?.topicStatus === TopicStatus.Accepted) && (
-            <>
-              <Divider />
-              <Content className="flex justify-end space-x-2">
-                <AtomLoadingButton
-                  disabled={
-                    topic?.topicStatus === TopicStatus.RequestChange ||
-                    (!isTopicExist && !canEdit)
-                  }
-                  onClick={handleRequestChangeTopic}
-                  buttonProps={{
-                    type: "ghost",
-                    className:
-                      "text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400",
-                  }}
-                >
-                  Yêu cầu chỉnh sửa
-                </AtomLoadingButton>
-                <AtomLoadingButton
-                  disabled={!isTopicExist}
-                  onClick={handleAcceptTopic}
-                  buttonProps={{ type: "primary" }}
-                >
-                  Duyệt đề tài
-                </AtomLoadingButton>
-              </Content>
-            </>
+          {isTeacher() ? (
+            topic?.topicStatus !== TopicStatus.Accepted ? (
+              <>
+                <Divider />
+                <Content className="flex justify-end space-x-2">
+                  <AtomLoadingButton
+                    disabled={
+                      topic?.topicStatus === TopicStatus.RequestChange ||
+                      (!isTopicExist && !canEdit)
+                    }
+                    onClick={handleRequestChangeTopic}
+                    buttonProps={{
+                      type: "ghost",
+                      className:
+                        "text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400",
+                    }}
+                  >
+                    Yêu cầu chỉnh sửa
+                  </AtomLoadingButton>
+                  <AtomLoadingButton
+                    disabled={!isTopicExist}
+                    onClick={handleAcceptTopic}
+                    buttonProps={{ type: "primary" }}
+                  >
+                    Duyệt đề tài
+                  </AtomLoadingButton>
+                </Content>
+              </>
+            ) : (
+              <>
+                <Divider />
+                <Content className="flex justify-end space-x-2">
+                  {isTopicExist && (
+                    <Button onClick={() => setCanEdit(true)} type="dashed">
+                      Chỉnh sửa đề tài
+                    </Button>
+                  )}
+                  <AtomLoadingButton
+                    disabled={!isValid}
+                    onClick={handleSendTopic}
+                    buttonProps={{ type: "primary" }}
+                  >
+                    Lưu đề tài
+                  </AtomLoadingButton>
+                </Content>
+              </>
+            )
+          ) : (
+            <></>
           )}
         </>
       </Content>

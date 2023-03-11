@@ -11,8 +11,6 @@ const { Content } = Layout;
 export default function Home() {
   const user = useRecoilValue<Student | null>(userState);
 
-  if (!isTeacher() && !isStudent()) return null;
-
   return (
     <>
       <Head>

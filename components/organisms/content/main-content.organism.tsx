@@ -179,6 +179,7 @@ function TeacherContent() {
     <Tabs
       items={teacherContentItems}
       className="p-5 bg-white rounded-md shadow-md"
+      defaultActiveKey="2"
       destroyInactiveTabPane
     />
   );
