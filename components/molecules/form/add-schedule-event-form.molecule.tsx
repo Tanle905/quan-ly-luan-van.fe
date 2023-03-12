@@ -8,6 +8,7 @@ import { Slot } from "../../../constants/enums";
 
 interface MCAddScheduleEventFormProps {
   currentDateData: (DateSelectArg & DateClickArg) | null;
+  currentEventData: any[] | null;
   form: FormInstance;
   isFormEditable: boolean;
 }
@@ -28,6 +29,7 @@ const slotsData: { name: string; value: Slot }[] = [
 export function MCAddScheduleEventForm({
   form,
   currentDateData,
+  currentEventData,
   isFormEditable,
 }: MCAddScheduleEventFormProps) {
   const [selectedSlots, setSelectedSlots] = useState<
@@ -37,6 +39,14 @@ export function MCAddScheduleEventForm({
 
   useEffect(() => {
     form.setFieldsValue({ date: selectedDateRange });
+    if (currentEventData) {
+      const filteredSlot = slotsData.filter((slot) =>
+        currentEventData[0].slots.find((curSlot: any) => {
+          return curSlot.slot === slot.value;
+        })
+      );
+      setSelectedSlots(filteredSlot);
+    }
   }, []);
 
   function handleSelectSlot(curSlot: { name: string; value: Slot }) {
@@ -70,7 +80,7 @@ export function MCAddScheduleEventForm({
       <Form.Item label={"Thời gian"} name="date" required className="mt-2">
         <DatePicker
           format={"DD-MM-YYYY"}
-          className="w-2/3"
+          className="w-full"
           disabled={!isFormEditable}
         />
       </Form.Item>

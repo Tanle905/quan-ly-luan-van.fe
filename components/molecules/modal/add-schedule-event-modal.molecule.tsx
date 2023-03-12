@@ -6,6 +6,7 @@ import { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import {
+  baseURL,
   COMMON_ENDPOINT,
   THESIS_DEFENSE_SCHEDULE_ENDPOINT,
   THESIS_PROGRESS_ENDPOINT,
@@ -27,7 +28,7 @@ interface MCAddScheduleEventModalProps {
   isModalVisible: boolean;
   setIsModelVisible: any;
   currentDateData: (DateSelectArg & DateClickArg) | null;
-  currentEventData: CalendarEvent | null;
+  currentEventData: any[] | null;
   setCurrentEventData: any;
 }
 
@@ -72,11 +73,15 @@ export function MCAddScheduleEventModal({
 
     try {
       await axios[currentEventData ? "put" : "post"](
-        process.env.NEXT_PUBLIC_BASE_URL +
+        baseURL +
           THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
           THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE +
-          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BUSY_LIST + COMMON_ENDPOINT.IMPORT,
-        payload
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BUSY_LIST +
+          COMMON_ENDPOINT.IMPORT,
+        {
+          ...payload,
+          ...(currentEventData ? { id: currentEventData[0].id } : {}),
+        }
       );
       calendarEventSendSubject.next(1);
       currentEventData
@@ -89,16 +94,16 @@ export function MCAddScheduleEventModal({
   }
 
   async function handleDeleteEvent() {
-    if (!user) return;
+    if (!user || !currentEventData) return;
 
     try {
       await axios.post(
-        process.env.NEXT_PUBLIC_BASE_URL +
-          THESIS_PROGRESS_ENDPOINT.BASE +
-          THESIS_PROGRESS_ENDPOINT.EVENT.BASE +
-          THESIS_PROGRESS_ENDPOINT.EVENT.DELETE,
+        baseURL +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BUSY_LIST,
         {
-          id: currentEventData?.id,
+          id: currentEventData[0].id,
           MSSV: user?.MSSV,
         }
       );
@@ -139,7 +144,7 @@ export function MCAddScheduleEventModal({
                 type: "ghost",
               }}
             >
-              Xóa sự kiện
+              Xóa ngày bận
             </AtomLoadingButton>
           ) : (
             <></>
@@ -155,6 +160,7 @@ export function MCAddScheduleEventModal({
         <MCAddScheduleEventForm
           isFormEditable={isFormEditable}
           currentDateData={currentDateData}
+          currentEventData={currentEventData}
           form={addEventForm}
         />
       </Modal>
