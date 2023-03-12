@@ -28,7 +28,6 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
   const [currentEventData, setCurrentEventData] = useState<any[] | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const user = useRecoilValue<(Teacher & Student) | null>(userState);
-  const [msg, contextHodler] = message.useMessage();
   const { data, mutate, isLoading } = useSWR(
     isMounted &&
       baseURL +
@@ -70,7 +69,6 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
 
   return (
     <>
-      {contextHodler}
       <MCAddScheduleEventModal
         isModalVisible={isModalVisible}
         setIsModelVisible={setIsModalVisible}

@@ -9,15 +9,9 @@ import {
   baseURL,
   COMMON_ENDPOINT,
   THESIS_DEFENSE_SCHEDULE_ENDPOINT,
-  THESIS_PROGRESS_ENDPOINT,
 } from "../../../constants/endpoints";
-import {
-  ScheduleEventType,
-  Slot,
-  ThesisStatus,
-} from "../../../constants/enums";
+import { ScheduleEventType, Slot } from "../../../constants/enums";
 import { calendarEventSendSubject } from "../../../constants/observables";
-import { CalendarEvent } from "../../../interfaces/calendar.interface";
 import { ScheduleEventTime } from "../../../interfaces/schedule.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { userState } from "../../../stores/auth.store";
@@ -40,7 +34,6 @@ export function MCAddScheduleEventModal({
   setCurrentEventData,
 }: MCAddScheduleEventModalProps) {
   const [isFormEditable, setIsFormEditable] = useState(true);
-  const [msg, contextHodler] = message.useMessage();
   const [addEventForm] = Form.useForm();
   const user = useRecoilValue<Student | null>(userState);
 
@@ -108,7 +101,7 @@ export function MCAddScheduleEventModal({
         }
       );
       calendarEventSendSubject.next(1);
-      message.success("Xóa sự kiện thành công !");
+      message.success("Xóa ngày bận thành công !");
       handleCloseModal();
     } catch (error: any) {
       message.error(error.response.data.message);
@@ -117,7 +110,6 @@ export function MCAddScheduleEventModal({
 
   return (
     <>
-      {contextHodler}
       <Modal
         open={isModalVisible}
         title={currentEventData ? "Chỉnh sửa ngày bận" : "Thêm ngày bận"}

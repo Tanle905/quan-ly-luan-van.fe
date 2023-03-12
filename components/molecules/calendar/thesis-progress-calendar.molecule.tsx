@@ -5,9 +5,7 @@ import { message, Layout } from "antd";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import {
-    THESIS_PROGRESS_ENDPOINT,
-} from "../../../constants/endpoints";
+import { THESIS_PROGRESS_ENDPOINT } from "../../../constants/endpoints";
 import { calendarEventSendSubject } from "../../../constants/observables";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
@@ -30,11 +28,12 @@ export function MCThesisProgressCalendar({
   const [isMounted, setIsMounted] = useState(false);
   const { data, mutate } = useSWR(
     isMounted &&
-      process.env.NEXT_PUBLIC_BASE_URL + THESIS_PROGRESS_ENDPOINT.BASE + THESIS_PROGRESS_ENDPOINT.EVENT,
+      process.env.NEXT_PUBLIC_BASE_URL +
+        THESIS_PROGRESS_ENDPOINT.BASE +
+        THESIS_PROGRESS_ENDPOINT.EVENT,
     thesisProgressEventFetcher
   );
   const user = useRecoilValue<(Teacher & Student) | null>(userState);
-  const [msg, contextHodler] = message.useMessage();
 
   useEffect(() => {
     setIsMounted(true);
@@ -66,7 +65,6 @@ export function MCThesisProgressCalendar({
 
   return (
     <>
-      {contextHodler}
       <Layout.Content>
         <FullCalendar
           plugins={[daygrid, interaction, moment]}

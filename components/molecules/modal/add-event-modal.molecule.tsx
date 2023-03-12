@@ -31,7 +31,6 @@ export function MCAddEventModal({
 }: MCAddEventModalProps) {
   const [isValid, setIsValid] = useState(false);
   const [isFormEditable, setIsFormEditable] = useState(true);
-  const [msg, contextHodler] = message.useMessage();
   const [addEventForm] = Form.useForm();
   const user = useRecoilValue<Student | null>(userState);
 
@@ -103,7 +102,6 @@ export function MCAddEventModal({
 
   return (
     <>
-      {contextHodler}
       <Modal
         open={isModalVisible}
         title={currentEventData ? "Chỉnh sửa sự kiện" : "Thêm sự kiện"}
