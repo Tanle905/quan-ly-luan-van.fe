@@ -21,7 +21,7 @@ export function MCHeaderLeft({ styles }: MCHeaderLeftProps) {
 
   switch (user?.roles[0]) {
     case Roles.TEACHER:
-      homeRoute = SCREEN_ROUTE.THESIS_PROGRESS;
+      homeRoute = SCREEN_ROUTE.BASE;
       break;
     case Roles.STUDENT:
       homeRoute = user.teacher
