@@ -16,7 +16,7 @@ import { userState } from "../../../stores/auth.store";
 import useSWR from "swr";
 import { clearCache } from "../../../utils/swr.util";
 import { MCAddScheduleEventModal } from "../modal/add-schedule-event-modal.molecule";
-import { isTeacher } from "../../../utils/role.util";
+import { isAdmin, isTeacher } from "../../../utils/role.util";
 import timegrid from "@fullcalendar/timegrid";
 import dayjs from "dayjs";
 
@@ -53,11 +53,11 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
   async function thesisProgressEventFetcher(url: string) {
     if (!user) return;
     try {
-      const { data } = await axios.get(
-        `${url}/?${isTeacher() ? "MSCB" : "MSSV"}=${
-          isTeacher() ? user.MSCB : user.MSSV
-        }`
-      );
+      const { data } = await axios.post(url, {
+        MSCB: user.MSCB,
+        MSSV: user.MSSV,
+        role: user.roles[0],
+      });
 
       return data.data;
     } catch (error: any) {
@@ -120,6 +120,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
           height={550}
           eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
           dateClick={(dateData) => {
+            if (isAdmin()) return;
             const filteredEventData = data.filter(
               (date) =>
                 dayjs(date.start).format("DD-MM-YYYY") ===
