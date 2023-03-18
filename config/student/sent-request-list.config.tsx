@@ -52,6 +52,14 @@ export const sentRequestListConfig: TableConfig = {
         },
       },
       {
+        key: "topic",
+        title: "Tên đề tài",
+        dataIndex: "topic",
+        render: (date: any, record: any) => {
+          return <Typography.Text>{date.topicName}</Typography.Text>;
+        },
+      },
+      {
         key: "requestStatus",
         title: "Trạng thái yêu cầu",
         render: (date: any, record: any) => {

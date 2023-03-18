@@ -9,6 +9,9 @@ import useSWR from "swr";
 import { baseURL, STUDENT_ENDPOINT } from "../../../constants/endpoints";
 import axios from "axios";
 import { Student } from "../../../interfaces/student.interface";
+import { MCProfileForm } from "../../molecules/form/profile-form.molecule";
+import { useRecoilValue } from "recoil";
+import { userState } from "../../../stores/auth.store";
 
 interface OGThesisProgressContentProps {
   MSSV?: string;
@@ -16,6 +19,7 @@ interface OGThesisProgressContentProps {
 }
 
 export function OGThesisProgressContent(props: OGThesisProgressContentProps) {
+  const user = useRecoilValue<Student | null>(userState);
   const [MSSV, setMSSV] = useState(props.MSSV);
   const [topic, setTopic] = useState<Topic | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -52,6 +56,11 @@ export function OGThesisProgressContent(props: OGThesisProgressContentProps) {
       label: `Tiến trình luận văn`,
       children: <MCThesisProgressCalendar MSSV={MSSV} />,
       disabled: topic?.topicStatus !== TopicStatus.Accepted,
+    },
+    {
+      key: "3",
+      label: "Thông tin giảng viên",
+      children: <MCProfileForm readOnly profile={user?.teacher} />,
     },
   ];
 

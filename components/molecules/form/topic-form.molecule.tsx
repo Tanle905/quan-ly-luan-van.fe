@@ -233,7 +233,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
               style={{ marginBottom: 0 }}
               rules={[{ required: true, max: 100 }]}
             >
-              <Input required type="text" disabled={disabledInputRules} />
+              <Input required type="text" readOnly={disabledInputRules} />
             </Item>
           </Content>
           <Content className="flex items-center">
@@ -244,7 +244,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
               style={{ marginBottom: 0 }}
               rules={[{ required: true, max: 100 }]}
             >
-              <Input type="text" disabled={disabledInputRules} />
+              <Input type="text" readOnly={disabledInputRules} />
             </Item>
           </Content>
           <Content className="flex items-center">
@@ -255,7 +255,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
               style={{ marginBottom: 0 }}
             >
               <Select
-                disabled={disabledInputRules}
+                className={`${disabledInputRules ? "readOnly" : ""}`}
                 tagRender={MajorTag}
                 options={options}
                 showArrow
@@ -270,7 +270,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
               style={{ marginBottom: 0 }}
               rules={[{ required: true, max: 300 }]}
             >
-              <TextArea rows={4} disabled={disabledInputRules} />
+              <TextArea rows={4} readOnly={disabledInputRules} />
             </Item>
           </Content>
         </Form>
@@ -354,6 +354,12 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
           )}
         </>
       </Content>
+      <style global>
+        {`.ant-select.readOnly
+          {
+            pointer-events: none;
+          }`}
+      </style>
     </>
   );
 }
