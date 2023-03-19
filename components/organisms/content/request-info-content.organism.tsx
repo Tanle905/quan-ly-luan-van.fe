@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import useSWR from "swr";
 import { baseURL, REQUEST_ENDPOINT } from "../../../constants/endpoints";
+import { useMount } from "../../../hooks/use-mount";
 import { Request } from "../../../interfaces/request.interface";
 import { isTeacher } from "../../../utils/role.util";
 import { MCProfileForm } from "../../molecules/form/profile-form.molecule";
@@ -15,18 +16,24 @@ export function OGRequestInfoContent({}: OGRequestInfoContentProps) {
   const [topic, setTopic] = useState(null);
   const router = useRouter();
   const { data } = useSWR<Request>(
-    baseURL + REQUEST_ENDPOINT.BASE + "/" + router.query.pid,
+    router.query.pid &&
+      baseURL + REQUEST_ENDPOINT.BASE + "/" + router.query.pid,
     fetchData
   );
+  const isMounted = useMount();
 
-  if (!data) return null;
+  if (!isMounted || !data) return null;
 
   const items: TabsProps["items"] = [
     {
       key: "1",
       label: `Thảo luận chủ đề luận văn`,
       children: (
-        <MCTopicForm topicId={data.topic?._id} topic={topic} setTopic={setTopic} />
+        <MCTopicForm
+          topicId={data.topic?._id}
+          topic={topic}
+          setTopic={setTopic}
+        />
       ),
     },
     {

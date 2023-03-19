@@ -158,7 +158,7 @@ export function OGTable({ config, ...props }: OGTableProps) {
             (isLoading || isValidating) && { indicator: <LoadingOutlined /> }
           }
           scroll={{ x: 500 }}
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: config.table.pageSize ?? 4 }}
           columns={config.table.columns}
           onChange={handleSortTable}
           dataSource={(config.apiEndpoint ? data : config.data).map(

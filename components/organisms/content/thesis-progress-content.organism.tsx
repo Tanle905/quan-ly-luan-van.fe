@@ -23,22 +23,10 @@ export function OGThesisProgressContent(props: OGThesisProgressContentProps) {
   const [MSSV, setMSSV] = useState(props.MSSV);
   const [topic, setTopic] = useState<Topic | null>(null);
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-
-    if (props.data) {
-      setMSSV(data?.MSSV);
-    }
-  }, []);
-
   const { data } = useSWR<Student>(
     mounted && MSSV && baseURL + STUDENT_ENDPOINT.BASE + "/" + MSSV,
     datafetcher
   );
-
-  if (MSSV && !data) return null;
-
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -63,6 +51,16 @@ export function OGThesisProgressContent(props: OGThesisProgressContentProps) {
       children: <MCProfileForm readOnly profile={user?.teacher} />,
     },
   ];
+
+  useEffect(() => {
+    setMounted(true);
+
+    if (props.data) {
+      setMSSV(data?.MSSV);
+    }
+  }, []);
+
+  if (MSSV && !data) return null;
 
   async function datafetcher(url: string) {
     return (await axios.post(url)).data.data;

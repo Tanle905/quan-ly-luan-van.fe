@@ -5,6 +5,7 @@ import {
   Input,
   Layout,
   message,
+  Modal,
   Select,
   StepProps,
   Steps,
@@ -12,7 +13,8 @@ import {
   Typography,
 } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import useSWR from "swr";
 import {
@@ -50,6 +52,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
   const [isValid, setIsValid] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
   const [options, setOptions] = useState([]);
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
   const { data: topicData, mutate } = useSWR(
     mounted && baseURL + TOPIC_ENDPOINT.BASE + "/" + topicId,
     topicFetcher
@@ -61,17 +64,13 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
         TAG_ENDPOINT.MAJOR_TAGS,
     tagsFetcher
   );
-  const isTopicExist = topicData?.topicName?.length > 0 ? true : false;
+  const isTopicAccepted = topicData?.topicStatus === TopicStatus.Accepted;
   let steps: StepsProps["items"] = [
     { title: "Tạo chủ đề" },
     { title: "Chờ duyệt" },
     { title: "Đã duyệt", status: "finish" },
   ];
-  const disabledInputRules =
-    !canEdit ||
-    (!canEdit &&
-      ((isTeacher() && topic?.topicStatus !== TopicStatus.Accepted) ||
-        (isStudent() && isTopicExist)));
+  const disabledInputRules = !canEdit || (isStudent() && isTopicAccepted);
 
   useEffect(() => {
     setMounted(true);
@@ -115,14 +114,12 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
       await axios.post<any, any, any>(
         `${baseURL}${TOPIC_ENDPOINT.BASE}/${topicId}${TOPIC_ENDPOINT.SEND}`,
         {
-          MSSV: user.MSSV,
-          MSCB: user.teacher?.MSCB as string,
-          studentName: `${user.lastName} ${user.firstName}`,
           topicName,
-          majorTag: majorTag,
           topicEnglishName,
+          majorTag: majorTag,
           topicDescription,
           role: user.roles[0],
+          updatedBy: `${user.lastName} ${user.firstName}`,
         }
       );
 
@@ -205,6 +202,15 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
 
   return (
     <>
+      <Modal
+        width={600}
+        title="Lịch sử thay đổi"
+        open={historyModalVisible}
+        onCancel={() => setHistoryModalVisible(false)}
+        footer={[]}
+      >
+        <HistoryModalBody history={topicData?.history} />
+      </Modal>
       <Content>
         <Title level={4} style={{ marginTop: 0 }}>
           Chủ đề luận văn
@@ -274,92 +280,134 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
             </Item>
           </Content>
         </Form>
-        <>
-          {isStudent() && !(topic?.topicStatus === TopicStatus.Accepted) && (
-            <>
-              <Divider />
-              <Content className="flex justify-end space-x-2">
-                <Button
-                  disabled={isTopicExist && !canEdit}
-                  onClick={handleResetField}
-                  type="ghost"
-                  className="text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400"
-                >
-                  Đặt lại
-                </Button>
-                <Button onClick={() => setCanEdit(true)} type="dashed">
-                  Chỉnh sửa đề tài
-                </Button>
-                <AtomLoadingButton
-                  disabled={!isValid}
-                  onClick={handleSendTopic}
-                  buttonProps={{ type: "primary" }}
-                >
-                  Lưu đề tài
-                </AtomLoadingButton>
-              </Content>
-            </>
-          )}
-        </>
-        <>
-          {isTeacher() ? (
-            topic?.topicStatus !== TopicStatus.Accepted ? (
-              <>
-                <Divider />
-                <Content className="flex justify-end space-x-2">
-                  <AtomLoadingButton
-                    disabled={
-                      topic?.topicStatus === TopicStatus.RequestChange ||
-                      (!isTopicExist && !canEdit)
-                    }
-                    onClick={handleRequestChangeTopic}
-                    buttonProps={{
-                      type: "ghost",
-                      className:
-                        "text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400",
-                    }}
-                  >
-                    Yêu cầu chỉnh sửa
-                  </AtomLoadingButton>
-                  <AtomLoadingButton
-                    disabled={!isTopicExist}
-                    onClick={handleAcceptTopic}
-                    buttonProps={{ type: "primary" }}
-                  >
-                    Duyệt đề tài
-                  </AtomLoadingButton>
-                </Content>
-              </>
-            ) : (
-              <>
-                <Divider />
-                <Content className="flex justify-end space-x-2">
-                  {isTopicExist && (
-                    <Button onClick={() => setCanEdit(true)} type="dashed">
-                      Chỉnh sửa đề tài
-                    </Button>
-                  )}
-                  <AtomLoadingButton
-                    disabled={!isValid}
-                    onClick={handleSendTopic}
-                    buttonProps={{ type: "primary" }}
-                  >
-                    Lưu đề tài
-                  </AtomLoadingButton>
-                </Content>
-              </>
-            )
-          ) : (
-            <></>
-          )}
-        </>
+        <Divider />
+        <TopicFormFooter
+          setHistoryModalVisible={setHistoryModalVisible}
+          topic={topic}
+          canEdit={canEdit}
+          handleAcceptTopic={handleAcceptTopic}
+          handleRequestChangeTopic={handleRequestChangeTopic}
+          handleResetField={handleResetField}
+          handleSendTopic={handleSendTopic}
+          isTopicAccepted={isTopicAccepted}
+          isValid={isValid}
+          setCanEdit={setCanEdit}
+        />
       </Content>
-      <style global>
+      <style>
         {`.ant-select.readOnly
           {
             pointer-events: none;
           }`}
       </style>
     </>
+  );
+}
+
+function HistoryModalBody({
+  history,
+}: {
+  history: { updatedAt: Date; updatedBy: string }[] | undefined;
+}) {
+  const convertedHistory = history
+    ? history.map((h) => ({ ...h, updatedAt: dayjs(h.updatedAt) }))
+    : [];
+  const isHistoryEmpty = convertedHistory.length === 0;
+
+  return (
+    <Content
+      className={`flex flex-col h-96 space-y-3 overflow-auto ${
+        isHistoryEmpty ? "justify-center" : ""
+      }`}
+    >
+      {!isHistoryEmpty ? (
+        convertedHistory.map((h, index) => (
+          <Typography.Text>
+            {(index += 1)}. {h.updatedAt.format("LLLL A ")}, người cập nhật:{" "}
+            {h.updatedBy}
+          </Typography.Text>
+        ))
+      ) : (
+        <Typography.Text className="text-center">
+          Không có lịch sử chỉnh sửa
+        </Typography.Text>
+      )}
+    </Content>
+  );
+}
+
+function TopicFormFooter(props: any) {
+  return (
+    <Content className="flex justify-between">
+      <Typography.Link onClick={() => props.setHistoryModalVisible(true)}>
+        Lịch sử thay đổi
+      </Typography.Link>
+      <Content className="flex justify-end space-x-2">
+        {isStudent() && !props.isTopicAccepted && (
+          <>
+            <Button
+              disabled={props.isTopicAccepted && !props.canEdit}
+              onClick={props.handleResetField}
+              type="ghost"
+              className="text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400"
+            >
+              Đặt lại
+            </Button>
+            <Button onClick={() => props.setCanEdit(true)} type="dashed">
+              Chỉnh sửa đề tài
+            </Button>
+            <AtomLoadingButton
+              disabled={!props.isValid}
+              onClick={props.handleSendTopic}
+              buttonProps={{ type: "primary" }}
+            >
+              Lưu đề tài
+            </AtomLoadingButton>
+          </>
+        )}
+        {isTeacher() && (
+          <>
+            {!props.isTopicAccepted && (
+              <>
+                <AtomLoadingButton
+                  disabled={
+                    props.topic?.topicStatus === TopicStatus.RequestChange ||
+                    (!props.isTopicAccepted && !props.canEdit)
+                  }
+                  onClick={props.handleRequestChangeTopic}
+                  buttonProps={{
+                    type: "ghost",
+                    className:
+                      "text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400",
+                  }}
+                >
+                  Yêu cầu chỉnh sửa
+                </AtomLoadingButton>
+                <AtomLoadingButton
+                  disabled={!props.isTopicAccepted}
+                  onClick={props.handleAcceptTopic}
+                  buttonProps={{ type: "primary" }}
+                >
+                  Duyệt đề tài
+                </AtomLoadingButton>
+                <Divider type="vertical" />
+              </>
+            )}
+            {props.isTopicAccepted && (
+              <Button onClick={() => props.setCanEdit(true)} type="dashed">
+                Chỉnh sửa đề tài
+              </Button>
+            )}
+            <AtomLoadingButton
+              disabled={!props.isValid}
+              onClick={props.handleSendTopic}
+              buttonProps={{ type: "primary" }}
+            >
+              Lưu đề tài
+            </AtomLoadingButton>
+          </>
+        )}
+      </Content>
+    </Content>
   );
 }

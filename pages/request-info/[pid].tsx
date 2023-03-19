@@ -2,11 +2,9 @@ import { Layout } from "antd";
 import Head from "next/head";
 import { OGRequestInfoContent } from "../../components/organisms/content/request-info-content.organism";
 import { OGHeader } from "../../components/organisms/header/header.organism";
-import { isStudent, isTeacher } from "../../utils/role.util";
 
 const { Content } = Layout;
 export default function Home() {
-  if (!isTeacher() && !isStudent()) return null;
 
   return (
     <>

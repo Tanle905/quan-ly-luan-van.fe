@@ -11,6 +11,7 @@ export interface TableConfig {
   extraRightComponent?: [(props: TableProps) => any];
   query?: any;
   table: {
+    pageSize?: number;
     columns: ColumnsType<object>;
     transform?: (data: any) => any;
   };
