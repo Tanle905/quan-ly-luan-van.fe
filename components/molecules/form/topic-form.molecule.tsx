@@ -337,6 +337,9 @@ function HistoryModalBody({
 }
 
 function TopicFormFooter(props: any) {
+  const isRequestChange =
+    props.topic?.topicStatus === TopicStatus.RequestChange;
+
   return (
     <Content className="flex justify-between">
       <Typography.Link onClick={() => props.setHistoryModalVisible(true)}>
@@ -370,10 +373,7 @@ function TopicFormFooter(props: any) {
             {!props.isTopicAccepted && (
               <>
                 <AtomLoadingButton
-                  disabled={
-                    props.topic?.topicStatus === TopicStatus.RequestChange ||
-                    (!props.isTopicAccepted && !props.canEdit)
-                  }
+                  disabled={isRequestChange}
                   onClick={props.handleRequestChangeTopic}
                   buttonProps={{
                     type: "ghost",
@@ -384,7 +384,7 @@ function TopicFormFooter(props: any) {
                   Yêu cầu chỉnh sửa
                 </AtomLoadingButton>
                 <AtomLoadingButton
-                  disabled={!props.isTopicAccepted}
+                  disabled={props.isTopicAccepted}
                   onClick={props.handleAcceptTopic}
                   buttonProps={{ type: "primary" }}
                 >
@@ -393,11 +393,9 @@ function TopicFormFooter(props: any) {
                 <Divider type="vertical" />
               </>
             )}
-            {props.isTopicAccepted && (
-              <Button onClick={() => props.setCanEdit(true)} type="dashed">
-                Chỉnh sửa đề tài
-              </Button>
-            )}
+            <Button onClick={() => props.setCanEdit(true)} type="dashed">
+              Chỉnh sửa đề tài
+            </Button>
             <AtomLoadingButton
               disabled={!props.isValid}
               onClick={props.handleSendTopic}

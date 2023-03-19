@@ -13,7 +13,7 @@ export function OGScheduleContent({ rightComponent }: OGScheduleContentProps) {
   if (!isMounted) return null;
 
   return (
-    <Layout.Content className={`space-y-3 my-5 ${isAdmin() ? "" : "mx-20"}`}>
+    <Layout.Content className={`space-y-3 my-5 ${isAdmin() ? "" : "mx-5"}`}>
       <Layout.Content className="flex justify-between">
         <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
           Lịch biểu bảo vệ luận văn

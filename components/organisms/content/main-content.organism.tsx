@@ -51,7 +51,7 @@ export function OGMainContent({}: OGMainContentProps) {
   const isMounted = useMount();
 
   return (
-    <Layout.Content className="mx-20 my-5 space-y-3">
+    <Layout.Content className="mx-5 my-5 space-y-3">
       <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
         Danh sách {isMounted && isTeacher() ? "sinh viên" : "giảng viên"}
       </Typography.Title>

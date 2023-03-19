@@ -7,6 +7,7 @@ import {
 import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { REQUEST_ENDPOINT } from "../../../constants/endpoints";
 import {
@@ -26,11 +27,13 @@ export function AtomReceivedRequestTableAction({
   request,
 }: AtomReceivedRequestTableActionProps) {
   const user = useRecoilValue<Student | null>(userState);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   async function handleAcceptRequest() {
-    if (!user || request.isTeacherAccepted) return null;
+    if (!user || request.isTeacherAccepted || isLoading) return null;
 
+    setIsLoading(true);
     try {
       await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL +
@@ -46,12 +49,15 @@ export function AtomReceivedRequestTableAction({
       message.success("Chấp nhận yêu cầu thành công");
     } catch (error: any) {
       message.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function handleDeleteRequest() {
-    if (!user?.MSSV) return;
+    if (isLoading) return;
 
+    setIsLoading(true);
     try {
       await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL +
@@ -59,7 +65,7 @@ export function AtomReceivedRequestTableAction({
           REQUEST_ENDPOINT.REJECT,
         {
           id: request._id,
-          MSSV: user.MSSV,
+          MSSV: request.student.MSSV,
         }
       );
 
@@ -68,6 +74,8 @@ export function AtomReceivedRequestTableAction({
       message.success("Xóa yêu cầu thành công");
     } catch (error: any) {
       message.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   }
   return (

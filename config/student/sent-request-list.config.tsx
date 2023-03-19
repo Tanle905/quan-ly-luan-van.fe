@@ -4,6 +4,7 @@ import { AtomSentRequestTableAction } from "../../components/atoms/action/sent-r
 import { Divider, Layout, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { TopicStatus } from "../../constants/enums";
 
 export const sentRequestListConfig: TableConfig = {
   apiEndpoint: REQUEST_ENDPOINT.BASE,
@@ -53,10 +54,22 @@ export const sentRequestListConfig: TableConfig = {
       },
       {
         key: "topic",
-        title: "Tên đề tài",
+        title: "Đề tài",
         dataIndex: "topic",
-        render: (date: any, record: any) => {
-          return <Typography.Text>{date.topicName}</Typography.Text>;
+        render: (topic: any, record: any) => {
+          return <Typography.Text>{topic.topicName}</Typography.Text>;
+        },
+      },
+      {
+        key: "topicStatus",
+        title: "Trạng thái đề tài",
+        dataIndex: "topic",
+        render: (topic: any, record: any) => {
+          return (
+            <Typography.Text>
+              {handleRenderTopicStatus(topic?.topicStatus)}
+            </Typography.Text>
+          );
         },
       },
       {
@@ -97,3 +110,27 @@ export const sentRequestListConfig: TableConfig = {
     ],
   },
 };
+
+function handleRenderTopicStatus(status: string | null) {
+  let statusText = "";
+
+  switch (status) {
+    case null:
+      statusText = "Tạo chủ đề";
+      break;
+    case TopicStatus.Pending:
+      statusText = "Chờ duyệt";
+      break;
+    case TopicStatus.RequestChange:
+      statusText = "Yêu cầu chỉnh sửa";
+      break;
+    case TopicStatus.Accepted:
+      statusText = "Đã duyệt";
+      break;
+    default:
+      status = "";
+      break;
+  }
+
+  return statusText;
+}

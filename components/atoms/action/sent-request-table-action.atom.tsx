@@ -7,8 +7,10 @@ import {
 import { Layout, message, Tooltip } from "antd";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { REQUEST_ENDPOINT } from "../../../constants/endpoints";
+import { TopicStatus } from "../../../constants/enums";
 import {
   reloadProfileSubject,
   reloadTableSubject,
@@ -26,11 +28,19 @@ export function AtomSentRequestTableAction({
   request,
 }: AtomSentRequestTableActionProps) {
   const user = useRecoilValue<Student | null>(userState);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   async function handleAcceptRequest() {
-    if (!user || request.isStudentAccepted) return null;
+    if (
+      !user ||
+      request.isStudentAccepted ||
+      request.topic?.topicStatus !== TopicStatus.Accepted ||
+      isLoading
+    )
+      return null;
 
+    setIsLoading(true);
     try {
       await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL +
@@ -46,12 +56,15 @@ export function AtomSentRequestTableAction({
       message.success("Chấp nhận yêu cầu thành công");
     } catch (error: any) {
       message.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function handleDeleteRequest() {
-    if (!user?.MSSV) return;
+    if (!user?.MSSV || isLoading) return;
 
+    setIsLoading(true);
     try {
       await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL +
@@ -68,13 +81,17 @@ export function AtomSentRequestTableAction({
       message.success("Xóa yêu cầu thành công");
     } catch (error: any) {
       message.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   }
   return (
     <Layout.Content className="flex justify-end space-x-1">
       <Tooltip
         title={
-          request.isStudentAccepted
+          request.topic?.topicStatus !== TopicStatus.Accepted
+            ? "Đề tài chưa được duyệt"
+            : request.isStudentAccepted
             ? "Bạn đã chấp nhận yêu cầu"
             : "Chấp nhận yêu cầu"
         }
@@ -82,7 +99,8 @@ export function AtomSentRequestTableAction({
         <CheckOutlined
           onClick={handleAcceptRequest}
           className={`p-2 rounded-md transition-all ${
-            request.isStudentAccepted
+            request.isStudentAccepted ||
+            request.topic?.topicStatus !== TopicStatus.Accepted
               ? "bg-gray-300 text-gray-800"
               : "text-green-600 hover:bg-indigo-600 hover:text-white"
           }`}
