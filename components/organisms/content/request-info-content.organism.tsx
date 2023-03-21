@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import useSWR from "swr";
 import { baseURL, REQUEST_ENDPOINT } from "../../../constants/endpoints";
+import { Roles } from "../../../constants/enums";
 import { useMount } from "../../../hooks/use-mount";
 import { Request } from "../../../interfaces/request.interface";
 import { isTeacher } from "../../../utils/role.util";
@@ -43,6 +44,7 @@ export function OGRequestInfoContent({}: OGRequestInfoContentProps) {
         <MCProfileForm
           isGuestMode
           profile={isTeacher() ? data.student : data.teacher}
+          role={isTeacher() ? Roles.STUDENT : Roles.TEACHER}
         />
       ),
     },

@@ -29,6 +29,7 @@ import { cloneDeep } from "lodash";
 interface MCProfileFormProps {
   isGuestMode?: boolean;
   profile: User | null | undefined;
+  role?: Roles;
 }
 
 export function MajorTag({ label, value, closable, onClose }: CustomTagProps) {
@@ -48,12 +49,16 @@ export function MajorTag({ label, value, closable, onClose }: CustomTagProps) {
   );
 }
 
-export function MCProfileForm({ profile, isGuestMode }: MCProfileFormProps) {
+export function MCProfileForm({
+  profile,
+  isGuestMode,
+  role,
+}: MCProfileFormProps) {
   const [form] = Form.useForm();
   const [mounted, setMounted] = useState(false);
   const [options, setOptions] = useState([]);
   const [roles, setRoles] = useState<string | undefined>("");
-  const isStudent = roles === Roles.STUDENT;
+  const isStudent = role ?? roles === Roles.STUDENT;
   const { data } = useSWR(
     mounted &&
       isTeacher() &&
