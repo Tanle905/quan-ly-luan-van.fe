@@ -101,8 +101,6 @@ export function MCProfileForm({ profile, isGuestMode }: MCProfileFormProps) {
     setRoles(profile?.roles[0]);
   }, [profile]);
 
-  console.log(profile);
-
   async function tagsFetcher() {
     const { data } = await axios.get(
       process.env.NEXT_PUBLIC_BASE_URL +

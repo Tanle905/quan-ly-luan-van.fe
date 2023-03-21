@@ -62,15 +62,6 @@ export const receivedRequestListConfig: TableConfig = {
                   <CloseOutlined className="text-red-600" />
                 )}
               </Typography.Text>
-              <Divider type="vertical" />
-              <Typography.Text>
-                Giảng viên{" "}
-                {record.isTeacherAccepted ? (
-                  <CheckOutlined className="text-green-600" />
-                ) : (
-                  <CloseOutlined className="text-red-600" />
-                )}
-              </Typography.Text>
             </Layout.Content>
           );
         },

@@ -115,7 +115,7 @@ export function AtomSentRequestTableAction({
       <Tooltip title="Gửi tin cho giảng viên">
         <MessageOutlined className="cursor-pointer p-2 hover:bg-indigo-600 hover:text-white rounded-md transition-all" />
       </Tooltip>
-      <Tooltip title="Thông tin giảng viên và đề tài">
+      <Tooltip title="Thông tin giảng viên và đề tài" placement="topLeft">
         <InfoCircleOutlined
           onClick={() =>
             router.push(`${SCREEN_ROUTE.REQUEST_INFO}/${request._id}`)

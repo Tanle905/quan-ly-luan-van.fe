@@ -5,6 +5,7 @@ import { Divider, Layout, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { TopicStatus } from "../../constants/enums";
+import { isStudent, isTeacher } from "../../utils/role.util";
 
 export const sentRequestListConfig: TableConfig = {
   apiEndpoint: REQUEST_ENDPOINT.BASE,
@@ -78,15 +79,6 @@ export const sentRequestListConfig: TableConfig = {
         render: (date: any, record: any) => {
           return (
             <Layout.Content className="flex items-center">
-              <Typography.Text>
-                Sinh viên{" "}
-                {record.isStudentAccepted ? (
-                  <CheckOutlined className="text-green-600" />
-                ) : (
-                  <CloseOutlined className="text-red-600" />
-                )}
-              </Typography.Text>
-              <Divider type="vertical" />
               <Typography.Text>
                 Giảng viên{" "}
                 {record.isTeacherAccepted ? (
