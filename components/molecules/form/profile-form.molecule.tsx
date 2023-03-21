@@ -58,7 +58,7 @@ export function MCProfileForm({
   const [mounted, setMounted] = useState(false);
   const [options, setOptions] = useState([]);
   const [roles, setRoles] = useState<string | undefined>("");
-  const isStudent = role ?? roles === Roles.STUDENT;
+  const isStudent = (role ?? roles) === Roles.STUDENT;
   const { data } = useSWR(
     mounted &&
       isTeacher() &&
