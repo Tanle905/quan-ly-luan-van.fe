@@ -59,7 +59,7 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
           <Content className="col-span-9">
             <MCProfileForm
               profile={userId ? data : user}
-              readOnly={userId ? true : false}
+              isGuestMode={userId ? true : false}
             />
           </Content>
         </Content>

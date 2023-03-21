@@ -27,7 +27,7 @@ import { TagDetails } from "../../../interfaces/tag.interface";
 import { cloneDeep } from "lodash";
 
 interface MCProfileFormProps {
-  readOnly?: boolean;
+  isGuestMode?: boolean;
   profile: User | null | undefined;
 }
 
@@ -48,7 +48,7 @@ export function MajorTag({ label, value, closable, onClose }: CustomTagProps) {
   );
 }
 
-export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
+export function MCProfileForm({ profile, isGuestMode }: MCProfileFormProps) {
   const [form] = Form.useForm();
   const [mounted, setMounted] = useState(false);
   const [options, setOptions] = useState([]);
@@ -101,6 +101,8 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
     setRoles(profile?.roles[0]);
   }, [profile]);
 
+  console.log(profile);
+
   async function tagsFetcher() {
     const { data } = await axios.get(
       process.env.NEXT_PUBLIC_BASE_URL +
@@ -127,30 +129,14 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
     }
   }
 
-  function handleResetForm() {
-    const clonedProfile = cloneDeep(profile) as any;
-    if (clonedProfile) delete clonedProfile.roles;
-
-    form.setFieldsValue({
-      ...clonedProfile,
-    });
-  }
-
   if (!profile) return null;
 
   return (
     <>
       <Layout.Content className="rounded-md shadow-md bg-white p-5 space-y-5">
-        {!readOnly && (
+        {!isGuestMode && (
           <>
             <Layout.Content className="flex justify-end space-x-2 px-5">
-              <Button
-                type="ghost"
-                onClick={handleResetForm}
-                className="text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400"
-              >
-                Đặt lại
-              </Button>
               <AtomLoadingButton
                 onClick={handleSaveProfile}
                 buttonProps={{ type: "primary" }}
@@ -163,13 +149,17 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
         )}
         <Form form={form} className="space-y-3">
           <div className="flex items-center">
-            <span className="w-52">{isStudent ? "MSSV: " : "MSCB: "}</span>
+            <div className="w-52">
+              <span className="text-end">
+                {isStudent ? "MSSV: " : "MSCB: "}
+              </span>
+            </div>
             <Form.Item
               className="inline-block w-96"
               name={isStudent ? "MSSV" : "MSCB"}
               style={{ marginBottom: 0 }}
             >
-              <Input type="text" disabled prefix={<NumberOutlined />} />
+              <Input type="text" readOnly prefix={<NumberOutlined />} />
             </Form.Item>
           </div>
           <div className="flex items-center">
@@ -180,14 +170,14 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
                 className="inline-block w-[11.4rem]"
                 style={{ marginBottom: 0 }}
               >
-                <Input type="text" disabled prefix={<UserOutlined />} />
+                <Input type="text" readOnly prefix={<UserOutlined />} />
               </Form.Item>
               <Form.Item
                 name={"firstName"}
                 className="inline-block w-[11.4rem]"
                 style={{ marginBottom: 0 }}
               >
-                <Input type="text" disabled />
+                <Input type="text" readOnly />
               </Form.Item>
             </div>
           </div>
@@ -198,7 +188,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
               className="inline-block w-96"
               style={{ marginBottom: 0 }}
             >
-              <Input type="number" disabled prefix={<PhoneOutlined />} />
+              <Input type="number" readOnly prefix={<PhoneOutlined />} />
             </Form.Item>
           </div>
           <div className="flex items-center">
@@ -208,7 +198,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
               className="inline-block w-96"
               style={{ marginBottom: 0 }}
             >
-              <Input type="text" disabled prefix={<MailOutlined />} />
+              <Input type="text" readOnly prefix={<MailOutlined />} />
             </Form.Item>
           </div>
           {!isStudent && (
@@ -220,7 +210,7 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
                 style={{ marginBottom: 0 }}
               >
                 <Select
-                  disabled={readOnly}
+                  className={`${isGuestMode ? "readOnly" : ""}`}
                   tagRender={MajorTag}
                   options={options}
                   mode="multiple"
@@ -229,80 +219,90 @@ export function MCProfileForm({ profile, readOnly }: MCProfileFormProps) {
               </Form.Item>
             </div>
           )}
-          <div className="flex items-center">
-            <span className="w-52">Chức vụ: </span>
-            <Form.Item
-              name={"roles"}
-              className="inline-block w-96"
-              style={{ marginBottom: 0 }}
-            >
-              <Input type="text" disabled />
-            </Form.Item>
-          </div>
-          <div className="flex items-center">
-            <span className="w-52">Chuyên ngành: </span>
-            <Form.Item
-              name={"major"}
-              className="inline-block w-96"
-              style={{ marginBottom: 0 }}
-            >
-              <Input type="text" disabled />
-            </Form.Item>
-          </div>
-          {isStudent && (
-            <div className="flex items-center">
-              <span className="w-52">Lớp: </span>
-              <Form.Item
-                name={"class"}
-                className="inline-block w-96"
-                style={{ marginBottom: 0 }}
-              >
-                <Input type="text" disabled />
-              </Form.Item>
-            </div>
+          {!isGuestMode && (
+            <>
+              <div className="flex items-center">
+                <span className="w-52">Chức vụ: </span>
+                <Form.Item
+                  name={"roles"}
+                  className="inline-block w-96"
+                  style={{ marginBottom: 0 }}
+                >
+                  <Input type="text" readOnly />
+                </Form.Item>
+              </div>
+              <div className="flex items-center">
+                <span className="w-52">Chuyên ngành: </span>
+                <Form.Item
+                  name={"major"}
+                  className="inline-block w-96"
+                  style={{ marginBottom: 0 }}
+                >
+                  <Input type="text" readOnly />
+                </Form.Item>
+              </div>
+              {isStudent && (
+                <div className="flex items-center">
+                  <span className="w-52">Lớp: </span>
+                  <Form.Item
+                    name={"class"}
+                    className="inline-block w-96"
+                    style={{ marginBottom: 0 }}
+                  >
+                    <Input type="text" readOnly />
+                  </Form.Item>
+                </div>
+              )}
+              <div className="flex items-center">
+                <span className="w-52">Trường: </span>
+                <Form.Item
+                  name={"department"}
+                  className="inline-block w-96"
+                  style={{ marginBottom: 0 }}
+                >
+                  <Input type="text" readOnly />
+                </Form.Item>
+              </div>
+              <div className="flex items-center">
+                <span className="w-52">Dân tộc: </span>
+                <Form.Item
+                  name={"ethnic"}
+                  className="inline-block w-96"
+                  style={{ marginBottom: 0 }}
+                >
+                  <Input type="text" readOnly />
+                </Form.Item>
+              </div>
+              <div className="flex items-center">
+                <span className="w-52">Tôn giáo: </span>
+                <Form.Item
+                  name={"religion"}
+                  className="inline-block w-96"
+                  style={{ marginBottom: 0 }}
+                >
+                  <Input type="text" readOnly />
+                </Form.Item>
+              </div>
+              <div className="flex items-center">
+                <span className="w-52">CCCD: </span>
+                <Form.Item
+                  name={"CCCD"}
+                  className="inline-block w-96"
+                  style={{ marginBottom: 0 }}
+                >
+                  <Input type="text" readOnly />
+                </Form.Item>
+              </div>
+            </>
           )}
-          <div className="flex items-center">
-            <span className="w-52">Trường: </span>
-            <Form.Item
-              name={"department"}
-              className="inline-block w-96"
-              style={{ marginBottom: 0 }}
-            >
-              <Input type="text" disabled />
-            </Form.Item>
-          </div>
-          <div className="flex items-center">
-            <span className="w-52">Dân tộc: </span>
-            <Form.Item
-              name={"ethnic"}
-              className="inline-block w-96"
-              style={{ marginBottom: 0 }}
-            >
-              <Input type="text" disabled />
-            </Form.Item>
-          </div>
-          <div className="flex items-center">
-            <span className="w-52">Tôn giáo: </span>
-            <Form.Item
-              name={"religion"}
-              className="inline-block w-96"
-              style={{ marginBottom: 0 }}
-            >
-              <Input type="text" disabled />
-            </Form.Item>
-          </div>
-          <div className="flex items-center">
-            <span className="w-52">CCCD: </span>
-            <Form.Item
-              name={"CCCD"}
-              className="inline-block w-96"
-              style={{ marginBottom: 0 }}
-            >
-              <Input type="text" disabled />
-            </Form.Item>
-          </div>
         </Form>
       </Layout.Content>
+      <style>
+        {`.ant-select.readOnly
+          {
+            pointer-events: none;
+          }`}
+      </style>
     </>
   );
 }

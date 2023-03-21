@@ -41,7 +41,7 @@ export function OGRequestInfoContent({}: OGRequestInfoContentProps) {
       label: `Thông tin ${isTeacher() ? "sinh viên" : "giảng viên"}`,
       children: (
         <MCProfileForm
-          readOnly
+          isGuestMode
           profile={isTeacher() ? data.student : data.teacher}
         />
       ),

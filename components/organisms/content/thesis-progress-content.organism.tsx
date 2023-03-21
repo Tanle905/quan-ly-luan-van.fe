@@ -12,6 +12,7 @@ import { Student } from "../../../interfaces/student.interface";
 import { MCProfileForm } from "../../molecules/form/profile-form.molecule";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
+import { isTeacher } from "../../../utils/role.util";
 
 interface OGThesisProgressContentProps {
   MSSV?: string;
@@ -47,8 +48,8 @@ export function OGThesisProgressContent(props: OGThesisProgressContentProps) {
     },
     {
       key: "3",
-      label: "Thông tin giảng viên",
-      children: <MCProfileForm readOnly profile={user?.teacher} />,
+      label: `Thông tin ${isTeacher() ? "sinh viên" : "giảng viên"}`,
+      children: <MCProfileForm isGuestMode profile={user?.teacher || data} />,
     },
   ];
 
