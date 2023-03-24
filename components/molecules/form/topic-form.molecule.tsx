@@ -14,15 +14,18 @@ import {
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import useSWR from "swr";
 import {
   baseURL,
+  REQUEST_ENDPOINT,
   TAG_ENDPOINT,
   TOPIC_ENDPOINT,
 } from "../../../constants/endpoints";
 import { TopicStatus } from "../../../constants/enums";
+import { reloadTableSubject } from "../../../constants/observables";
+import { Request } from "../../../interfaces/request.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { TagDetails } from "../../../interfaces/tag.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
@@ -40,12 +43,18 @@ const { Item } = Form;
 const { TextArea } = Input;
 
 interface MCTopicFormProps {
+  request?: Request;
   topicId: string | undefined;
   topic: any;
   setTopic: any;
 }
 
-export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
+export function MCTopicForm({
+  topicId,
+  topic,
+  setTopic,
+  request,
+}: MCTopicFormProps) {
   const [mounted, setMounted] = useState(false);
   const user = useRecoilValue<(Student & Teacher) | null>(userState);
   const [form] = Form.useForm();
@@ -64,6 +73,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
         TAG_ENDPOINT.MAJOR_TAGS,
     tagsFetcher
   );
+  const isTopicCreated = topicData?.topicStatus;
   const isTopicAccepted = topicData?.topicStatus === TopicStatus.Accepted;
   let steps: StepsProps["items"] = [
     { title: "Tạo chủ đề" },
@@ -282,6 +292,8 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
         </Form>
         <Divider />
         <TopicFormFooter
+          user={user}
+          request={request}
           setHistoryModalVisible={setHistoryModalVisible}
           topic={topic}
           canEdit={canEdit}
@@ -289,6 +301,7 @@ export function MCTopicForm({ topicId, topic, setTopic }: MCTopicFormProps) {
           handleRequestChangeTopic={handleRequestChangeTopic}
           handleResetField={handleResetField}
           handleSendTopic={handleSendTopic}
+          isTopicCreated={isTopicCreated}
           isTopicAccepted={isTopicAccepted}
           isValid={isValid}
           setCanEdit={setCanEdit}
@@ -340,6 +353,27 @@ function TopicFormFooter(props: any) {
   const isRequestChange =
     props.topic?.topicStatus === TopicStatus.RequestChange;
 
+  async function handleAcceptRequest() {
+    if (!isTeacher() || !props.user || !props.request) return null;
+
+    try {
+      await axios.post(
+        process.env.NEXT_PUBLIC_BASE_URL +
+          REQUEST_ENDPOINT.BASE +
+          REQUEST_ENDPOINT.ACCEPT,
+        {
+          id: props.request._id,
+          role: props.user.roles[0],
+        }
+      );
+
+      reloadTableSubject.next(1);
+      message.success("Chấp nhận yêu cầu thành công");
+    } catch (error: any) {
+      message.error(error.response.data.message);
+    }
+  }
+
   return (
     <Content className="flex justify-between">
       <Typography.Link onClick={() => props.setHistoryModalVisible(true)}>
@@ -348,14 +382,6 @@ function TopicFormFooter(props: any) {
       <Content className="flex justify-end space-x-2">
         {isStudent() && !props.isTopicAccepted && (
           <>
-            <Button
-              disabled={props.isTopicAccepted && !props.canEdit}
-              onClick={props.handleResetField}
-              type="ghost"
-              className="text-white bg-red-600 hover:bg-red-500 transition-all disabled:bg-gray-100 disabled:text-gray-400"
-            >
-              Đặt lại
-            </Button>
             <Button onClick={() => props.setCanEdit(true)} type="dashed">
               Chỉnh sửa đề tài
             </Button>
@@ -373,7 +399,7 @@ function TopicFormFooter(props: any) {
             {!props.isTopicAccepted && (
               <>
                 <AtomLoadingButton
-                  disabled={isRequestChange}
+                  disabled={!props.isTopicCreated || isRequestChange}
                   onClick={props.handleRequestChangeTopic}
                   buttonProps={{
                     type: "ghost",
@@ -384,8 +410,11 @@ function TopicFormFooter(props: any) {
                   Yêu cầu chỉnh sửa
                 </AtomLoadingButton>
                 <AtomLoadingButton
-                  disabled={props.isTopicAccepted}
-                  onClick={props.handleAcceptTopic}
+                  disabled={!props.isTopicCreated || props.isTopicAccepted}
+                  onClick={async () => {
+                    handleAcceptRequest();
+                    props.handleAcceptTopic();
+                  }}
                   buttonProps={{ type: "primary" }}
                 >
                   Duyệt đề tài

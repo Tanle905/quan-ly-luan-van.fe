@@ -1,9 +1,9 @@
 import { TableConfig } from "../interface/table-config.interface";
 import { REQUEST_ENDPOINT } from "../../constants/endpoints";
-import { AtomSentRequestTableAction } from "../../components/atoms/action/sent-request-table-action.atom";
 import { AtomReceivedRequestTableAction } from "../../components/atoms/action/received-request-table-action.atom";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { Layout, Typography, Divider } from "antd";
+import { Layout, Typography } from "antd";
+import { handleRenderTopicStatus } from "../../utils/format.util";
 
 export const receivedRequestListConfig: TableConfig = {
   apiEndpoint: REQUEST_ENDPOINT.BASE,
@@ -46,6 +46,14 @@ export const receivedRequestListConfig: TableConfig = {
         dataIndex: "topic",
         render: (topic: any, record: any) => {
           return topic.topicName;
+        },
+      },
+      {
+        key: "topic",
+        title: "Trạng thái đề tài",
+        dataIndex: "topic",
+        render: (topic: any, record: any) => {
+          return handleRenderTopicStatus(topic?.topicStatus);
         },
       },
       {

@@ -1,11 +1,10 @@
 import { TableConfig } from "../interface/table-config.interface";
 import { REQUEST_ENDPOINT } from "../../constants/endpoints";
 import { AtomSentRequestTableAction } from "../../components/atoms/action/sent-request-table-action.atom";
-import { Divider, Layout, Tag, Typography } from "antd";
+import { Layout, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { TopicStatus } from "../../constants/enums";
-import { isStudent, isTeacher } from "../../utils/role.util";
+import { handleRenderTopicStatus } from "../../utils/format.util";
 
 export const sentRequestListConfig: TableConfig = {
   apiEndpoint: REQUEST_ENDPOINT.BASE,
@@ -102,27 +101,3 @@ export const sentRequestListConfig: TableConfig = {
     ],
   },
 };
-
-function handleRenderTopicStatus(status: string | null) {
-  let statusText = "";
-
-  switch (status) {
-    case null:
-      statusText = "Tạo chủ đề";
-      break;
-    case TopicStatus.Pending:
-      statusText = "Chờ duyệt";
-      break;
-    case TopicStatus.RequestChange:
-      statusText = "Yêu cầu chỉnh sửa";
-      break;
-    case TopicStatus.Accepted:
-      statusText = "Đã duyệt";
-      break;
-    default:
-      status = "";
-      break;
-  }
-
-  return statusText;
-}

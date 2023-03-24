@@ -1,16 +1,17 @@
-import { DatePicker, Form, FormInstance, Input } from "antd";
+import { DatePicker, Form, FormInstance } from "antd";
 import { DateSelectArg } from "@fullcalendar/core";
 import { DateClickArg } from "@fullcalendar/interaction";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { handleValidateOnFieldChange } from "../../../utils/validation.util";
 import { Slot } from "../../../constants/enums";
 
 interface MCAddScheduleEventFormProps {
+  title?: string;
   currentDateData: (DateSelectArg & DateClickArg) | null;
-  currentEventData: any[] | null;
+  currentEventData?: any[] | null;
   form: FormInstance;
   isFormEditable: boolean;
+  disabledSlots?: Slot[];
 }
 
 const slotsData: { name: string; value: Slot }[] = [
@@ -31,6 +32,8 @@ export function MCAddScheduleEventForm({
   currentDateData,
   currentEventData,
   isFormEditable,
+  title,
+  disabledSlots,
 }: MCAddScheduleEventFormProps) {
   const [selectedSlots, setSelectedSlots] = useState<
     { name: string; value: Slot }[]
@@ -62,7 +65,7 @@ export function MCAddScheduleEventForm({
 
   return (
     <Form form={form} layout="vertical">
-      <span>Chọn buổi bận</span>
+      <span>{title ?? "Chọn buổi bận"}</span>
       <div className="mt-2 grid grid-cols-5 gap-2">
         {slotsData.map((curSlot, index) => (
           <SlotElement
@@ -74,6 +77,7 @@ export function MCAddScheduleEventForm({
                 ? true
                 : false
             }
+            disabledSlots={disabledSlots}
           />
         ))}
       </div>
@@ -92,12 +96,20 @@ function SlotElement(props: {
   slot: { name: string; value: Slot };
   onclick?: (value: Slot) => void;
   selected?: boolean;
+  disabledSlots?: Slot[];
 }) {
+  const isCurSlotsDisabled = props.disabledSlots?.includes(props.slot.value);
   return (
     <div
-      onClick={() => props.onclick && props.onclick(props.slot.value)}
+      onClick={() =>
+        !isCurSlotsDisabled && props.onclick && props.onclick(props.slot.value)
+      }
       className={`px-3 py-2 text-center rounded-md shadow-md cursor-pointer transition-all ${
-        props.selected ? "bg-indigo-600 text-white" : "bg-white text-gray-800"
+        isCurSlotsDisabled
+          ? "bg-gray-300 text-black"
+          : props.selected
+          ? "bg-indigo-600 text-white"
+          : "bg-white text-gray-800"
       }`}
     >
       {props.slot.name}

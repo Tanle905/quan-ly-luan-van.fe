@@ -1,10 +1,10 @@
 * {
   font-family: Arial, Helvetica, sans-serif;
   --fc-button-text-color: #fff;
-  --fc-button-bg-color: rgb(79 70 229);;
-  --fc-button-border-color: rgb(79 70 229);;
-  --fc-button-hover-bg-color: rgb(99 102 241);;
-  --fc-button-hover-border-color: rgb(99 102 241);;
+  --fc-button-bg-color: rgb(79 70 229);
+  --fc-button-border-color: rgb(79 70 229);
+  --fc-button-hover-bg-color: rgb(99 102 241);
+  --fc-button-hover-border-color: rgb(99 102 241);
   --fc-button-active-bg-color: rgb(99 102 241);
   --fc-button-active-border-color: rgb(99 102 241);
 }
@@ -17,3 +17,13 @@ body {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::-webkit-scrollbar {
+  @apply h-2 w-1 bg-gray-200;
+}
+::-webkit-scrollbar-track {
+  @apply rounded-sm bg-gray-200;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-sm bg-indigo-600/70;
+}

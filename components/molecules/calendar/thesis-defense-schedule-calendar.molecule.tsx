@@ -19,6 +19,7 @@ import { MCAddScheduleEventModal } from "../modal/add-schedule-event-modal.molec
 import { isAdmin, isTeacher } from "../../../utils/role.util";
 import timegrid from "@fullcalendar/timegrid";
 import dayjs from "dayjs";
+import { MCAdminAddScheduleEventModal } from "../modal/admin-add-schedule-event-modal.molecule";
 
 interface MCThesisDefenseScheduleCalendarProps {}
 
@@ -69,13 +70,23 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
 
   return (
     <>
-      <MCAddScheduleEventModal
-        isModalVisible={isModalVisible}
-        setIsModelVisible={setIsModalVisible}
-        currentDateData={currentDateData}
-        currentEventData={currentEventData}
-        setCurrentEventData={setCurrentEventData}
-      />
+      {isAdmin() ? (
+        <MCAdminAddScheduleEventModal
+          isModalVisible={isModalVisible}
+          setIsModelVisible={setIsModalVisible}
+          currentDateData={currentDateData}
+          currentEventData={currentEventData}
+          setCurrentEventData={setCurrentEventData}
+        />
+      ) : (
+        <MCAddScheduleEventModal
+          isModalVisible={isModalVisible}
+          setIsModelVisible={setIsModalVisible}
+          currentDateData={currentDateData}
+          currentEventData={currentEventData}
+          setCurrentEventData={setCurrentEventData}
+        />
+      )}
       <Layout.Content className="p-5 bg-white rounded-md shadow-md">
         <FullCalendar
           plugins={[daygrid, timegrid, interaction]}
@@ -120,7 +131,6 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
           height={550}
           eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
           dateClick={(dateData) => {
-            if (isAdmin()) return;
             const filteredEventData = data.filter(
               (date) =>
                 dayjs(date.start).format("DD-MM-YYYY") ===
@@ -135,13 +145,17 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
         />
       </Layout.Content>
       <style global>{`
+      .fc .fc-daygrid-day-frame {
+        max-height: 50px;
+        overflow: auto;
+      }
       .fc-daygrid-day:hover {
         cursor: pointer;
         background-color: rgb(230 230 230);
       }
       .fc .fc-daygrid-day.fc-day-today {
-          color: white;
-          background-color: rgb(99 102 241);
+        color: white;
+        background-color: rgb(99 102 241);
       }
   `}</style>
     </>

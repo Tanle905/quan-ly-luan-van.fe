@@ -31,6 +31,7 @@ export function OGRequestInfoContent({}: OGRequestInfoContentProps) {
       label: `Thảo luận chủ đề luận văn`,
       children: (
         <MCTopicForm
+          request={data}
           topicId={data.topic?._id}
           topic={topic}
           setTopic={setTopic}

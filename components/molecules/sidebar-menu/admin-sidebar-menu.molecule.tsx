@@ -72,7 +72,7 @@ export function MCAdminSidebarMenu() {
   }
 
   return (
-    <div style={{ width: 256 }}>
+    <div style={{ width: collapsed ? 90 : 260 }} className="transition-all">
       <Menu
         className="h-screen"
         defaultSelectedKeys={["1"]}

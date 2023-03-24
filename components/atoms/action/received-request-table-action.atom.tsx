@@ -30,30 +30,6 @@ export function AtomReceivedRequestTableAction({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  async function handleAcceptRequest() {
-    if (!user || request.isTeacherAccepted || isLoading) return null;
-
-    setIsLoading(true);
-    try {
-      await axios.post(
-        process.env.NEXT_PUBLIC_BASE_URL +
-          REQUEST_ENDPOINT.BASE +
-          REQUEST_ENDPOINT.ACCEPT,
-        {
-          id: request._id,
-          role: user.roles[0],
-        }
-      );
-
-      reloadTableSubject.next(1);
-      message.success("Chấp nhận yêu cầu thành công");
-    } catch (error: any) {
-      message.error(error.response.data.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   async function handleDeleteRequest() {
     if (isLoading) return;
 
@@ -80,22 +56,6 @@ export function AtomReceivedRequestTableAction({
   }
   return (
     <Layout.Content className="flex justify-end space-x-1">
-      <Tooltip
-        title={
-          request.isTeacherAccepted
-            ? "Bạn đã chấp nhận yêu cầu"
-            : "Chấp nhận yêu cầu"
-        }
-      >
-        <CheckOutlined
-          onClick={handleAcceptRequest}
-          className={`p-2 rounded-md transition-all ${
-            request.isTeacherAccepted
-              ? "bg-gray-300 text-gray-800"
-              : "text-green-600 hover:bg-indigo-600 hover:text-white"
-          }`}
-        />
-      </Tooltip>
       <Tooltip title="Xóa yêu cầu">
         <CloseOutlined
           onClick={handleDeleteRequest}
