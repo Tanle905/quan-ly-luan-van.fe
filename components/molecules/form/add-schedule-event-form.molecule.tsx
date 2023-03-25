@@ -12,6 +12,7 @@ interface MCAddScheduleEventFormProps {
   form: FormInstance;
   isFormEditable: boolean;
   disabledSlots?: Slot[];
+  mode?: "single" | "multiple";
 }
 
 const slotsData: { name: string; value: Slot }[] = [
@@ -34,6 +35,7 @@ export function MCAddScheduleEventForm({
   isFormEditable,
   title,
   disabledSlots,
+  mode = "multiple",
 }: MCAddScheduleEventFormProps) {
   const [selectedSlots, setSelectedSlots] = useState<
     { name: string; value: Slot }[]
@@ -52,15 +54,34 @@ export function MCAddScheduleEventForm({
     }
   }, []);
 
-  function handleSelectSlot(curSlot: { name: string; value: Slot }) {
-    let newSelectedSlots = [...selectedSlots];
-    if (selectedSlots.find((slot) => slot.value === curSlot.value)) {
-      newSelectedSlots = newSelectedSlots.filter(
-        (slot) => slot.value !== curSlot.value
-      );
-    } else newSelectedSlots.push(curSlot);
+  useEffect(() => {
+    let newSelectedSlots = selectedSlots.filter((slot) =>
+      disabledSlots?.includes(slot.value)
+    );
+
     setSelectedSlots(newSelectedSlots);
     form.setFieldValue("slot", newSelectedSlots);
+  }, [disabledSlots]);
+
+  function handleSelectSlot(curSlot: { name: string; value: Slot }) {
+    switch (mode) {
+      case "multiple":
+        let newSelectedSlots = [...selectedSlots];
+        if (selectedSlots.find((slot) => slot.value === curSlot.value)) {
+          newSelectedSlots = newSelectedSlots.filter(
+            (slot) => slot.value !== curSlot.value
+          );
+        } else newSelectedSlots.push(curSlot);
+        setSelectedSlots(newSelectedSlots);
+        form.setFieldValue("slot", newSelectedSlots);
+        break;
+      case "single":
+        setSelectedSlots([curSlot]);
+        form.setFieldValue("slot", [curSlot]);
+        break;
+      default:
+        break;
+    }
   }
 
   return (
@@ -86,6 +107,10 @@ export function MCAddScheduleEventForm({
           format={"DD-MM-YYYY"}
           className="w-full"
           disabled={!isFormEditable}
+          disabledDate={(date) =>
+            date.format("DD-MM-YYYY") !==
+            dayjs(currentDateData?.date).format("DD-MM-YYYY")
+          }
         />
       </Form.Item>
     </Form>
@@ -106,7 +131,7 @@ function SlotElement(props: {
       }
       className={`px-3 py-2 text-center rounded-md shadow-md cursor-pointer transition-all ${
         isCurSlotsDisabled
-          ? "bg-gray-300 text-black"
+          ? "bg-gray-300 text-black cursor-not-allowed"
           : props.selected
           ? "bg-indigo-600 text-white"
           : "bg-white text-gray-800"

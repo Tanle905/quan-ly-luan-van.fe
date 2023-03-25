@@ -8,6 +8,7 @@ import {
   message,
   Modal,
   Select,
+  Tabs,
 } from "antd";
 import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
@@ -62,6 +63,53 @@ export function MCAdminAddScheduleEventModal({
       THESIS_DEFENSE_SCHEDULE_ENDPOINT.STUDENT_LIST.BASE,
     fetchStudentList
   );
+  const items = [
+    {
+      key: "1",
+      label: `Thêm lịch`,
+      children: (
+        <>
+          <StudentListForm
+            form={studentListForm}
+            studentLists={data?.studentLists}
+            scheduleEventList={data?.calendar?.scheduleEventList}
+            setMSCBList={setMSCBList}
+          />
+          <MCAddScheduleEventForm
+            mode="single"
+            title="Chọn buổi báo cáo"
+            isFormEditable={isFormEditable}
+            currentDateData={currentDateData}
+            form={addEventForm}
+            disabledSlots={filledSlots}
+          />
+        </>
+      ),
+    },
+    {
+      key: "2",
+      label: `Chỉnh sửa lịch`,
+      children: (
+        <>
+          <StudentListForm
+            form={studentListForm}
+            studentLists={data?.studentLists}
+            scheduleEventList={data?.calendar?.scheduleEventList}
+            setMSCBList={setMSCBList}
+          />
+          <MCAddScheduleEventForm
+            mode="single"
+            title="Chọn buổi báo cáo"
+            isFormEditable={isFormEditable}
+            currentDateData={currentDateData}
+            form={addEventForm}
+            disabledSlots={filledSlots}
+          />
+        </>
+      ),
+      disabled: true,
+    },
+  ];
 
   useEffect(() => {
     setIsFormEditable(currentEventData ? false : true);
@@ -82,21 +130,27 @@ export function MCAdminAddScheduleEventModal({
   }
 
   async function handleSaveEvent() {
-    if (!user?.MSCB) return;
-
     const startDate: Dayjs = addEventForm.getFieldValue("date");
+    const MSSV = studentListForm.getFieldValue("MSSV");
+    const teacherName = studentListForm.getFieldValue("teacherName");
+    const studentName = studentListForm.getFieldValue("studentName");
     const slots: { name: string; value: Slot }[] =
       addEventForm.getFieldValue("slot");
-    const mappedSlots: Slot[] = slots.map((slot) => slot.value);
-    const payload: ScheduleEventTime = {
-      type: ScheduleEventType.BusyEvent,
-      busyTimeData: {
+
+    if (!slots.length) return;
+
+    const payload = {
+      type: ScheduleEventType.ThesisDefenseEvent,
+      thesisDefenseTimeData: {
         start: startDate.toDate(),
-        MSCB: user.MSCB,
-        teacherName: `${user.lastName} ${user.firstName}`,
-        slots: mappedSlots,
+        MSCB: MSCBList,
+        MSSV,
+        teacherName,
+        studentName,
+        slots: slots[0].value,
       },
     };
+    return console.log(payload);
 
     try {
       await axios[currentEventData ? "put" : "post"](
@@ -188,9 +242,7 @@ export function MCAdminAddScheduleEventModal({
     <>
       <Modal
         open={isModalVisible}
-        title={
-          currentEventData ? "Chỉnh sửa buổi báo cáo" : "Thêm buổi báo cáo"
-        }
+        title="Quản lý lịch biểu"
         destroyOnClose={true}
         closable
         onCancel={handleCloseModal}
@@ -227,19 +279,7 @@ export function MCAdminAddScheduleEventModal({
           </AtomLoadingButton>,
         ]}
       >
-        <StudentListForm
-          form={studentListForm}
-          studentLists={data?.studentLists}
-          scheduleEventList={data?.calendar?.scheduleEventList}
-          setMSCBList={setMSCBList}
-        />
-        <MCAddScheduleEventForm
-          title="Chọn buổi báo cáo"
-          isFormEditable={isFormEditable}
-          currentDateData={currentDateData}
-          form={addEventForm}
-          disabledSlots={filledSlots}
-        />
+        <Tabs items={items} />
       </Modal>
     </>
   );
@@ -266,6 +306,7 @@ function StudentListForm({
         ...prevList,
         ...curList.students.map((student: any) => {
           return {
+            title: curList.teacherName,
             label: `${student.lastName} ${student.firstName} - ${curList.teacherName} phụ trách`,
             value: student.MSSV,
             disabled: scheduleEventList.find(
@@ -284,13 +325,6 @@ function StudentListForm({
         <Form.Item label="Chọn sinh viên" name="MSSV">
           <Select
             options={handleMapStudent() ?? []}
-            onChange={(value) => setSelectedStudent(true)}
-          ></Select>
-        </Form.Item>
-        <Form.Item label="Chọn giảng viên hướng dẫn (3 người)" name="MSCB">
-          <Select
-            disabled={!selectedStudent}
-            mode="multiple"
             filterOption={(input, option) =>
               (option?.value as string)
                 ?.toLowerCase()
@@ -299,11 +333,30 @@ function StudentListForm({
                 ?.toLowerCase()
                 .indexOf(input.toLowerCase()) >= 0
             }
+            onChange={(value, option: any) => {
+              setSelectedStudent(true);
+              form.setFieldValue("teacherName", option.title);
+              form.setFieldValue("studentName", option.label);
+            }}
+          ></Select>
+        </Form.Item>
+        <Form.Item label="Chọn giảng viên hướng dẫn (3 người)" name="MSCB">
+          <Select
+            disabled={!selectedStudent}
+            mode="multiple"
             options={
               data?.map((teacher: any) => ({
                 label: `${teacher.lastName} ${teacher.firstName}`,
                 value: teacher.MSCB,
               })) ?? []
+            }
+            filterOption={(input, option) =>
+              (option?.value as string)
+                ?.toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0 ||
+              (option?.label as string)
+                ?.toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
             }
             onChange={(value) => {
               if (value?.length > 3) {

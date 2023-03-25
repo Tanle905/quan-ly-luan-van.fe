@@ -119,8 +119,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
           events={data.reduce((prev: any, cur: any) => {
             return [...prev, ...cur.slots];
           }, [])}
-          eventTimeFormat={{ hour: "2-digit", minute: "2-digit" }}
-          displayEventEnd
+          eventTimeFormat={{ hour: "numeric", minute: "2-digit" }}
           weekNumbers
           weekText="Tuần "
           selectable={false}
@@ -129,6 +128,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
           timeZone="none"
           firstDay={1}
           height={550}
+          windowResizeDelay={100}
           eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
           dateClick={(dateData) => {
             const filteredEventData = data.filter(
@@ -146,7 +146,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
       </Layout.Content>
       <style global>{`
       .fc .fc-daygrid-day-frame {
-        max-height: 50px;
+        max-height: 100px;
         overflow: auto;
       }
       .fc-daygrid-day:hover {

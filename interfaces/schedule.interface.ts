@@ -9,11 +9,12 @@ export interface BusyTime extends CalendarEvent {
 }
 
 export interface ThesisDefenseTime extends CalendarEvent {
-  MSCB: string;
+  MSCB: string[];
   MSSV: string;
   studentName: string;
   teacherName: string;
-  topicName: string;
+  topic: string;
+  slots: Slot;
 }
 
 export interface ScheduleEventTime {
