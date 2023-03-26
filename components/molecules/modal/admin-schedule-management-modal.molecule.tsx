@@ -69,12 +69,12 @@ function ModalContent({ data, form }: ModalContent) {
     data.reportPrepareWeek &&
       form.setFieldValue("reportPrepareWeek", [
         dayjs(data.reportPrepareWeek.start),
-        dayjs(data.reportPrepareWeek.end),
+        dayjs(data.reportPrepareWeek.end).subtract(1, "day"),
       ]);
     data.thesisDefenseWeek &&
       form.setFieldValue("thesisDefenseWeek", [
         dayjs(data.thesisDefenseWeek.start),
-        dayjs(data.thesisDefenseWeek.end),
+        dayjs(data.thesisDefenseWeek.end).subtract(1, "day"),
       ]);
   }, [data]);
 
@@ -84,11 +84,19 @@ function ModalContent({ data, form }: ModalContent) {
     const payload = {
       reportPrepareWeek: {
         start: reportPrepareWeek[0].utcOffset(0).startOf("day").toDate(),
-        end: reportPrepareWeek[1].utcOffset(0).startOf("day").toDate(),
+        end: reportPrepareWeek[1]
+          .utcOffset(0)
+          .startOf("day")
+          .add(1, "day")
+          .toDate(),
       },
       thesisDefenseWeek: {
         start: thesisDefenseWeek[0].utcOffset(0).startOf("day").toDate(),
-        end: thesisDefenseWeek[1].utcOffset(0).startOf("day").toDate(),
+        end: thesisDefenseWeek[1]
+          .utcOffset(0)
+          .startOf("day")
+          .add(1, "day")
+          .toDate(),
       },
     };
 

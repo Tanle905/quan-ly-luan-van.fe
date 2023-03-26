@@ -15,12 +15,18 @@ import LocalizedFormat from "dayjs/plugin/localizedFormat";
 import utc from "dayjs/plugin/utc";
 import { getToken } from "../utils/local-storage.util";
 import vi from "dayjs/locale/vi";
+import updateLocale from "dayjs/plugin/updateLocale";
 import axios from "axios";
+import viVN from "antd/locale/vi_VN";
 
 export default function App({ Component, pageProps }: AppProps) {
   dayjs.extend(LocalizedFormat);
   dayjs.extend(utc);
+  dayjs.extend(updateLocale);
   dayjs.locale(vi);
+  dayjs.updateLocale("vi", {
+    weekStart: 1,
+  });
   const router = useRouter();
   const [msg, contextHolder] = message.useMessage();
 
@@ -38,7 +44,10 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       {contextHolder}
-      <ConfigProvider theme={{ token: { colorPrimary: INDIGO_600 } }}>
+      <ConfigProvider
+        theme={{ token: { colorPrimary: INDIGO_600 } }}
+        locale={viVN}
+      >
         <RecoilRoot>
           <Component {...pageProps} />
         </RecoilRoot>
