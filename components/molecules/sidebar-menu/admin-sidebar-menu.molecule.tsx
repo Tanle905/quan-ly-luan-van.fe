@@ -28,7 +28,9 @@ function items(collapsed: boolean, toggleCollapsed: () => void): MenuItem[] {
     },
     {
       label: "Lịch biểu",
-      key: SCREEN_ROUTE.ADMIN.SCHEDULE,
+      key: SCREEN_ROUTE.ADMIN.BASE.slice(
+        SCREEN_ROUTE.ADMIN.BASE.lastIndexOf("/")
+      ),
       icon: <CalendarOutlined />,
     },
     {

@@ -18,6 +18,7 @@ export interface ThesisDefenseTime extends CalendarEvent {
 }
 
 export interface ScheduleEventTime {
+  _id?: string;
   type: ScheduleEventType;
   busyTimeData?: BusyTime;
   thesisDefenseTimeData?: ThesisDefenseTime;

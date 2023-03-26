@@ -15,7 +15,7 @@ interface MCAddScheduleEventFormProps {
   mode?: "single" | "multiple";
 }
 
-const slotsData: { name: string; value: Slot }[] = [
+export const slotsData: { name: string; value: Slot }[] = [
   { name: "7h - 8h", value: Slot.Slot1 },
   { name: "8h - 9h", value: Slot.Slot2 },
   { name: "9h - 10h", value: Slot.Slot3 },

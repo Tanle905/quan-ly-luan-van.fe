@@ -5,6 +5,7 @@ import {
   baseURL,
   THESIS_DEFENSE_SCHEDULE_ENDPOINT,
 } from "../../../constants/endpoints";
+import { calendarEventSendSubject } from "../../../constants/observables";
 import { MCAdminScheduleManagementModal } from "../../molecules/modal/admin-schedule-management-modal.molecule";
 import { withAdminSideBar } from "../../molecules/sidebar-menu/admin-sidebar-menu.molecule";
 import { OGScheduleContent } from "./schedule-content.organism";
@@ -28,6 +29,7 @@ export function OGAdminContent() {
           THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.THESIS_DEFENSE_TIME
       );
 
+      calendarEventSendSubject.next(1);
       message.success("Tự động sắp lịch thành công");
     } catch (error: any) {
       message.error(error?.response?.data?.message);

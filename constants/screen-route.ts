@@ -6,8 +6,7 @@ export const SCREEN_ROUTE = {
   THESIS_PROGRESS: "/thesis",
   SCHEDULE: "/schedule",
   ADMIN: {
-    BASE: "/admin",
-    SCHEDULE: "/schedule",
+    BASE: "/admin/schedule",
     MANAGEMENT: {
       STUDENT: "/student-management",
       TEACHER: "/teacher-management",

@@ -2,14 +2,18 @@ import { DateSelectArg } from "@fullcalendar/core";
 import { DateClickArg } from "@fullcalendar/interaction";
 import {
   Button,
+  Collapse,
+  Dropdown,
   Form,
   FormInstance,
   Input,
   Layout,
+  Menu,
   message,
   Modal,
   Select,
   Tabs,
+  Typography,
 } from "antd";
 import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
@@ -20,14 +24,20 @@ import {
   TEACHER_ENDPOINT,
   THESIS_DEFENSE_SCHEDULE_ENDPOINT,
 } from "../../../constants/endpoints";
-import { Slot } from "../../../constants/enums";
+import { ScheduleEventType, Slot } from "../../../constants/enums";
 import { calendarEventSendSubject } from "../../../constants/observables";
 import { ScheduleEventTime } from "../../../interfaces/schedule.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { userState } from "../../../stores/auth.store";
 import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
-import { MCAddScheduleEventForm } from "../form/add-schedule-event-form.molecule";
+import {
+  MCAddScheduleEventForm,
+  slotsData,
+} from "../form/add-schedule-event-form.molecule";
 import useSWR from "swr";
+import { Teacher } from "../../../interfaces/teacher.interface";
+import { Topic } from "../../../interfaces/topic.interface";
+import { MoreOutlined } from "@ant-design/icons";
 
 interface MCAdminAddScheduleEventModalProps {
   isModalVisible: boolean;
@@ -39,11 +49,35 @@ interface MCAdminAddScheduleEventModalProps {
 
 interface StudentListFormProps {
   form: FormInstance;
+  teacherList: Teacher[];
   studentLists: any[];
   scheduleEventList: ScheduleEventTime[];
   MSCBList: string[];
   setMSCBList: any;
 }
+
+interface ThesisDefenseEventsProps {
+  teacherList: Teacher[];
+  dateList: ScheduleEventTime[];
+  mutateDateList: any;
+}
+
+const items = (
+  children: (mode: "add" | "edit") => JSX.Element,
+  disabled: boolean
+) => [
+  {
+    key: "1",
+    label: `Thêm lịch`,
+    children: children("add"),
+  },
+  {
+    key: "2",
+    label: `Chi tiết lịch`,
+    children: children("edit"),
+    disabled,
+  },
+];
 
 export function MCAdminAddScheduleEventModal({
   isModalVisible,
@@ -58,61 +92,24 @@ export function MCAdminAddScheduleEventModal({
   const [studentListForm] = Form.useForm();
   const [addEventForm] = Form.useForm();
   const user = useRecoilValue<Student | null>(userState);
-  const { data } = useSWR(
+  const { data: teacherList } = useSWR(
+    baseURL + TEACHER_ENDPOINT.BASE,
+    fetchTeacher
+  );
+  const { data: studentList } = useSWR(
     baseURL +
       THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
       THESIS_DEFENSE_SCHEDULE_ENDPOINT.STUDENT_LIST.BASE,
-    fetchStudentList
+    fetchList
   );
-  const items = [
-    {
-      key: "1",
-      label: `Thêm lịch`,
-      children: (
-        <>
-          <StudentListForm
-            form={studentListForm}
-            studentLists={data?.studentLists}
-            scheduleEventList={data?.calendar?.scheduleEventList}
-            MSCBList={MSCBList}
-            setMSCBList={setMSCBList}
-          />
-          <MCAddScheduleEventForm
-            mode="single"
-            title="Chọn buổi báo cáo"
-            isFormEditable={isFormEditable}
-            currentDateData={currentDateData}
-            form={addEventForm}
-            disabledSlots={filledSlots}
-          />
-        </>
-      ),
-    },
-    {
-      key: "2",
-      label: `Chỉnh sửa lịch`,
-      children: (
-        <>
-          <StudentListForm
-            form={studentListForm}
-            studentLists={data?.studentLists}
-            scheduleEventList={data?.calendar?.scheduleEventList}
-            MSCBList={MSCBList}
-            setMSCBList={setMSCBList}
-          />
-          <MCAddScheduleEventForm
-            mode="single"
-            title="Chọn buổi báo cáo"
-            isFormEditable={isFormEditable}
-            currentDateData={currentDateData}
-            form={addEventForm}
-            disabledSlots={filledSlots}
-          />
-        </>
-      ),
-      disabled: true,
-    },
-  ];
+  const { data: selectedDateList, mutate: mutateDateList } = useSWR(
+    baseURL +
+      THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+      THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE +
+      "/" +
+      dayjs(currentDateData?.date).toDate(),
+    fetchList
+  );
 
   useEffect(() => {
     setIsFormEditable(currentEventData ? false : true);
@@ -127,10 +124,14 @@ export function MCAdminAddScheduleEventModal({
     setFilledSlots([]);
   }
 
-  async function fetchStudentList(url: string) {
+  async function fetchList(url: string) {
     return await (
       await axios.get(url)
     ).data?.data;
+  }
+
+  async function fetchTeacher(url: string) {
+    return (await axios.post(url)).data?.data;
   }
 
   async function handleSaveEvent() {
@@ -167,28 +168,7 @@ export function MCAdminAddScheduleEventModal({
       currentEventData
         ? message.success("Chỉnh sửa buổi báo cáo thành công")
         : message.success("Thêm buổi báo cáo thành công !");
-      handleCloseModal();
-    } catch (error: any) {
-      message.error(error.response.data.message);
-    }
-  }
-
-  async function handleDeleteEvent() {
-    if (!user || !currentEventData) return;
-
-    try {
-      await axios.post(
-        baseURL +
-          THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
-          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE +
-          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BUSY_LIST,
-        {
-          id: currentEventData[0].id,
-          MSSV: user?.MSSV,
-        }
-      );
       calendarEventSendSubject.next(1);
-      message.success("Xóa buổi báo cáo thành công !");
       handleCloseModal();
     } catch (error: any) {
       message.error(error.response.data.message);
@@ -200,11 +180,11 @@ export function MCAdminAddScheduleEventModal({
   }
 
   function handleFilterSlots() {
-    if (!currentDateData || !data || !MSCBList) return;
+    if (!currentDateData || !studentList || !MSCBList) return;
 
     const parsedSelectedDate =
       currentDateData.date && parseDate(currentDateData.date);
-    const filledSlots = data.calendar.scheduleEventList
+    const filledSlots = studentList.calendar.scheduleEventList
       .filter((e: any) => {
         //Check today if any teacher in selected list have busy or thesis event
         return (
@@ -257,13 +237,47 @@ export function MCAdminAddScheduleEventModal({
           </AtomLoadingButton>,
         ]}
       >
-        <Tabs items={items} />
+        <Tabs
+          items={items(
+            (mode) =>
+              mode === "add" ? (
+                <>
+                  <StudentListForm
+                    teacherList={teacherList}
+                    form={studentListForm}
+                    studentLists={studentList?.studentLists}
+                    scheduleEventList={studentList?.calendar?.scheduleEventList}
+                    MSCBList={MSCBList}
+                    setMSCBList={setMSCBList}
+                  />
+                  <MCAddScheduleEventForm
+                    mode="single"
+                    title="Chọn buổi báo cáo"
+                    isFormEditable={isFormEditable}
+                    currentDateData={currentDateData}
+                    form={addEventForm}
+                    disabledSlots={filledSlots}
+                  />
+                </>
+              ) : (
+                <ThesisDefenseEvents
+                  teacherList={teacherList}
+                  dateList={selectedDateList}
+                  mutateDateList={mutateDateList}
+                />
+              ),
+            !selectedDateList?.filter(
+              (e: any) => e.type === ScheduleEventType.ThesisDefenseEvent
+            ).length
+          )}
+        />
       </Modal>
     </>
   );
 }
 
 function StudentListForm({
+  teacherList,
   studentLists,
   scheduleEventList,
   form,
@@ -271,13 +285,8 @@ function StudentListForm({
   setMSCBList,
 }: StudentListFormProps) {
   const [selectedStudent, setSelectedStudent] = useState(false);
-  const { data } = useSWR(baseURL + TEACHER_ENDPOINT.BASE, fetchTeacher);
 
   useEffect(() => {}, [selectedStudent]);
-
-  async function fetchTeacher(url: string) {
-    return (await axios.post(url)).data?.data;
-  }
 
   function handleMapStudent() {
     return studentLists.reduce(
@@ -305,7 +314,7 @@ function StudentListForm({
 
   function handleMapTeacher() {
     const options =
-      data
+      teacherList
         ?.map((teacher: any) => ({
           label: `${teacher.lastName} ${teacher.firstName}`,
           value: teacher.MSCB,
@@ -316,14 +325,14 @@ function StudentListForm({
 
   function handleSetMSCBList() {
     const list = [
-      ...(form.getFieldValue("teacher1")
-        ? [form.getFieldValue("teacher1")]
+      ...(form.getFieldValue("teacher3")
+        ? [form.getFieldValue("teacher3")]
         : []),
       ...(form.getFieldValue("teacher2")
         ? [form.getFieldValue("teacher2")]
         : []),
-      ...(form.getFieldValue("teacher3")
-        ? [form.getFieldValue("teacher3")]
+      ...(form.getFieldValue("teacher1")
+        ? [form.getFieldValue("teacher1")]
         : []),
     ];
     setMSCBList(list);
@@ -349,14 +358,14 @@ function StudentListForm({
               form.setFieldValue("teacherName", option.title.split(":")[0]);
               form.setFieldValue("teacher1", option.title.split(":")[1]);
               handleSetMSCBList();
-              form.setFieldValue("studentName", option.label);
+              form.setFieldValue("studentName", option.label.split(" - ")[0]);
             }}
           ></Select>
         </Form.Item>
         <Form.Item label="Thư kí" className="readOnly" name="teacherName">
           <Input readOnly />
         </Form.Item>
-        <Form.Item label="Thư kí" hidden className="readOnly" name="teacher1">
+        <Form.Item hidden className="readOnly" name="teacher1">
           <Input readOnly />
         </Form.Item>
         <Form.Item label="Phản biện" name="teacher2">
@@ -382,4 +391,110 @@ function StudentListForm({
       </Form>
     </Layout.Content>
   );
+}
+
+function ThesisDefenseEvents({
+  teacherList,
+  dateList,
+  mutateDateList,
+}: ThesisDefenseEventsProps) {
+  const items = dateList?.map(
+    (event, index) =>
+      event.type === ScheduleEventType.ThesisDefenseEvent && (
+        <Collapse.Panel
+          key={index}
+          extra={
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: "1",
+                    label: (
+                      <Typography.Text
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteEvent(event._id);
+                        }}
+                      >
+                        Xóa buổi báo cáo
+                      </Typography.Text>
+                    ),
+                  },
+                ],
+              }}
+            >
+              <MoreOutlined onClick={(e) => e.stopPropagation()} />
+            </Dropdown>
+          }
+          header={`${
+            slotsData.find(
+              (slot) => slot.value === event.thesisDefenseTimeData?.slots
+            )?.name
+          } / ${event.thesisDefenseTimeData?.studentName}`}
+        >
+          <div>
+            <span className="font-semibold">Thư kí: </span>
+            <span>
+              {`${
+                findTeacher(event.thesisDefenseTimeData?.MSCB[2])?.lastName
+              } ${
+                findTeacher(event.thesisDefenseTimeData?.MSCB[2])?.firstName
+              }`}
+            </span>
+          </div>
+          <div>
+            <span className="font-semibold">Phản biện: </span>
+            <span>
+              {`${
+                findTeacher(event.thesisDefenseTimeData?.MSCB[1])?.lastName
+              } ${
+                findTeacher(event.thesisDefenseTimeData?.MSCB[1])?.firstName
+              }`}
+            </span>
+          </div>
+          <div>
+            <span className="font-semibold">Chủ tịch hội đồng: </span>
+            <span>
+              {`${
+                findTeacher(event.thesisDefenseTimeData?.MSCB[0])?.lastName
+              } ${
+                findTeacher(event.thesisDefenseTimeData?.MSCB[0])?.firstName
+              }`}
+            </span>
+          </div>
+          <div>
+            <span className="font-semibold">Đề tài: </span>
+            <span>
+              {
+                (event.thesisDefenseTimeData?.topic as unknown as Topic)
+                  .topicName
+              }
+            </span>
+          </div>
+        </Collapse.Panel>
+      )
+  );
+
+  function findTeacher(MSCB: string | undefined) {
+    return teacherList.find((t) => t.MSCB === MSCB);
+  }
+
+  async function handleDeleteEvent(id: string | undefined) {
+    try {
+      await axios.delete(
+        baseURL +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.THESIS_DEFENSE_TIME +
+          "/" +
+          id
+      );
+      message.success("Xóa buổi báo cáo thành công");
+      mutateDateList();
+    } catch (error: any) {
+      message.error(error.response?.data?.message);
+    }
+  }
+
+  return <Collapse>{items}</Collapse>;
 }

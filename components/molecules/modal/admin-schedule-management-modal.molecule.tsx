@@ -2,11 +2,12 @@ import { DatePicker, Form, FormInstance, message, Modal } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect } from "react";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import {
   baseURL,
   THESIS_DEFENSE_SCHEDULE_ENDPOINT,
 } from "../../../constants/endpoints";
+import { calendarEventSendSubject } from "../../../constants/observables";
 import { ScheduleCalendar } from "../../../interfaces/schedule.interface";
 
 interface MCAdminScheduleManagementModalProps {
@@ -15,7 +16,6 @@ interface MCAdminScheduleManagementModalProps {
 }
 
 interface ModalContent {
-  data: ScheduleCalendar;
   form: FormInstance;
 }
 
@@ -23,60 +23,17 @@ export function MCAdminScheduleManagementModal({
   isOpen,
   setIsOpen,
 }: MCAdminScheduleManagementModalProps) {
-  const { data } = useSWR(
-    THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
-      THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE,
-    dataFetcher
-  );
   const [form] = Form.useForm();
 
-  async function dataFetcher(url: string) {
-    try {
-      return await (
-        await axios.get(baseURL + url)
-      ).data.data;
-    } catch (error: any) {
-      message.error(error.response?.data?.message);
-    }
-  }
-
-  function handleOnOk() {
-    form.submit();
+  async function handleOnOk() {
+    await handleSubmitForm();
+    calendarEventSendSubject.next(1);
+    handleCloseModal();
   }
 
   function handleCloseModal() {
     setIsOpen(false);
   }
-
-  return (
-    <Modal
-      title="Quản lí lịch biểu"
-      open={isOpen}
-      onOk={handleOnOk}
-      onCancel={handleCloseModal}
-      destroyOnClose
-      closable
-    >
-      <ModalContent data={data} form={form} />
-    </Modal>
-  );
-}
-
-function ModalContent({ data, form }: ModalContent) {
-  useEffect(() => {
-    if (!data) return;
-
-    data.reportPrepareWeek &&
-      form.setFieldValue("reportPrepareWeek", [
-        dayjs(data.reportPrepareWeek.start),
-        dayjs(data.reportPrepareWeek.end).subtract(1, "day"),
-      ]);
-    data.thesisDefenseWeek &&
-      form.setFieldValue("thesisDefenseWeek", [
-        dayjs(data.thesisDefenseWeek.start),
-        dayjs(data.thesisDefenseWeek.end).subtract(1, "day"),
-      ]);
-  }, [data]);
 
   async function handleSubmitForm() {
     const reportPrepareWeek = form.getFieldValue("reportPrepareWeek");
@@ -115,7 +72,53 @@ function ModalContent({ data, form }: ModalContent) {
   }
 
   return (
-    <Form layout="vertical" form={form} onFinish={handleSubmitForm}>
+    <Modal
+      title="Quản lí lịch biểu"
+      open={isOpen}
+      onOk={handleOnOk}
+      onCancel={handleCloseModal}
+      destroyOnClose
+      closable
+    >
+      <ModalContent form={form} />
+    </Modal>
+  );
+}
+
+function ModalContent({ form }: ModalContent) {
+  const { data } = useSWR(
+    THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+      THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE,
+    dataFetcher
+  );
+
+  async function dataFetcher(url: string) {
+    try {
+      return await (
+        await axios.get(baseURL + url)
+      ).data.data;
+    } catch (error: any) {
+      message.error(error.response?.data?.message);
+    }
+  }
+
+  useEffect(() => {
+    if (!data) return;
+
+    data.reportPrepareWeek &&
+      form.setFieldValue("reportPrepareWeek", [
+        dayjs(data.reportPrepareWeek.start),
+        dayjs(data.reportPrepareWeek.end).subtract(1, "day"),
+      ]);
+    data.thesisDefenseWeek &&
+      form.setFieldValue("thesisDefenseWeek", [
+        dayjs(data.thesisDefenseWeek.start),
+        dayjs(data.thesisDefenseWeek.end).subtract(1, "day"),
+      ]);
+  }, [data]);
+
+  return (
+    <Form layout="vertical" form={form}>
       <Form.Item label="Tuần lễ nộp danh sách báo cáo" name="reportPrepareWeek">
         <DatePicker.RangePicker className="w-full" format="DD-MM-YYYY" />
       </Form.Item>

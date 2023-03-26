@@ -73,7 +73,6 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
   }
 
   if (!Array.isArray(data) || isLoading) return null;
-  console.log(handleTransformDataToEvent());
 
   return (
     <>
