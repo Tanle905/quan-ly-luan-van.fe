@@ -66,7 +66,14 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
     }
   }
 
+  function handleTransformDataToEvent() {
+    return data.reduce((prev: any, cur: any) => {
+      return [...prev, ...(cur.slots ? cur.slots : [cur])];
+    }, []);
+  }
+
   if (!Array.isArray(data) || isLoading) return null;
+  console.log(handleTransformDataToEvent());
 
   return (
     <>
@@ -116,9 +123,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
               duration: { days: 1 },
             },
           }}
-          events={data.reduce((prev: any, cur: any) => {
-            return [...prev, ...cur.slots];
-          }, [])}
+          events={handleTransformDataToEvent()}
           eventTimeFormat={{ hour: "numeric", minute: "2-digit" }}
           weekNumbers
           weekText="Tuần "
@@ -145,10 +150,6 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
         />
       </Layout.Content>
       <style global>{`
-      .fc .fc-daygrid-day-frame {
-        max-height: 100px;
-        overflow: auto;
-      }
       .fc-daygrid-day:hover {
         cursor: pointer;
         background-color: rgb(230 230 230);

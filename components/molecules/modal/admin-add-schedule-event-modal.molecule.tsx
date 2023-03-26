@@ -4,6 +4,7 @@ import {
   Button,
   Form,
   FormInstance,
+  Input,
   Layout,
   message,
   Modal,
@@ -16,11 +17,10 @@ import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import {
   baseURL,
-  COMMON_ENDPOINT,
   TEACHER_ENDPOINT,
   THESIS_DEFENSE_SCHEDULE_ENDPOINT,
 } from "../../../constants/endpoints";
-import { ScheduleEventType, Slot } from "../../../constants/enums";
+import { Slot } from "../../../constants/enums";
 import { calendarEventSendSubject } from "../../../constants/observables";
 import { ScheduleEventTime } from "../../../interfaces/schedule.interface";
 import { Student } from "../../../interfaces/student.interface";
@@ -41,6 +41,7 @@ interface StudentListFormProps {
   form: FormInstance;
   studentLists: any[];
   scheduleEventList: ScheduleEventTime[];
+  MSCBList: string[];
   setMSCBList: any;
 }
 
@@ -73,6 +74,7 @@ export function MCAdminAddScheduleEventModal({
             form={studentListForm}
             studentLists={data?.studentLists}
             scheduleEventList={data?.calendar?.scheduleEventList}
+            MSCBList={MSCBList}
             setMSCBList={setMSCBList}
           />
           <MCAddScheduleEventForm
@@ -95,6 +97,7 @@ export function MCAdminAddScheduleEventModal({
             form={studentListForm}
             studentLists={data?.studentLists}
             scheduleEventList={data?.calendar?.scheduleEventList}
+            MSCBList={MSCBList}
             setMSCBList={setMSCBList}
           />
           <MCAddScheduleEventForm
@@ -120,6 +123,7 @@ export function MCAdminAddScheduleEventModal({
     addEventForm.resetFields();
     setIsModelVisible(false);
     setCurrentEventData(null);
+    setMSCBList([]);
     setFilledSlots([]);
   }
 
@@ -140,28 +144,23 @@ export function MCAdminAddScheduleEventModal({
     if (!slots.length) return;
 
     const payload = {
-      type: ScheduleEventType.ThesisDefenseEvent,
-      thesisDefenseTimeData: {
-        start: startDate.toDate(),
-        MSCB: MSCBList,
-        MSSV,
-        teacherName,
-        studentName,
-        slots: slots[0].value,
-      },
+      start: startDate.toDate(),
+      MSCB: MSCBList,
+      MSSV,
+      teacherName,
+      studentName,
+      slots: slots[0].value,
     };
-    return console.log(payload);
 
     try {
-      await axios[currentEventData ? "put" : "post"](
+      await axios[false ? "put" : "post"](
         baseURL +
           THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
           THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BASE +
-          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.BUSY_LIST +
-          COMMON_ENDPOINT.IMPORT,
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.CALENDAR.THESIS_DEFENSE_TIME,
         {
           ...payload,
-          ...(currentEventData ? { id: currentEventData[0].id } : {}),
+          ...(currentEventData && { id: currentEventData[0].id }),
         }
       );
       calendarEventSendSubject.next(1);
@@ -242,7 +241,7 @@ export function MCAdminAddScheduleEventModal({
     <>
       <Modal
         open={isModalVisible}
-        title="Quản lý lịch biểu"
+        title="Quản lý lịch báo cáo"
         destroyOnClose={true}
         closable
         onCancel={handleCloseModal}
@@ -250,27 +249,6 @@ export function MCAdminAddScheduleEventModal({
           <Button type="text" onClick={handleCloseModal}>
             Hủy bỏ
           </Button>,
-          currentEventData ? (
-            <Button type="dashed" onClick={() => setIsFormEditable(true)}>
-              Chỉnh sửa
-            </Button>
-          ) : (
-            <></>
-          ),
-          currentEventData ? (
-            <AtomLoadingButton
-              onClick={handleDeleteEvent}
-              buttonProps={{
-                className:
-                  "text-white bg-red-600 hover:bg-red-500 transition-all",
-                type: "ghost",
-              }}
-            >
-              Xóa buổi báo cáo
-            </AtomLoadingButton>
-          ) : (
-            <></>
-          ),
           <AtomLoadingButton
             onClick={handleSaveEvent}
             buttonProps={{ type: "primary" }}
@@ -289,6 +267,7 @@ function StudentListForm({
   studentLists,
   scheduleEventList,
   form,
+  MSCBList,
   setMSCBList,
 }: StudentListFormProps) {
   const [selectedStudent, setSelectedStudent] = useState(false);
@@ -304,18 +283,57 @@ function StudentListForm({
     return studentLists.reduce(
       (prevList, curList) => [
         ...prevList,
-        ...curList.students.map((student: any) => {
-          return {
-            title: curList.teacherName,
-            label: `${student.lastName} ${student.firstName} - ${curList.teacherName} phụ trách`,
-            value: student.MSSV,
-            disabled: scheduleEventList.find(
+        ...curList.students
+          .map((student: any) => {
+            const isScheduled = scheduleEventList.find(
               (e) => e.thesisDefenseTimeData?.MSSV === student.MSSV
-            ),
-          };
-        }),
+            );
+
+            return isScheduled
+              ? null
+              : {
+                  title: `${curList.teacherName}:${curList.MSCB}`,
+                  label: `${student.lastName} ${student.firstName} - ${curList.teacherName} phụ trách`,
+                  value: student.MSSV,
+                };
+          })
+          .filter((item: any) => item),
       ],
       []
+    );
+  }
+
+  function handleMapTeacher() {
+    const options =
+      data
+        ?.map((teacher: any) => ({
+          label: `${teacher.lastName} ${teacher.firstName}`,
+          value: teacher.MSCB,
+        }))
+        .filter((option: any) => !MSCBList.includes(option.value)) ?? [];
+    return options;
+  }
+
+  function handleSetMSCBList() {
+    const list = [
+      ...(form.getFieldValue("teacher1")
+        ? [form.getFieldValue("teacher1")]
+        : []),
+      ...(form.getFieldValue("teacher2")
+        ? [form.getFieldValue("teacher2")]
+        : []),
+      ...(form.getFieldValue("teacher3")
+        ? [form.getFieldValue("teacher3")]
+        : []),
+    ];
+    setMSCBList(list);
+  }
+
+  function filterOption(input: any, option: any) {
+    return (
+      (option?.value as string)?.toLowerCase().indexOf(input.toLowerCase()) >=
+        0 ||
+      (option?.label as string)?.toLowerCase().indexOf(input.toLowerCase()) >= 0
     );
   }
 
@@ -325,46 +343,40 @@ function StudentListForm({
         <Form.Item label="Chọn sinh viên" name="MSSV">
           <Select
             options={handleMapStudent() ?? []}
-            filterOption={(input, option) =>
-              (option?.value as string)
-                ?.toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0 ||
-              (option?.label as string)
-                ?.toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
+            filterOption={filterOption}
             onChange={(value, option: any) => {
               setSelectedStudent(true);
-              form.setFieldValue("teacherName", option.title);
+              form.setFieldValue("teacherName", option.title.split(":")[0]);
+              form.setFieldValue("teacher1", option.title.split(":")[1]);
+              handleSetMSCBList();
               form.setFieldValue("studentName", option.label);
             }}
           ></Select>
         </Form.Item>
-        <Form.Item label="Chọn giảng viên hướng dẫn (3 người)" name="MSCB">
+        <Form.Item label="Thư kí" className="readOnly" name="teacherName">
+          <Input readOnly />
+        </Form.Item>
+        <Form.Item label="Thư kí" hidden className="readOnly" name="teacher1">
+          <Input readOnly />
+        </Form.Item>
+        <Form.Item label="Phản biện" name="teacher2">
           <Select
+            allowClear
+            onClear={handleSetMSCBList}
             disabled={!selectedStudent}
-            mode="multiple"
-            options={
-              data?.map((teacher: any) => ({
-                label: `${teacher.lastName} ${teacher.firstName}`,
-                value: teacher.MSCB,
-              })) ?? []
-            }
-            filterOption={(input, option) =>
-              (option?.value as string)
-                ?.toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0 ||
-              (option?.label as string)
-                ?.toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-            onChange={(value) => {
-              if (value?.length > 3) {
-                value.pop();
-                return;
-              }
-              setMSCBList(value);
-            }}
+            options={handleMapTeacher()}
+            filterOption={filterOption}
+            onChange={handleSetMSCBList}
+          ></Select>
+        </Form.Item>
+        <Form.Item label="Chủ trì hội đồng" name="teacher3">
+          <Select
+            allowClear
+            onClear={handleSetMSCBList}
+            disabled={!selectedStudent}
+            options={handleMapTeacher()}
+            filterOption={filterOption}
+            onChange={handleSetMSCBList}
           ></Select>
         </Form.Item>
       </Form>
