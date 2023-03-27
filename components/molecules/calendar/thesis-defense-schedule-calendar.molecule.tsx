@@ -20,6 +20,7 @@ import { isAdmin, isTeacher } from "../../../utils/role.util";
 import timegrid from "@fullcalendar/timegrid";
 import dayjs from "dayjs";
 import { MCAdminAddScheduleEventModal } from "../modal/admin-add-schedule-event-modal.molecule";
+import { exportExcels } from "../../../utils/data-processing.util";
 
 interface MCThesisDefenseScheduleCalendarProps {}
 
@@ -99,7 +100,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
           headerToolbar={{
             start: "title",
             center: "dayGridMonth,dayGridWeek,timeGrid",
-            end: "prev,today,next",
+            end: "export prev,today,next",
           }}
           buttonText={{
             prev: "Trước",
@@ -120,6 +121,12 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
             timeGrid: {
               type: "timeGrid",
               duration: { days: 1 },
+            },
+          }}
+          customButtons={{
+            export: {
+              text: "Xuất lịch biểu",
+              click: () => exportExcels(data),
             },
           }}
           events={handleTransformDataToEvent()}
