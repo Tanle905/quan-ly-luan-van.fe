@@ -8,7 +8,7 @@ export interface TableConfig {
   subTitle?: string;
   filter?: FilterConfig[];
   search?: boolean;
-  extraRightComponent?: [(props: TableProps) => any];
+  extraRightComponent?: ((props: TableProps) => any)[];
   query?: any;
   table: {
     pageSize?: number;

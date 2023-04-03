@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from "antd";
+import { Button, ButtonProps, message } from "antd";
 import { useState } from "react";
 
 interface AtomLoadingButtonProps {
@@ -18,8 +18,13 @@ export function AtomLoadingButton({
 
   async function handleOnClick() {
     setIsLoading(true);
-    await onClick();
-    setIsLoading(false);
+    try {
+      await onClick();
+    } catch (error) {
+      message.error("Error");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (

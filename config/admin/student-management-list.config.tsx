@@ -1,17 +1,47 @@
-import { AtomStudentTableAction } from "../../components/atoms/action/student-table-action.atom";
-import {} from "../../components/atoms/action/teacher-table-action.atom";
+import { Button, Layout, Switch, Typography, message } from "antd";
 import { AtomExportButton } from "../../components/atoms/button/export-button.atom";
-import { STUDENT_MANAGEMENT_ENDPOINT } from "../../constants/endpoints";
+import {
+  COMMON_ENDPOINT,
+  STUDENT_ENDPOINT,
+  STUDENT_MANAGEMENT_ENDPOINT,
+  THESIS_DEFENSE_SCHEDULE_ENDPOINT,
+  baseURL,
+} from "../../constants/endpoints";
 import { TableConfig } from "../interface/table-config.interface";
+import { AtomStudentManagementTableAction } from "../../components/atoms/action/student-management-table-action.atom";
+import { MCAddUserFormModal } from "../../components/molecules/modal/add-user-form-modal.molecule";
+import useSWR from "swr";
+import axios from "axios";
+import { useState } from "react";
 
 export const studentManagementListConfig: TableConfig = {
   apiEndpoint: STUDENT_MANAGEMENT_ENDPOINT.BASE,
   title: "Quản lý sinh viên",
   search: true,
   extraRightComponent: [
-    ({ key, href }) => href && <AtomExportButton key={key} href={href} />,
+    ({ key, href }) =>
+      href && (
+        <AtomExportButton
+          key={key}
+          href={baseURL + STUDENT_ENDPOINT.BASE + COMMON_ENDPOINT.EXPORT}
+          method="POST"
+        />
+      ),
+    (props) => (
+      <MCAddUserFormModal
+        title="Thêm sinh viên"
+        endpoint={STUDENT_MANAGEMENT_ENDPOINT.BASE}
+        triggerElement={(openModal) => (
+          <Button onClick={openModal} type="primary">
+            Thêm sinh viên
+          </Button>
+        )}
+      />
+    ),
+    () => <GradingStatusSwitch />,
   ],
   table: {
+    pageSize: 7,
     columns: [
       {
         key: "MSSV",
@@ -38,9 +68,9 @@ export const studentManagementListConfig: TableConfig = {
         sorter: true,
       },
       {
-        key: "topicName",
-        title: "Tên đề tài",
-        dataIndex: "topicName",
+        key: "major",
+        title: "Chuyên ngành",
+        dataIndex: "major",
         sorter: true,
       },
       {
@@ -48,9 +78,51 @@ export const studentManagementListConfig: TableConfig = {
         width: "10%",
         title: "Hành động",
         render: (text, student: any) => (
-          <AtomStudentTableAction student={student} />
+          <AtomStudentManagementTableAction student={student} />
         ),
       },
     ],
   },
 };
+
+function GradingStatusSwitch() {
+  const [loading, setLoading] = useState(false);
+  const { data: status, mutate } = useSWR(
+    baseURL +
+      THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+      THESIS_DEFENSE_SCHEDULE_ENDPOINT.GRADING_STATUS,
+    async (url) => (await axios.get(url)).data.data
+  );
+
+  async function handleToggleGradingStatus(checked: boolean) {
+    setLoading(true);
+    try {
+      await axios.put(
+        baseURL +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+          THESIS_DEFENSE_SCHEDULE_ENDPOINT.GRADING_STATUS,
+        { status: checked }
+      );
+
+      message.success("Chuyển trạng thái thành công");
+    } catch (error: any) {
+      message.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
+      mutate();
+    }
+  }
+
+  if (status === undefined) return null;
+
+  return (
+    <Layout.Content className="w-full space-x-2 flex items-center justify-end">
+      <Typography.Text>{status ? "Khóa" : "Mở khóa"} nhập điểm</Typography.Text>
+      <Switch
+        disabled={loading}
+        defaultChecked={status}
+        onChange={handleToggleGradingStatus}
+      />
+    </Layout.Content>
+  );
+}

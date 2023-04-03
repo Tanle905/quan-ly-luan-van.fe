@@ -41,7 +41,7 @@ export function exportExcels(data: any) {
       return [
         formattedDate,
         curSlotEvent
-          ? `Đề tài: ${curSlotEvent?.topic.topicName}- Sinh viên thực hiện: ${curSlotEvent?.studentName}`
+          ? `Đề tài: ${curSlotEvent?.topic.topicName} - Sinh viên thực hiện: ${curSlotEvent?.studentName}`
           : "",
       ];
     });
@@ -51,6 +51,14 @@ export function exportExcels(data: any) {
       ...Object.fromEntries(curSlotEventList),
     };
   });
+  const cellProps: XLSX.CellObject = {
+    s: {
+      alignment: {
+        wrapText: true,
+      },
+    },
+    t: "s",
+  };
 
   function isThesisDefenseWeek(e: any) {
     return e.backgroundColor === "#358630";
@@ -74,24 +82,27 @@ export function exportExcels(data: any) {
     cellStyles: true,
   });
   worksheet["!cols"] = [
-    { wch: 20 },
-    { wch: 20 },
-    { wch: 20 },
-    { wch: 20 },
-    { wch: 20 },
-    { wch: 20 },
-    { wch: 20 },
-    { wch: 20 },
+    { wch: 25 },
+    { wch: 25 },
+    { wch: 25 },
+    { wch: 25 },
+    { wch: 25 },
+    { wch: 25 },
+    { wch: 25 },
+    { wch: 25 },
   ];
   worksheet["!rows"] = [
-    { hpx: 50 },
-    { hpx: 30 },
-    { hpx: 30 },
-    { hpx: 30 },
-    { hpx: 30 },
-    { hpx: 30 },
-    { hpx: 30 },
-    { hpx: 30 },
+    { hpx: 25 },
+    { hpx: 70 },
+    { hpx: 70 },
+    { hpx: 70 },
+    { hpx: 70 },
+    { hpx: 70 },
+    { hpx: 70 },
+    { hpx: 70 },
+    { hpx: 70 },
+    { hpx: 70 },
+    { hpx: 70 },
   ];
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");

@@ -14,6 +14,9 @@ export const PROFILE_ENDPOINT = {
 export const STUDENT_MANAGEMENT_ENDPOINT = {
   BASE: "/student-management",
 };
+export const TEACHER_MANAGEMENT_ENDPOINT = {
+  BASE: "/teacher-management",
+};
 export const STUDENT_ENDPOINT = {
   BASE: "/student",
 };
@@ -54,4 +57,5 @@ export const THESIS_DEFENSE_SCHEDULE_ENDPOINT = {
     BUSY_LIST: "/busy-time",
     THESIS_DEFENSE_TIME: "/thesis-defense-time",
   },
+  GRADING_STATUS: "/grading-status",
 };

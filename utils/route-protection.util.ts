@@ -32,11 +32,16 @@ export function calendarRouteProtection(router: NextRouter) {
 }
 
 export function adminRouteProtection(router: NextRouter) {
+  if (!isAdmin() && router.pathname.search(SCREEN_ROUTE.ADMIN.BASE) !== -1) {
+    router.push(SCREEN_ROUTE.UNAUTHORIZED);
+  }
   if (
     isAdmin() &&
     !sharedRoute.includes(router.pathname) &&
     router.pathname.search(SCREEN_ROUTE.ADMIN.BASE) === -1
   ) {
-    router.push(SCREEN_ROUTE.ADMIN.BASE);
+    router.push(
+      SCREEN_ROUTE.ADMIN.BASE + SCREEN_ROUTE.ADMIN.MANAGEMENT.SCHEDULE
+    );
   }
 }

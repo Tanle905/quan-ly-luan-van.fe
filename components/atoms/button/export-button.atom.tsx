@@ -5,11 +5,18 @@ import { AtomLoadingButton } from "./loading-button.atom";
 interface AtomExportButtonProps {
   href: string;
   title?: string;
+  method?: "GET" | "POST";
 }
 
-export function AtomExportButton({ href, title }: AtomExportButtonProps) {
+export function AtomExportButton({
+  href,
+  title,
+  method,
+}: AtomExportButtonProps) {
   async function dataFetcher() {
-    const res = await axios.post(href);
+    const res = await axios(href, {
+      method: method ?? "POST",
+    });
     const data = res.data.data;
     data.unshift(Object.keys(data[0]));
     const csvContent =

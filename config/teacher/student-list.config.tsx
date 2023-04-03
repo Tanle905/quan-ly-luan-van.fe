@@ -1,7 +1,6 @@
 import { Tag } from "antd";
 import { AtomStudentTableAction } from "../../components/atoms/action/student-table-action.atom";
 import {} from "../../components/atoms/action/teacher-table-action.atom";
-import { AtomExportButton } from "../../components/atoms/button/export-button.atom";
 import { STUDENT_ENDPOINT } from "../../constants/endpoints";
 import { TableConfig } from "../interface/table-config.interface";
 
@@ -9,9 +8,6 @@ export const studentListConfig: TableConfig = {
   apiEndpoint: STUDENT_ENDPOINT.BASE,
   title: "Quản lý sinh viên",
   search: true,
-  extraRightComponent: [
-    ({ key, href }) => href && <AtomExportButton key={key} href={href} />,
-  ],
   table: {
     columns: [
       {

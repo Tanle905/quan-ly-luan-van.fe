@@ -19,7 +19,6 @@ export const thesisDefenseStudentListConfig: (
 ) => {
   return {
     apiEndpoint: STUDENT_ENDPOINT.BASE,
-    title: "Quản lý danh sách sinh viên báo cáo",
     search: true,
     extraRightComponent: [
       () => {

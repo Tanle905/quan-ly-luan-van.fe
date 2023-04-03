@@ -31,6 +31,8 @@ import { Teacher } from "../../../interfaces/teacher.interface";
 import { userState } from "../../../stores/auth.store";
 import { isTeacher } from "../../../utils/role.util";
 import { OGTable } from "../table/table.organism";
+import { scheduleListConfig } from "../../../config/teacher/schedule-list.config";
+import useSWR from "swr";
 
 interface OGMainContentProps {}
 
@@ -65,6 +67,12 @@ function TeacherContent() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [selectedRowStatuses, setSelectedRowStatuses] = useState<any[]>([]);
+  const { data: status } = useSWR(
+    baseURL +
+      THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
+      THESIS_DEFENSE_SCHEDULE_ENDPOINT.GRADING_STATUS,
+    async (url) => (await axios.get(url)).data.data
+  );
   const rowSelection: TableRowSelection<any> = {
     selectedRowKeys,
     onChange: onSelectChange,
@@ -85,7 +93,7 @@ function TeacherContent() {
     },
     {
       key: "3",
-      label: `Danh sách báo cáo`,
+      label: `Nộp danh sách báo cáo`,
       children: (
         <OGTable
           rowSelection={rowSelection}
@@ -100,9 +108,12 @@ function TeacherContent() {
         />
       ),
     },
+    {
+      key: "4",
+      label: `Báo cáo luận văn`,
+      children: <OGTable config={scheduleListConfig(status)} key={4} />,
+    },
   ];
-
-  useEffect(() => {}, []);
 
   function onSelectChange(newSelectedRowKeys: React.Key[], selectedRows: any) {
     setSelectedRowKeys(newSelectedRowKeys);

@@ -29,7 +29,8 @@ export function MCHeaderLeft({ styles }: MCHeaderLeftProps) {
         : SCREEN_ROUTE.BASE;
       break;
     case Roles.ADMIN:
-      homeRoute = SCREEN_ROUTE.ADMIN.BASE;
+      homeRoute =
+        SCREEN_ROUTE.ADMIN.BASE + SCREEN_ROUTE.ADMIN.MANAGEMENT.SCHEDULE;
       break;
     default:
       break;

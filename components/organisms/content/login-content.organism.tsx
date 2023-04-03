@@ -43,7 +43,11 @@ export function OGLoginContent() {
         form.getFieldsValue()
       );
       localStorage.setItem(LOCAL_STORAGE.USER_DATA, JSON.stringify(data));
-      router.push(isAdmin() ? SCREEN_ROUTE.ADMIN.BASE : SCREEN_ROUTE.BASE);
+      router.push(
+        isAdmin()
+          ? SCREEN_ROUTE.ADMIN.BASE + SCREEN_ROUTE.ADMIN.MANAGEMENT.SCHEDULE
+          : SCREEN_ROUTE.BASE
+      );
     } catch (error: any) {
       message.error(error.response.data.message);
     }

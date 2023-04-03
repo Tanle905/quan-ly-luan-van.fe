@@ -86,6 +86,7 @@ export function MCAdminAddScheduleEventModal({
   currentEventData,
   setCurrentEventData,
 }: MCAdminAddScheduleEventModalProps) {
+  const [activeKey, setActiveKey] = useState(1);
   const [isFormEditable, setIsFormEditable] = useState(true);
   const [MSCBList, setMSCBList] = useState<any>([]);
   const [filledSlots, setFilledSlots] = useState<Slot[]>([]);
@@ -225,19 +226,24 @@ export function MCAdminAddScheduleEventModal({
         destroyOnClose={true}
         closable
         onCancel={handleCloseModal}
-        footer={[
-          <Button type="text" onClick={handleCloseModal}>
-            Hủy bỏ
-          </Button>,
-          <AtomLoadingButton
-            onClick={handleSaveEvent}
-            buttonProps={{ type: "primary" }}
-          >
-            Lưu
-          </AtomLoadingButton>,
-        ]}
+        footer={
+          activeKey === 1
+            ? [
+                <Button type="text" onClick={handleCloseModal}>
+                  Hủy bỏ
+                </Button>,
+                <AtomLoadingButton
+                  onClick={handleSaveEvent}
+                  buttonProps={{ type: "primary" }}
+                >
+                  Lưu
+                </AtomLoadingButton>,
+              ]
+            : null
+        }
       >
         <Tabs
+          onTabClick={(key) => setActiveKey(parseInt(key))}
           items={items(
             (mode) =>
               mode === "add" ? (
@@ -491,6 +497,7 @@ function ThesisDefenseEvents({
       );
       message.success("Xóa buổi báo cáo thành công");
       mutateDateList();
+      calendarEventSendSubject.next(1);
     } catch (error: any) {
       message.error(error.response?.data?.message);
     }

@@ -25,7 +25,10 @@ export function OGTable({ config, ...props }: OGTableProps) {
   const user = useRecoilValue<Student | null>(userState);
   const [queryParams, setQueryParams] = useState<{}>({});
   const url =
-    user && `${process.env.NEXT_PUBLIC_BASE_URL}${config?.apiEndpoint}`;
+    user &&
+    `${process.env.NEXT_PUBLIC_BASE_URL}${config?.apiEndpoint}${
+      typeof config.query === "string" ? config.query : ""
+    }`;
   const { data, isLoading, isValidating, mutate } = useSWR(
     config.apiEndpoint && url,
     fetchData
@@ -165,7 +168,9 @@ export function OGTable({ config, ...props }: OGTableProps) {
             (data: any, index: any) => {
               return {
                 key: index,
-                ...(config.table.transform ? config.table.transform(data) : data),
+                ...(config.table.transform
+                  ? config.table.transform(data)
+                  : data),
               };
             }
           )}
