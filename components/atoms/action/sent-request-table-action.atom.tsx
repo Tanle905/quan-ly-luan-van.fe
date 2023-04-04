@@ -4,7 +4,7 @@ import {
   CloseOutlined,
   CheckOutlined,
 } from "@ant-design/icons";
-import { Layout, message, Tooltip } from "antd";
+import { Layout, message, Modal, Tooltip } from "antd";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -97,7 +97,18 @@ export function AtomSentRequestTableAction({
         }
       >
         <CheckOutlined
-          onClick={handleAcceptRequest}
+          onClick={() =>
+            !(
+              request.isStudentAccepted ||
+              request.topic?.topicStatus !== TopicStatus.Accepted
+            ) &&
+            Modal.confirm({
+              closable: true,
+              onOk: handleAcceptRequest,
+              title: "Chấp nhận yêu cầu",
+              content: "Bạn có muốn chấp nhận yêu cầu ?",
+            })
+          }
           className={`p-2 rounded-md transition-all ${
             request.isStudentAccepted ||
             request.topic?.topicStatus !== TopicStatus.Accepted
@@ -108,7 +119,14 @@ export function AtomSentRequestTableAction({
       </Tooltip>
       <Tooltip title="Xóa yêu cầu">
         <CloseOutlined
-          onClick={handleDeleteRequest}
+          onClick={() =>
+            Modal.confirm({
+              closable: true,
+              onOk: handleDeleteRequest,
+              title: "Hủy yêu cầu",
+              content: "Bạn có muốn hủy yêu cầu ?",
+            })
+          }
           className="cursor-pointer p-2 text-red-600 hover:bg-indigo-600 hover:text-white rounded-md transition-all"
         />
       </Tooltip>

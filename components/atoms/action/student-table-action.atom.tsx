@@ -9,6 +9,7 @@ import {
   MenuItemProps,
   MenuProps,
   message,
+  Modal,
   Tooltip,
   Typography,
 } from "antd";
@@ -60,7 +61,16 @@ function MoreDropdown({ MSSV }: { MSSV: string }) {
     {
       key: "1",
       label: (
-        <Typography.Text onClick={handleRemoveStudent}>
+        <Typography.Text
+          onClick={() =>
+            Modal.confirm({
+              closable: true,
+              title: "Xóa sinh viên khỏi danh sách",
+              content: "Bạn có muốn xóa sinh viên ra khỏi danh sách ?",
+              onOk: handleRemoveStudent,
+            })
+          }
+        >
           Xóa sinh viên
         </Typography.Text>
       ),

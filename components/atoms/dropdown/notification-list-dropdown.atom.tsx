@@ -9,6 +9,7 @@ import { Notification } from "../../../interfaces/notification.interface";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
 import { userState } from "../../../stores/auth.store";
+import { isStudent } from "../../../utils/role.util";
 
 interface AtomNotificationListDropDownProps {
   children: ReactElement | ReactNode;
@@ -68,7 +69,9 @@ export function AtomNotificationListDropDown({
   async function notificationFetcher() {
     try {
       const { data } = await axios.get(
-        process.env.NEXT_PUBLIC_BASE_URL + NOTIFICATION_ENDPOINT.BASE,
+        `${process.env.NEXT_PUBLIC_BASE_URL}${NOTIFICATION_ENDPOINT.BASE}/?${
+          isStudent() ? "MSSV=" + user?.MSSV : "MSCB=" + user?.MSCB
+        }`
       );
 
       return data;

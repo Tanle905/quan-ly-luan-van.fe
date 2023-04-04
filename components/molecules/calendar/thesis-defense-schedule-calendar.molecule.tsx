@@ -16,7 +16,7 @@ import { userState } from "../../../stores/auth.store";
 import useSWR from "swr";
 import { clearCache } from "../../../utils/swr.util";
 import { MCAddScheduleEventModal } from "../modal/add-schedule-event-modal.molecule";
-import { isAdmin, isTeacher } from "../../../utils/role.util";
+import { isAdmin, isStudent, isTeacher } from "../../../utils/role.util";
 import timegrid from "@fullcalendar/timegrid";
 import dayjs from "dayjs";
 import { MCAdminAddScheduleEventModal } from "../modal/admin-add-schedule-event-modal.molecule";
@@ -142,6 +142,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
           windowResizeDelay={100}
           eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
           dateClick={(dateData) => {
+            if (isStudent()) return;
             const filteredEventData = data.filter(
               (date) =>
                 dayjs(date.start).format("DD-MM-YYYY") ===

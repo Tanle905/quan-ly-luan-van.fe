@@ -3,7 +3,7 @@ import {
   MessageOutlined,
   SendOutlined,
 } from "@ant-design/icons";
-import { Layout, message, Tooltip } from "antd";
+import { Layout, message, Modal, Tooltip } from "antd";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -16,7 +16,6 @@ import {
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { Student } from "../../../interfaces/student.interface";
 import { Teacher } from "../../../interfaces/teacher.interface";
-import { NotificationService } from "../../../services/notification.service";
 import { userState } from "../../../stores/auth.store";
 
 interface AtomTeacherTableActionProps {
@@ -50,12 +49,6 @@ export function AtomTeacherTableAction({
       reloadProfileSubject.next(1);
       reloadTableSubject.next(1);
       message.success("Gửi yêu cầu thành công");
-
-      await NotificationService.sendNotification({
-        user,
-        receiver: teacher._id,
-        content: `Sinh viên ${user?.lastName} ${user?.firstName} (${user?.email}) - ${user?.MSSV} đã gửi yêu cầu xin hướng dẫn.`,
-      });
     } catch (error: any) {
       message.error(error.message);
     } finally {
@@ -84,7 +77,14 @@ export function AtomTeacherTableAction({
                 ? "cursor-default text-gray-700 bg-gray-300"
                 : "cursor-pointer hover:bg-indigo-600 hover:text-white"
             }`}
-            onClick={handleSendRequest}
+            onClick={() =>
+              Modal.confirm({
+                closable: true,
+                onOk: handleSendRequest,
+                title: "Gửi yêu cầu",
+                content: "Bạn có muốn gửi yêu cầu cho giảng viên này ?",
+              })
+            }
           />
         </Tooltip>
         <Tooltip title="Xem thông tin giảng viên">
