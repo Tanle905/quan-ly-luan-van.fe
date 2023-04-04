@@ -123,10 +123,14 @@ export function MCThesisProgressCalendar({
         )}
       </Layout.Content>
       <style>{`
-.fc .fc-daygrid-day.fc-day-today {
-    color: white;
-    background-color: rgb(99 102 241);
-}
+      .fc-daygrid-day:hover {
+        cursor: pointer;
+        background-color: rgb(230 230 230);
+      }
+      .fc .fc-daygrid-day.fc-day-today {
+        color: white;
+        background-color: rgb(99 102 241);
+      }
   `}</style>
     </>
   );

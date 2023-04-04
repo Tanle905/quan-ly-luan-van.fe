@@ -85,22 +85,6 @@ export function OGLoginContent() {
               >
                 <Input type="password" />
               </Form.Item>
-              <Row className="flex justify-between">
-                <Col>
-                  <Content className="flex space-x-1">
-                    <Checkbox
-                      name="rememberPassword"
-                      onChange={onCheckRememberPassword}
-                    />
-                    <Paragraph className="font-semibold m-0 text-gray-700">
-                      Nhớ mật khẩu
-                    </Paragraph>
-                  </Content>
-                </Col>
-                <Col>
-                  <Link className="text-indigo-600">Quên mật khẩu?</Link>
-                </Col>
-              </Row>
               <AtomLoadingButton
                 disabled={!isLoginFormValid}
                 onClick={() => handleLogin(loginForm)}

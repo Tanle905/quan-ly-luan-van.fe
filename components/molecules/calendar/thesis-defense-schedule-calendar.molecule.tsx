@@ -155,7 +155,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
           }}
         />
       </Layout.Content>
-      <style global>{`
+      <style>{`
       .fc-daygrid-day:hover {
         cursor: pointer;
         background-color: rgb(230 230 230);

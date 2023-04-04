@@ -1,6 +1,4 @@
-import {
-  BellOutlined,
-} from "@ant-design/icons";
+import { BellOutlined } from "@ant-design/icons";
 import { Badge, Layout } from "antd";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
@@ -36,7 +34,7 @@ export function MCHeaderRight({ styles }: MCHeaderRightProps) {
             <Layout.Content className="relative">
               <BellOutlined />
               <Badge
-                className="absolute -top-[0.4rem] right-[0.15rem] w-1"
+                className="origin-left translate-x-4 absolute -top-[0.5rem] right-[0.15rem]"
                 count={notificationCount}
                 showZero
                 size="small"
