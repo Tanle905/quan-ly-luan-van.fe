@@ -22,6 +22,7 @@ export const STUDENT_ENDPOINT = {
 };
 export const TEACHER_ENDPOINT = {
   BASE: "/teacher",
+  TOPIC: "/topic",
 };
 export const REQUEST_ENDPOINT = {
   BASE: "/request",
