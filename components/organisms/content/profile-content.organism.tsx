@@ -98,7 +98,7 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
 function ThesisListAccordion({ MSCB }: any) {
   const { data: topicList } = useSWR(
     MSCB && baseURL + TEACHER_ENDPOINT.BASE + TEACHER_ENDPOINT.TOPIC,
-    async (url) => (await axios.post(url, { MSCB })).data.data
+    async (url: any) => (await axios.post(url, { MSCB })).data.data
   );
 
   if (!topicList) return null;
