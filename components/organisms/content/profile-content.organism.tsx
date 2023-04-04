@@ -120,7 +120,9 @@ function ThesisListAccordion({ MSCB }: any) {
                 </div>
                 <div>
                   <span className="font-semibold">Chủ đề: </span>
-                  <Tag>{topic.majorTag}</Tag>
+                  {topic.majorTag.map((tag) => (
+                    <Tag>{tag.value}</Tag>
+                  ))}
                 </div>
                 <div>
                   <span className="font-semibold">Nội dung: </span>
