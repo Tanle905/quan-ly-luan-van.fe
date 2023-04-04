@@ -12,7 +12,7 @@ import { userState } from "../../../stores/auth.store";
 import { isStudent } from "../../../utils/role.util";
 
 interface AtomNotificationListDropDownProps {
-  children: ReactElement | ReactNode;
+  children: (data: any) => ReactElement | ReactNode;
 }
 
 export function AtomNotificationListDropDown({
@@ -88,7 +88,7 @@ export function AtomNotificationListDropDown({
       open={open}
       onOpenChange={() => setOpen(!open)}
     >
-      {children}
+      {children(data)}
     </Dropdown>
   );
 }

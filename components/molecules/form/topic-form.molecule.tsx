@@ -23,7 +23,7 @@ import {
   TAG_ENDPOINT,
   TOPIC_ENDPOINT,
 } from "../../../constants/endpoints";
-import { TopicStatus } from "../../../constants/enums";
+import { Roles, TopicStatus } from "../../../constants/enums";
 import { reloadTableSubject } from "../../../constants/observables";
 import { Request } from "../../../interfaces/request.interface";
 import { Student } from "../../../interfaces/student.interface";
@@ -364,7 +364,7 @@ function TopicFormFooter(props: any) {
           REQUEST_ENDPOINT.ACCEPT,
         {
           id: props.request._id,
-          role: props.user.roles[0],
+          role: props.user.roles.find((r: any) => r === Roles.TEACHER),
         }
       );
 
