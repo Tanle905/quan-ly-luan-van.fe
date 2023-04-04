@@ -1,17 +1,5 @@
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  FormInstance,
-  Input,
-  Layout,
-  message,
-  Row,
-  Typography,
-} from "antd";
+import { Form, FormInstance, Input, Layout, message, Typography } from "antd";
 import { useState } from "react";
-import { CheckboxChangeEvent } from "antd/es/checkbox";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { AUTH_ENDPOINT } from "../../../constants/endpoints";
@@ -19,7 +7,6 @@ import { LOCAL_STORAGE } from "../../../constants/local_storage_key";
 import { SCREEN_ROUTE } from "../../../constants/screen-route";
 import { handleValidateOnFieldChange } from "../../../utils/validation.util";
 import { AtomLoadingButton } from "../../atoms/button/loading-button.atom";
-import { isAdmin } from "../../../utils/role.util";
 import Image from "next/image";
 
 export function OGLoginContent() {
@@ -28,11 +15,6 @@ export function OGLoginContent() {
   const { Paragraph, Title, Link } = Typography;
   const [loginForm] = Form.useForm();
   const [isLoginFormValid, setIsLoginFormValid] = useState(false);
-  const [isRememberPassword, setIsRememberPassword] = useState(false);
-
-  function onCheckRememberPassword(event: CheckboxChangeEvent) {
-    setIsRememberPassword(event.target.checked);
-  }
 
   async function handleLogin(form: FormInstance) {
     try {
@@ -43,11 +25,7 @@ export function OGLoginContent() {
         form.getFieldsValue()
       );
       localStorage.setItem(LOCAL_STORAGE.USER_DATA, JSON.stringify(data));
-      router.push(
-        isAdmin()
-          ? SCREEN_ROUTE.ADMIN.BASE + SCREEN_ROUTE.ADMIN.MANAGEMENT.SCHEDULE
-          : SCREEN_ROUTE.BASE
-      );
+      router.push(SCREEN_ROUTE.BASE);
     } catch (error: any) {
       message.error(error.response.data.message);
     }

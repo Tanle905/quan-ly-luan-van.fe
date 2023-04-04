@@ -20,17 +20,13 @@ export function MCHeaderLeft({ styles }: MCHeaderLeftProps) {
   let homeRoute = "/";
 
   switch (user?.roles[0]) {
-    case Roles.TEACHER:
+    case Roles.TEACHER || Roles.ADMIN:
       homeRoute = SCREEN_ROUTE.BASE;
       break;
     case Roles.STUDENT:
       homeRoute = user.teacher
         ? SCREEN_ROUTE.THESIS_PROGRESS
         : SCREEN_ROUTE.BASE;
-      break;
-    case Roles.ADMIN:
-      homeRoute =
-        SCREEN_ROUTE.ADMIN.BASE + SCREEN_ROUTE.ADMIN.MANAGEMENT.SCHEDULE;
       break;
     default:
       break;
@@ -40,8 +36,14 @@ export function MCHeaderLeft({ styles }: MCHeaderLeftProps) {
     <Layout.Content className="flex space-x-3 self-center" style={styles}>
       <AtomHeaderBrand href={homeRoute} />
       <AtomHeaderNavLink title="Trang Chủ" href={homeRoute} />
-      {isMounted && !isAdmin() && (
-        <AtomHeaderNavLink title="Lịch Biểu" href={SCREEN_ROUTE.SCHEDULE} />
+      <AtomHeaderNavLink title="Lịch Biểu" href={SCREEN_ROUTE.SCHEDULE} />
+      {isMounted && isAdmin() && (
+        <AtomHeaderNavLink
+          title="Trang admin"
+          href={
+            SCREEN_ROUTE.ADMIN.BASE + SCREEN_ROUTE.ADMIN.MANAGEMENT.SCHEDULE
+          }
+        />
       )}
     </Layout.Content>
   );

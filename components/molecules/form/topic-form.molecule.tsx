@@ -126,7 +126,7 @@ export function MCTopicForm({
         {
           topicName,
           topicEnglishName,
-          majorTag: majorTag,
+          majorTag: majorTag.map((tag: any) => ({ value: tag })),
           topicDescription,
           role: user.roles[0],
           updatedBy: `${user.lastName} ${user.firstName}`,
@@ -274,6 +274,7 @@ export function MCTopicForm({
                 className={`${disabledInputRules ? "readOnly" : ""}`}
                 tagRender={MajorTag}
                 options={options}
+                mode="multiple"
                 showArrow
               />
             </Item>
@@ -284,7 +285,7 @@ export function MCTopicForm({
               className="w-full"
               name="topicDescription"
               style={{ marginBottom: 0 }}
-              rules={[{ required: true, max: 300 }]}
+              rules={[{ required: true, max: 3000 }]}
             >
               <TextArea rows={4} readOnly={disabledInputRules} />
             </Item>

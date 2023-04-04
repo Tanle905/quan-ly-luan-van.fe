@@ -1,4 +1,5 @@
 import { TopicStatus } from "../constants/enums";
+import { TagDetails } from "./tag.interface";
 
 export interface Topic {
   _id?: string;
@@ -7,7 +8,7 @@ export interface Topic {
   studentName: string;
   topicName: string;
   topicEnglishName?: string;
-  majorTag: string;
+  majorTag: TagDetails[];
   topicDescription: string;
   topicStatus?: TopicStatus;
   history?: Date[];

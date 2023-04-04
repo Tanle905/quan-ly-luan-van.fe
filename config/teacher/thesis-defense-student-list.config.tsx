@@ -104,8 +104,10 @@ export const thesisDefenseStudentListConfig: (
           title: "Chủ đề đề tài",
           dataIndex: "topic",
           width: "10%",
-          render: (value, record, index) => {
-            return <Tag>{value.majorTag}</Tag>;
+          render: (topic: any, row: any) => {
+            return topic.majorTag.map((tag: any, index: number) => (
+              <Tag key={index}>{tag.value}</Tag>
+            ));
           },
         },
         {

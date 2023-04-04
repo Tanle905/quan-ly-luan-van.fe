@@ -76,7 +76,7 @@ export function AtomNotificationListDropDown({
 
       return data;
     } catch (error: any) {
-      console.log(error.response);
+      console.log(error);
     }
   }
 

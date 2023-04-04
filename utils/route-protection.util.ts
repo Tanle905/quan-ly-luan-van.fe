@@ -5,13 +5,11 @@ import { Student } from "../interfaces/student.interface";
 import { Teacher } from "../interfaces/teacher.interface";
 import { isAdmin, isStudent } from "./role.util";
 
-const sharedRoute = [SCREEN_ROUTE.PROFILE];
-
 export function loginRouteProtection(router: NextRouter) {
   if (!localStorage.getItem(LOCAL_STORAGE.USER_DATA))
     router.push(SCREEN_ROUTE.LOGIN);
   else if (router.pathname === SCREEN_ROUTE.LOGIN)
-    router.push(isAdmin() ? SCREEN_ROUTE.ADMIN.BASE : SCREEN_ROUTE.BASE);
+    router.push(SCREEN_ROUTE.BASE);
 }
 
 export function calendarRouteProtection(router: NextRouter) {
@@ -32,16 +30,9 @@ export function calendarRouteProtection(router: NextRouter) {
 }
 
 export function adminRouteProtection(router: NextRouter) {
+  if (!localStorage.getItem(LOCAL_STORAGE.USER_DATA)) return;
+
   if (!isAdmin() && router.pathname.search(SCREEN_ROUTE.ADMIN.BASE) !== -1) {
     router.push(SCREEN_ROUTE.UNAUTHORIZED);
-  }
-  if (
-    isAdmin() &&
-    !sharedRoute.includes(router.pathname) &&
-    router.pathname.search(SCREEN_ROUTE.ADMIN.BASE) === -1
-  ) {
-    router.push(
-      SCREEN_ROUTE.ADMIN.BASE + SCREEN_ROUTE.ADMIN.MANAGEMENT.SCHEDULE
-    );
   }
 }

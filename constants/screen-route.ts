@@ -1,6 +1,7 @@
 export const SCREEN_ROUTE = {
   BASE: "/",
   UNAUTHORIZED: "/403",
+  NOT_FOUND: "/404",
   LOGIN: "/login",
   REQUEST_INFO: "/request-info",
   PROFILE: "/profile",

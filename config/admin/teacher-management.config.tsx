@@ -1,9 +1,15 @@
 import { TableConfig } from "../interface/table-config.interface";
-import { TEACHER_MANAGEMENT_ENDPOINT } from "../../constants/endpoints";
-import { Button, Tag } from "antd";
+import {
+  TAG_ENDPOINT,
+  TEACHER_MANAGEMENT_ENDPOINT,
+  baseURL,
+} from "../../constants/endpoints";
+import { Button, Form, Input, Modal, Tag } from "antd";
 import { AtomTeacherManagementTableAction } from "../../components/atoms/action/teacher-management-table-action.atom";
 import { MCAddUserFormModal } from "../../components/molecules/modal/add-user-form-modal.molecule";
 import { Roles } from "../../constants/enums";
+import { useState } from "react";
+import axios from "axios";
 
 export const teacherManagementListConfig: TableConfig = {
   apiEndpoint: TEACHER_MANAGEMENT_ENDPOINT.BASE,
@@ -21,6 +27,7 @@ export const teacherManagementListConfig: TableConfig = {
         )}
       />
     ),
+    () => <AddTagModal />,
   ],
   table: {
     columns: [
@@ -66,3 +73,43 @@ export const teacherManagementListConfig: TableConfig = {
     ],
   },
 };
+
+function AddTagModal() {
+  const [open, setOpen] = useState(false);
+  const [form] = Form.useForm();
+
+  async function handleAddModal() {
+    if (!form.getFieldValue("value")) return;
+
+    await axios.post(baseURL + TAG_ENDPOINT.BASE + TAG_ENDPOINT.MAJOR_TAGS, {
+      value: form.getFieldValue("value"),
+    });
+    form.resetFields();
+    setOpen(false);
+  }
+
+  return (
+    <>
+      <Modal
+        title="Thêm tag"
+        destroyOnClose
+        closable
+        open={open}
+        onOk={handleAddModal}
+        onCancel={() => {
+          form.resetFields();
+          setOpen(false);
+        }}
+      >
+        <Form form={form}>
+          <Form.Item label="Tên Tag" name={"value"}>
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Button type="primary" onClick={() => setOpen(true)}>
+        Thêm tag
+      </Button>
+    </>
+  );
+}
