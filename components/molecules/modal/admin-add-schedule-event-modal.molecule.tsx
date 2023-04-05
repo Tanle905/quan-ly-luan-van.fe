@@ -123,6 +123,7 @@ export function MCAdminAddScheduleEventModal({
     setCurrentEventData(null);
     setMSCBList([]);
     setFilledSlots([]);
+    setActiveKey(1);
   }
 
   async function fetchList(url: string) {
