@@ -7,7 +7,13 @@ import { Divider, Layout, message, Modal, Upload } from "antd";
 import { ReactNode, useEffect, useState } from "react";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { storage } from "../../../utils/firebase";
-import { getMetadata, list, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  getMetadata,
+  list,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { isStudent, isTeacher } from "../../../utils/role.util";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
@@ -19,6 +25,8 @@ import { formatBytes } from "../../../utils/format.util";
 import dayjs from "dayjs";
 import { onModifyFileListSubject } from "../../../constants/observables";
 import { THESIS_UPLOAD_FILE_LIMIT } from "../../../constants/variables";
+import axios from "axios";
+import { TOPIC_ENDPOINT, baseURL } from "../../../constants/endpoints";
 
 const { Dragger } = Upload;
 
@@ -99,17 +107,27 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
 
   async function handleUploadFile(e: UploadChangeParam<UploadFile<any>>) {
     const { file } = e;
-    const { originFileObj, name, status } = file;
+    const { originFileObj, name, status, type } = file;
     const fileRef = ref(storage, `${serialNumber}/${name}`);
     try {
       if (status !== "done") return;
+      if (type?.split("/")[1] !== "pdf")
+        throw Error("File đã chọn không phải định dạng PDF");
 
       const uploadedFile = await uploadBytes(fileRef, originFileObj as Blob);
-      console.log(uploadedFile.ref);
+
       handleSetFileList();
+      await axios.put(
+        baseURL +
+          TOPIC_ENDPOINT.BASE +
+          "/" +
+          (user as Student).topic?._id +
+          TOPIC_ENDPOINT.SEND,
+        { file: await getDownloadURL(uploadedFile.ref) }
+      );
       message.success("Tải file lên thành công.");
     } catch (error: any) {
-      message.error("Lỗi tải lên.");
+      message.error(error.message ?? "Lỗi tải lên.");
     }
   }
 
