@@ -17,6 +17,9 @@ export const STUDENT_MANAGEMENT_ENDPOINT = {
 export const TEACHER_MANAGEMENT_ENDPOINT = {
   BASE: "/teacher-management",
 };
+export const TOPIC_MANAGEMENT_ENDPOINT = {
+  BASE: "/topic-management",
+};
 export const STUDENT_ENDPOINT = {
   BASE: "/student",
 };
