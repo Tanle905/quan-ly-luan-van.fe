@@ -25,6 +25,6 @@ export interface FilterConfig {
   key: string;
   label: string;
   endpoint?: string;
-  data?: { value: string }[];
+  data?: { value: string | null | undefined; label?: string }[];
   selectProps?: SelectProps;
 }

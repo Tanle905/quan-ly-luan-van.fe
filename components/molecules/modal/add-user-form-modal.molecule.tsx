@@ -139,16 +139,18 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
           </Form.Item>
         </div>
       </div>
-      <div className="flex items-center">
-        <span className="w-52">Điểm số: </span>
-        <Form.Item
-          name={"grade"}
-          className="inline-block w-96"
-          style={{ marginBottom: 0 }}
-        >
-          <InputNumber className="w-full" min={0} max={10} prefix="điểm" />
-        </Form.Item>
-      </div>
+      {role === Roles.STUDENT && (
+        <div className="flex items-center">
+          <span className="w-52">Điểm số: </span>
+          <Form.Item
+            name={"grade"}
+            className="inline-block w-96"
+            style={{ marginBottom: 0 }}
+          >
+            <InputNumber className="w-full" min={0} max={10} prefix="điểm" />
+          </Form.Item>
+        </div>
+      )}
       <div className="flex items-center">
         <div className="w-52">
           <span className="text-end">{isStudent ? "MSSV: " : "MSCB: "}</span>

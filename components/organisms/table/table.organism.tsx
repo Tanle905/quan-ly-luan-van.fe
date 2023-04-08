@@ -148,11 +148,11 @@ export function OGTable({ config, ...props }: OGTableProps) {
 
           <Layout.Content className="flex items-center space-x-2">
             {config.search && <SearchElement />}
-            {config.filter && <FilterElement config={config.filter} />}
             {config.extraRightComponent &&
               config.extraRightComponent.map((component, index) =>
                 component({ key: index, href: url + COMMON_ENDPOINT.EXPORT })
               )}
+            {config.filter && <FilterElement config={config.filter} />}
           </Layout.Content>
         </Layout.Content>
         <Table

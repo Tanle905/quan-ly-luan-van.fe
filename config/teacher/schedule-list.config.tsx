@@ -18,7 +18,7 @@ export const scheduleListConfig: (status: any) => TableConfig = (status) => ({
       </Typography.Text>
     ),
   ],
-  query: `?status=${ThesisStatus.IsReadyForThesisDefense}`,
+  query: `?status=${ThesisStatus.IsHadThesisDefenseSchedule}`,
   table: {
     columns: [
       {
@@ -137,7 +137,7 @@ function ScheduleDropdown({ student, status }: any) {
               key: 1,
               label: "Nhập điểm",
               onClick: () => setOpen(true),
-              disabled: !status,
+              disabled: status !== ThesisStatus.IsHadThesisDefenseSchedule,
             },
           ],
         }}

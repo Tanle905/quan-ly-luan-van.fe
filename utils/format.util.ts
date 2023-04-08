@@ -1,4 +1,4 @@
-import { TopicStatus } from "../constants/enums";
+import { ThesisStatus, TopicStatus } from "../constants/enums";
 
 export function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return "0 Bytes";
@@ -30,6 +30,30 @@ export function handleRenderTopicStatus(status: string | null) {
       break;
     default:
       status = "";
+      break;
+  }
+
+  return statusText;
+}
+
+export function handleRenderStudentStatus(status: string | null) {
+  let statusText = "";
+
+  switch (status) {
+    case null:
+      statusText = "Giảng viên chưa nộp danh sách";
+      break;
+    case ThesisStatus.IsHadThesisDefenseSchedule:
+      statusText = "Đã có lịch báo cáo";
+      break;
+    case ThesisStatus.IsReadyForThesisDefense:
+      statusText = "Chưa có lịch báo cáo";
+      break;
+    case ThesisStatus.IsMarkedForIncomplete:
+      statusText = "Nhận điểm I";
+      break;
+    default:
+      statusText = "Giảng viên chưa nộp danh sách";
       break;
   }
 

@@ -3,18 +3,20 @@ import { useMemo } from "react";
 import { useMount } from "../../../hooks/use-mount";
 import { isAdmin } from "../../../utils/role.util";
 import { MCThesisDefenseScheduleCalendar } from "../../molecules/calendar/thesis-defense-schedule-calendar.molecule";
+import { Roles } from "../../../constants/enums";
 
 interface OGScheduleContentProps {
   rightComponent?: any;
+  role: Roles;
 }
 
-export function OGScheduleContent({ rightComponent }: OGScheduleContentProps) {
+export function OGScheduleContent({ rightComponent, role }: OGScheduleContentProps) {
   const isMounted = useMount();
 
   if (!isMounted) return null;
 
   return (
-    <Layout.Content className={`space-y-3 my-5 ${isAdmin() ? "" : "mx-5"}`}>
+    <Layout.Content className={`space-y-3 my-5 ${role === Roles.ADMIN ? "" : "mx-5"}`}>
       <Layout.Content className="flex justify-between">
         <Layout.Content className="flex justify-start space-x-5">
           <Typography.Title
@@ -28,7 +30,7 @@ export function OGScheduleContent({ rightComponent }: OGScheduleContentProps) {
         </Layout.Content>
         {rightComponent}
       </Layout.Content>
-      <MCThesisDefenseScheduleCalendar />
+      <MCThesisDefenseScheduleCalendar role={role}/>
     </Layout.Content>
   );
 }

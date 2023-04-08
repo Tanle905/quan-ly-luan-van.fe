@@ -1,8 +1,6 @@
 import {
-  MessageOutlined,
   InfoCircleOutlined,
   CloseOutlined,
-  CheckOutlined,
 } from "@ant-design/icons";
 import { Layout, message, Tooltip } from "antd";
 import axios from "axios";

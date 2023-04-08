@@ -60,6 +60,7 @@ interface ThesisDefenseEventsProps {
   teacherList: Teacher[];
   dateList: ScheduleEventTime[];
   mutateDateList: any;
+  mutateStudentList: any;
 }
 
 const items = (
@@ -97,7 +98,7 @@ export function MCAdminAddScheduleEventModal({
     baseURL + TEACHER_ENDPOINT.BASE,
     fetchTeacher
   );
-  const { data: studentList } = useSWR(
+  const { data: studentList, mutate: mutateStudentList } = useSWR(
     baseURL +
       THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
       THESIS_DEFENSE_SCHEDULE_ENDPOINT.STUDENT_LIST.BASE,
@@ -172,6 +173,8 @@ export function MCAdminAddScheduleEventModal({
         : message.success("Thêm buổi báo cáo thành công !");
       calendarEventSendSubject.next(1);
       handleCloseModal();
+      mutateDateList();
+      mutateStudentList();
     } catch (error: any) {
       message.error(error.response.data.message);
     }
@@ -271,6 +274,7 @@ export function MCAdminAddScheduleEventModal({
                   teacherList={teacherList}
                   dateList={selectedDateList}
                   mutateDateList={mutateDateList}
+                  mutateStudentList={mutateStudentList}
                 />
               ),
             !selectedDateList?.filter(
@@ -404,6 +408,7 @@ function ThesisDefenseEvents({
   teacherList,
   dateList,
   mutateDateList,
+  mutateStudentList,
 }: ThesisDefenseEventsProps) {
   const items = dateList?.map(
     (event, index) =>
@@ -498,6 +503,7 @@ function ThesisDefenseEvents({
       );
       message.success("Xóa buổi báo cáo thành công");
       mutateDateList();
+      mutateStudentList();
       calendarEventSendSubject.next(1);
     } catch (error: any) {
       message.error(error.response?.data?.message);

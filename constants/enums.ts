@@ -10,6 +10,7 @@ export enum TopicStatus {
 }
 export enum ThesisStatus {
   IsReadyForThesisDefense = "isReadyForThesisDefense",
+  IsHadThesisDefenseSchedule = "isHadThesisDefenseSchedule",
   IsMarkedForIncomplete = "isMarkedForIncomplete",
 }
 export enum ScheduleEventType {

@@ -21,10 +21,13 @@ import timegrid from "@fullcalendar/timegrid";
 import dayjs from "dayjs";
 import { MCAdminAddScheduleEventModal } from "../modal/admin-add-schedule-event-modal.molecule";
 import { exportExcels } from "../../../utils/data-processing.util";
+import { Roles } from "../../../constants/enums";
 
-interface MCThesisDefenseScheduleCalendarProps {}
+interface MCThesisDefenseScheduleCalendarProps {
+  role: Roles;
+}
 
-export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalendarProps) {
+export function MCThesisDefenseScheduleCalendar({role}: MCThesisDefenseScheduleCalendarProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentDateData, setCurrentDateData] = useState<any>(null);
   const [currentEventData, setCurrentEventData] = useState<any[] | null>(null);
@@ -77,7 +80,7 @@ export function MCThesisDefenseScheduleCalendar({}: MCThesisDefenseScheduleCalen
 
   return (
     <>
-      {isAdmin() ? (
+      {role === Roles.ADMIN ? (
         <MCAdminAddScheduleEventModal
           isModalVisible={isModalVisible}
           setIsModelVisible={setIsModalVisible}

@@ -35,7 +35,10 @@ export function FilterElement({ config }: FilterElementProps) {
                 })
               }
               options={data.map((item: any) => {
-                return { value: item.value };
+                return {
+                  value: item.value,
+                  ...(item.label && { label: item.label }),
+                };
               })}
             ></Select>
           </Layout.Content>

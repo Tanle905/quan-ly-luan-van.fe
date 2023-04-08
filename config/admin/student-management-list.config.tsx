@@ -13,12 +13,34 @@ import { MCAddUserFormModal } from "../../components/molecules/modal/add-user-fo
 import useSWR from "swr";
 import axios from "axios";
 import { useState } from "react";
+import { ThesisStatus } from "../../constants/enums";
+import { handleRenderStudentStatus } from "../../utils/format.util";
 
 export const studentManagementListConfig: TableConfig = {
   apiEndpoint: STUDENT_MANAGEMENT_ENDPOINT.BASE,
   title: "Quản lý sinh viên",
   search: true,
+  filter: [
+    {
+      key: "status",
+      label: "Trạng thái",
+      data: [
+        { label: "Tất cả", value: "" },
+        { label: "Giảng viên chưa nộp danh sách", value: null },
+        { label: "Nhận điểm I", value: ThesisStatus.IsMarkedForIncomplete },
+        {
+          label: "Chưa có lịch báo cáo",
+          value: ThesisStatus.IsReadyForThesisDefense,
+        },
+        {
+          label: "Đã có lịch báo cáo",
+          value: ThesisStatus.IsHadThesisDefenseSchedule,
+        },
+      ],
+    },
+  ],
   extraRightComponent: [
+    () => <GradingStatusSwitch />,
     ({ key, href }) =>
       href && (
         <AtomExportButton
@@ -38,7 +60,6 @@ export const studentManagementListConfig: TableConfig = {
         )}
       />
     ),
-    () => <GradingStatusSwitch />,
   ],
   table: {
     pageSize: 7,
@@ -72,6 +93,15 @@ export const studentManagementListConfig: TableConfig = {
         title: "Chuyên ngành",
         dataIndex: "major",
         sorter: true,
+      },
+      {
+        key: "status",
+        title: "Trạng thái luận văn",
+        dataIndex: "status",
+        sorter: true,
+        render:(value, record, index) => {
+            return handleRenderStudentStatus(value)
+        },
       },
       {
         key: "action",

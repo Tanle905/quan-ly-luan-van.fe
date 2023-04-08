@@ -2,6 +2,7 @@ import { Layout } from "antd";
 import Head from "next/head";
 import { OGScheduleContent } from "../../components/organisms/content/schedule-content.organism";
 import { OGHeader } from "../../components/organisms/header/header.organism";
+import { Roles } from "../../constants/enums";
 
 const { Content } = Layout;
 export default function Home() {
@@ -15,8 +16,7 @@ export default function Home() {
       </Head>
       <Content className="min-h-screen bg-gray-100">
         <OGHeader />
-        <OGScheduleContent />
-        <Content className="mx-20 my-5"></Content>
+        <OGScheduleContent role={Roles.TEACHER}/>
       </Content>
     </>
   );

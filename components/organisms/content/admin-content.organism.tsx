@@ -9,6 +9,7 @@ import { calendarEventSendSubject } from "../../../constants/observables";
 import { MCAdminScheduleManagementModal } from "../../molecules/modal/admin-schedule-management-modal.molecule";
 import { withAdminSideBar } from "../../molecules/sidebar-menu/admin-sidebar-menu.molecule";
 import { OGScheduleContent } from "./schedule-content.organism";
+import { Roles } from "../../../constants/enums";
 
 export function OGAdminContent() {
   const [
@@ -43,6 +44,7 @@ export function OGAdminContent() {
         setIsOpen={setIsScheduleManagementModalVisible}
       />
       <OGScheduleContent
+        role={Roles.ADMIN}
         rightComponent={
           <Space>
             <Button type="primary" onClick={handleOpenModal}>
