@@ -18,7 +18,6 @@ export function exportExcels(data: any) {
       ["Hội đồng"]: cur.teacherName[0],
     };
     delete cur.id;
-    delete cur.teacherName;
 
     return [
       ...prev,
@@ -41,7 +40,7 @@ export function exportExcels(data: any) {
       return [
         formattedDate,
         curSlotEvent
-          ? `Đề tài: ${curSlotEvent?.topic.topicName} - Sinh viên thực hiện: ${curSlotEvent?.studentName}`
+          ? `Đề tài: ${curSlotEvent?.topic.topicName} - Sinh viên thực hiện: ${curSlotEvent?.studentName} - Các giảng viên phụ trách: ${curSlotEvent?.teacherName?.join(', ')} `
           : "",
       ];
     });
@@ -76,7 +75,6 @@ export function exportExcels(data: any) {
 
     return dateArr;
   }
-  console.log(sheetData);
 
   const worksheet = XLSX.utils.json_to_sheet(sheetData, {
     cellStyles: true,
