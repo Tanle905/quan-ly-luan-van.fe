@@ -1,7 +1,7 @@
 import daygrid from "@fullcalendar/daygrid";
 import interaction from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
-import { message, Layout } from "antd";
+import { message, Layout, Tooltip } from "antd";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
@@ -27,7 +27,9 @@ interface MCThesisDefenseScheduleCalendarProps {
   role: Roles;
 }
 
-export function MCThesisDefenseScheduleCalendar({role}: MCThesisDefenseScheduleCalendarProps) {
+export function MCThesisDefenseScheduleCalendar({
+  role,
+}: MCThesisDefenseScheduleCalendarProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentDateData, setCurrentDateData] = useState<any>(null);
   const [currentEventData, setCurrentEventData] = useState<any[] | null>(null);
@@ -132,6 +134,7 @@ export function MCThesisDefenseScheduleCalendar({role}: MCThesisDefenseScheduleC
               click: () => exportExcels(data),
             },
           }}
+          dayMaxEventRows={0}
           events={handleTransformDataToEvent()}
           eventTimeFormat={{ hour: "numeric", minute: "2-digit" }}
           weekNumbers

@@ -15,6 +15,8 @@ import axios from "axios";
 import { useState } from "react";
 import { ThesisStatus } from "../../constants/enums";
 import { handleRenderStudentStatus } from "../../utils/format.util";
+import dayjs from "dayjs";
+import { slotsData } from "../../components/molecules/form/add-schedule-event-form.molecule";
 
 export const studentManagementListConfig: TableConfig = {
   apiEndpoint: STUDENT_MANAGEMENT_ENDPOINT.BASE,
@@ -99,8 +101,24 @@ export const studentManagementListConfig: TableConfig = {
         title: "Trạng thái luận văn",
         dataIndex: "status",
         sorter: true,
-        render:(value, record, index) => {
-            return handleRenderStudentStatus(value)
+        render: (value, record, index) => {
+          return handleRenderStudentStatus(value);
+        },
+      },
+      {
+        key: "reportSchedule",
+        title: "Lịch báo cáo",
+        dataIndex: "reportSchedule",
+        render: (value, record, index) => {
+          return (
+            <Typography.Text>
+              {value
+                ? `${
+                    slotsData.find((s) => s.value == value.title)?.name ?? ''
+                  }/ ${dayjs(value.start).format("LL")}`
+                : "Chưa có"}
+            </Typography.Text>
+          );
         },
       },
       {
