@@ -46,7 +46,7 @@ export function MCAddScheduleEventForm({
     form.setFieldsValue({ date: selectedDateRange });
     if (currentEventData) {
       const filteredSlot = slotsData.filter((slot) =>
-        currentEventData[0].slots.find((curSlot: any) => {
+        currentEventData[0]?.slots?.find((curSlot: any) => {
           return curSlot.slot === slot.value;
         })
       );
@@ -55,8 +55,10 @@ export function MCAddScheduleEventForm({
   }, []);
 
   useEffect(() => {
-    let newSelectedSlots = selectedSlots.filter((slot) =>
-      disabledSlots?.includes(slot.value)
+    if (!disabledSlots) return;
+
+    let newSelectedSlots = selectedSlots.filter(
+      (slot) => !disabledSlots?.includes(slot.value)
     );
 
     setSelectedSlots(newSelectedSlots);

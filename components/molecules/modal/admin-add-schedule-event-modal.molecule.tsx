@@ -89,7 +89,7 @@ export function MCAdminAddScheduleEventModal({
 }: MCAdminAddScheduleEventModalProps) {
   const [activeKey, setActiveKey] = useState(1);
   const [isFormEditable, setIsFormEditable] = useState(true);
-  const [MSCBList, setMSCBList] = useState<any>([]);
+  const [MSCBList, setMSCBList] = useState<any[]>([]);
   const [filledSlots, setFilledSlots] = useState<Slot[]>([]);
   const [studentListForm] = Form.useForm();
   const [addEventForm] = Form.useForm();
@@ -138,25 +138,29 @@ export function MCAdminAddScheduleEventModal({
   }
 
   async function handleSaveEvent() {
-    const startDate: Dayjs = addEventForm.getFieldValue("date");
-    const MSSV = studentListForm.getFieldValue("MSSV");
-    const teacherName = studentListForm.getFieldValue("teacherName");
-    const studentName = studentListForm.getFieldValue("studentName");
-    const slots: { name: string; value: Slot }[] =
-      addEventForm.getFieldValue("slot");
-
-    if (!slots.length) return;
-
-    const payload = {
-      start: startDate.toDate(),
-      MSCB: MSCBList,
-      MSSV,
-      teacherName,
-      studentName,
-      slots: slots[0].value,
-    };
-
     try {
+      const slots: { name: string; value: Slot }[] =
+        addEventForm.getFieldValue("slot");
+
+      if (!slots.length) throw new Error("Hãy chọn khung giờ báo cáo");
+
+      if (!MSCBList.length)
+        throw new Error("Hãy chọn đủ 3 thành viên tham gia báo cáo");
+
+      const startDate: Dayjs = addEventForm.getFieldValue("date");
+      const MSSV = studentListForm.getFieldValue("MSSV");
+      const teacherName = studentListForm.getFieldValue("teacherName");
+      const studentName = studentListForm.getFieldValue("studentName");
+
+      const payload = {
+        start: startDate.toDate(),
+        MSCB: MSCBList,
+        MSSV,
+        teacherName,
+        studentName,
+        slots: slots[0].value,
+      };
+
       await axios[false ? "put" : "post"](
         baseURL +
           THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
@@ -176,7 +180,7 @@ export function MCAdminAddScheduleEventModal({
       mutateDateList();
       mutateStudentList();
     } catch (error: any) {
-      message.error(error.response.data.message);
+      message.error(error?.response?.data?.message || error?.message);
     }
   }
 

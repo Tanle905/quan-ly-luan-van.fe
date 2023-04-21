@@ -137,7 +137,9 @@ function ScheduleDropdown({ student, status }: any) {
               key: 1,
               label: "Nhập điểm",
               onClick: () => setOpen(true),
-              disabled: status !== ThesisStatus.IsHadThesisDefenseSchedule,
+              disabled:
+                !status ||
+                student?.status !== ThesisStatus.IsHadThesisDefenseSchedule,
             },
           ],
         }}

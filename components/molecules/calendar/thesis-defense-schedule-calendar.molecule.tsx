@@ -63,7 +63,7 @@ export function MCThesisDefenseScheduleCalendar({
       const { data } = await axios.post(url, {
         MSCB: user.MSCB,
         MSSV: user.MSSV,
-        role: user.roles[0],
+        role: role,
       });
 
       return data.data;
