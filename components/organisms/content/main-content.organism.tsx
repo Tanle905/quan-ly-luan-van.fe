@@ -1,6 +1,8 @@
 import {
+  Button,
   Layout,
   message,
+  Modal,
   RadioChangeEvent,
   TableProps,
   Tabs,
@@ -10,7 +12,7 @@ import {
 import { TableRowSelection } from "antd/es/table/interface";
 import axios from "axios";
 import { cloneDeep } from "lodash";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { sentRequestListConfig } from "../../../config/student/sent-request-list.config";
 import { teacherListConfig } from "../../../config/student/teacher-list-config";
@@ -63,23 +65,12 @@ export function OGMainContent({}: OGMainContentProps) {
 }
 
 function TeacherContent() {
-  const user = useRecoilValue<Teacher | null>(userState);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
-  const [selectedRowStatuses, setSelectedRowStatuses] = useState<any[]>([]);
   const { data: status } = useSWR(
     baseURL +
       THESIS_DEFENSE_SCHEDULE_ENDPOINT.BASE +
       THESIS_DEFENSE_SCHEDULE_ENDPOINT.GRADING_STATUS,
     async (url) => (await axios.get(url)).data.data
   );
-  const rowSelection: TableRowSelection<any> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-    getCheckboxProps: (record: any) => ({
-      disabled: user?.isImportedStudentListToSystem,
-    }),
-  };
   const teacherContentItems: TabsProps["items"] = [
     {
       key: "1",
@@ -93,46 +84,57 @@ function TeacherContent() {
     },
     {
       key: "3",
-      label: `Nộp danh sách báo cáo`,
-      children: (
-        <OGTable
-          rowSelection={rowSelection}
-          config={thesisDefenseStudentListConfig(
-            handleSubmit,
-            handleSetStatus,
-            selectedRowKeys,
-            user?.isImportedStudentListToSystem
-          )}
-          key={3}
-          size="small"
-        />
-      ),
-    },
-    {
-      key: "4",
       label: `Báo cáo luận văn`,
       children: <OGTable config={scheduleListConfig(status)} key={4} />,
     },
   ];
 
-  function onSelectChange(newSelectedRowKeys: React.Key[], selectedRows: any) {
-    setSelectedRowKeys(newSelectedRowKeys);
-    setSelectedRows(selectedRows);
-  }
+  return (
+    <Tabs
+      items={teacherContentItems}
+      className="p-5 bg-white rounded-md shadow-md"
+      defaultActiveKey="2"
+      destroyInactiveTabPane
+      tabBarExtraContent={
+        <SendStudentModal>
+          {(setOpen) => (
+            <Button type="primary" onClick={() => setOpen(true)}>
+              Nộp danh sách báo cáo
+            </Button>
+          )}
+        </SendStudentModal>
+      }
+    />
+  );
+}
 
-  function handleSetStatus(e: RadioChangeEvent, index: number) {
-    if (selectedRowStatuses.find((row) => row.index === index)) {
-      setSelectedRowStatuses((prev: any) => {
-        prev[index] = { index, value: e.target.value };
+function StudentContent() {
+  return (
+    <Tabs
+      items={studentContentItems}
+      className="p-5 bg-white rounded-md shadow-md"
+      destroyInactiveTabPane
+    />
+  );
+}
 
-        return prev;
-      });
-    } else
-      setSelectedRowStatuses((prev: any) => {
-        prev.push({ index, value: e.target.value });
-        return prev;
-      });
-  }
+function SendStudentModal({
+  children,
+}: {
+  children: (setOpen: any) => ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const user = useRecoilValue<Teacher | null>(userState);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [selectedRowStatuses, setSelectedRowStatuses] = useState<any[]>([]);
+  const rowSelection: TableRowSelection<any> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    getCheckboxProps: (record: any) => ({
+      disabled: user?.isImportedStudentListToSystem,
+    }),
+  };
 
   async function handleSubmit() {
     const clonedSelectedRows = cloneDeep(selectedRows);
@@ -177,31 +179,79 @@ function TeacherContent() {
       setSelectedRowKeys([]);
       reloadProfileSubject.next(1);
       message.success("Nộp danh sách báo cáo thành công.");
+      handleOnCancel();
     } catch (error: any) {
       message.error(error.response.data.message);
     }
+  }
+
+  function onSelectChange(newSelectedRowKeys: React.Key[], selectedRows: any) {
+    setSelectedRowKeys(newSelectedRowKeys);
+    setSelectedRows(selectedRows);
+  }
+
+  function handleSetStatus(e: RadioChangeEvent, index: number) {
+    if (selectedRowStatuses.find((row) => row.index === index)) {
+      setSelectedRowStatuses((prev: any) => {
+        prev[index] = { index, value: e.target.value };
+
+        return prev;
+      });
+    } else
+      setSelectedRowStatuses((prev: any) => {
+        prev.push({ index, value: e.target.value });
+        return prev;
+      });
   }
 
   function handleSeperateStudentList(list: Student[], status: ThesisStatus) {
     return list.filter((student) => student.status === status);
   }
 
+  function handleOnCancel() {
+    setOpen(false);
+  }
   return (
-    <Tabs
-      items={teacherContentItems}
-      className="p-5 bg-white rounded-md shadow-md"
-      defaultActiveKey="2"
-      destroyInactiveTabPane
-    />
-  );
-}
-
-function StudentContent() {
-  return (
-    <Tabs
-      items={studentContentItems}
-      className="p-5 bg-white rounded-md shadow-md"
-      destroyInactiveTabPane
-    />
+    <>
+      <Modal
+        width={1400}
+        open={open}
+        onCancel={handleOnCancel}
+        closable
+        title="Nộp danh sách báo cáo"
+        destroyOnClose
+        footer={[
+          <Button
+            type="primary"
+            disabled={user?.isImportedStudentListToSystem}
+            onClick={() =>
+              Modal.confirm({
+                icon: null,
+                closable: true,
+                title: "Nộp danh sách",
+                mask: true,
+                maskClosable: true,
+                content:
+                  "Bạn có muốn nộp danh sách không ? Mỗi giảng viên chỉ được thực hiện thao tác này 1 lần.",
+                onOk: handleSubmit,
+              })
+            }
+          >
+            Nộp danh sách
+          </Button>,
+        ]}
+      >
+        <OGTable
+          rowSelection={rowSelection}
+          config={thesisDefenseStudentListConfig(
+            handleSetStatus,
+            selectedRowKeys
+          )}
+          key={3}
+          size="small"
+        />
+      </Modal>
+      {children(setOpen)}
+    </>
   );
 }

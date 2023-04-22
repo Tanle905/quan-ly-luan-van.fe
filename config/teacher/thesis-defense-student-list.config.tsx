@@ -1,5 +1,4 @@
-import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Modal, Radio, RadioChangeEvent, Tag, Tooltip } from "antd";
+import { Radio, RadioChangeEvent, Tag } from "antd";
 import { cloneDeep } from "lodash";
 import {} from "../../components/atoms/action/teacher-table-action.atom";
 import { STUDENT_ENDPOINT } from "../../constants/endpoints";
@@ -7,52 +6,13 @@ import { ThesisStatus } from "../../constants/enums";
 import { TableConfig } from "../interface/table-config.interface";
 
 export const thesisDefenseStudentListConfig: (
-  handleSubmit: () => void,
   handleSetStatus: (e: RadioChangeEvent, index: number) => void,
-  selectedRowKeys: React.Key[],
-  disabled?: boolean | undefined
-) => TableConfig = (
-  handleSubmit,
-  handleSetStatus,
-  selectedRowKeys,
-  disabled
-) => {
+  selectedRowKeys: React.Key[]
+) => TableConfig = (handleSetStatus, selectedRowKeys) => {
   return {
     apiEndpoint: STUDENT_ENDPOINT.BASE,
     search: true,
-    extraRightComponent: [
-      () => {
-        return (
-          <Tooltip
-            title={
-              disabled
-                ? "Bạn đã nộp danh sách báo cáo"
-                : "Nộp danh sách báo cáo"
-            }
-          >
-            <Button
-              disabled={disabled}
-              type="primary"
-              onClick={() =>
-                Modal.confirm({
-                  icon: null,
-                  closable: true,
-                  title: "Nộp danh sách",
-                  mask: true,
-                  maskClosable: true,
-                  content:
-                    "Bạn có muốn nộp danh sách không ? Mỗi giảng viên chỉ được thực hiện thao tác này 1 lần.",
-                  onOk: handleSubmit,
-                })
-              }
-            >
-              <UploadOutlined />
-              Nộp Danh sách
-            </Button>
-          </Tooltip>
-        );
-      },
-    ],
+    query: `?status=${null}`,
     table: {
       columns: [
         {
