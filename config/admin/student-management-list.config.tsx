@@ -114,7 +114,7 @@ export const studentManagementListConfig: TableConfig = {
             <Typography.Text>
               {value
                 ? `${
-                    slotsData.find((s) => s.value == value.title)?.name ?? ''
+                    slotsData.find((s) => s.value == value.title)?.name ?? ""
                   }/ ${dayjs(value.start).format("LL")}`
                 : "Chưa có"}
             </Typography.Text>
@@ -152,7 +152,7 @@ function GradingStatusSwitch() {
         { status: checked }
       );
 
-      message.success("Chuyển trạng thái thành công");
+      message.success(`${checked ? "Mở khóa" : "Khóa"} nhập điểm thành công`);
     } catch (error: any) {
       message.error(error?.response?.data?.message);
     } finally {
@@ -165,7 +165,7 @@ function GradingStatusSwitch() {
 
   return (
     <Layout.Content className="w-full space-x-2 flex items-center justify-end">
-      <Typography.Text>{status ? "Khóa" : "Mở khóa"} nhập điểm</Typography.Text>
+      <Typography.Text>Trạng thái nhập điểm</Typography.Text>
       <Switch
         disabled={loading}
         defaultChecked={status}
