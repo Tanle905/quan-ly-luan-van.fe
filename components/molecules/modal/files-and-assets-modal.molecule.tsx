@@ -107,10 +107,9 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
 
   async function handleUploadFile(e: UploadChangeParam<UploadFile<any>>) {
     const { file } = e;
-    const { originFileObj, name, status, type } = file;
+    const { originFileObj, name, type } = file;
     const fileRef = ref(storage, `${serialNumber}/${name}`);
     try {
-      if (status !== "done") return;
       if (type?.split("/")[1] !== "pdf")
         throw Error("File đã chọn không phải định dạng PDF");
 
