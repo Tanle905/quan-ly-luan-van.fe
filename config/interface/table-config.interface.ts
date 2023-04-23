@@ -14,6 +14,7 @@ export interface TableConfig {
     pageSize?: number;
     columns: ColumnsType<object>;
     transform?: (data: any) => any;
+    redirect?: (data: any) => string;
   };
 }
 

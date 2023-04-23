@@ -50,7 +50,10 @@ export function OGLoginContent() {
               <Form.Item
                 name={"username"}
                 label={"Tài khoản"}
-                rules={[{ required: true, max: 50 }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập tên đăng nhập" },
+                  { max: 50, message: "Tên đăng nhập không vượt quá 50 ký tự" },
+                ]}
                 className="font-semibold text-gray-600"
               >
                 <Input />
@@ -58,7 +61,13 @@ export function OGLoginContent() {
               <Form.Item
                 name={"password"}
                 label={"Mật khẩu"}
-                rules={[{ required: true, max: 32 }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập mật khẩu",
+                  },
+                  { max: 32, message: "Mật khẩu không vượt quá 32 ký tự" },
+                ]}
                 className="font-semibold text-gray-600"
               >
                 <Input type="password" />

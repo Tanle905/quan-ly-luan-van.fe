@@ -36,7 +36,7 @@ export function AtomTeacherTableAction({
     if (isRequestSent || isLoading) return;
     setIsLoading(true);
     try {
-      await axios.post(
+      const result = await axios.post(
         process.env.NEXT_PUBLIC_BASE_URL +
           REQUEST_ENDPOINT.BASE +
           REQUEST_ENDPOINT.SEND,
@@ -49,6 +49,7 @@ export function AtomTeacherTableAction({
       reloadProfileSubject.next(1);
       reloadTableSubject.next(1);
       message.success("Gửi yêu cầu thành công");
+      router.push(`request-info/${result.data?.id}`);
     } catch (error: any) {
       message.error(error.message);
     } finally {
@@ -60,7 +61,7 @@ export function AtomTeacherTableAction({
 
   return (
     <>
-      <Layout.Content className="flex justify-end space-x-1">
+      <Layout.Content className="flex justify-end space-x-1 z-50">
         <Tooltip
           title={
             isRequestSent

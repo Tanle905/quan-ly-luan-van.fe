@@ -144,7 +144,7 @@ export function MCAdminAddScheduleEventModal({
 
       if (!slots.length) throw new Error("Hãy chọn khung giờ báo cáo");
 
-      if (!MSCBList.length)
+      if (MSCBList.length < 3)
         throw new Error("Hãy chọn đủ 3 thành viên tham gia báo cáo");
 
       const startDate: Dayjs = addEventForm.getFieldValue("date");
@@ -300,8 +300,15 @@ function StudentListForm({
   setMSCBList,
 }: StudentListFormProps) {
   const [selectedStudent, setSelectedStudent] = useState(false);
+  const [teacherOptions, setTeacherOptions] = useState(handleMapTeacher());
 
-  useEffect(() => {}, [selectedStudent]);
+  useEffect(() => {
+    setTeacherOptions(handleMapTeacher());
+  }, [selectedStudent]);
+
+  useEffect(() => {
+    setTeacherOptions(handleMapTeacher());
+  }, [MSCBList]);
 
   function handleMapStudent() {
     return studentLists.reduce(
@@ -369,11 +376,13 @@ function StudentListForm({
             options={handleMapStudent() ?? []}
             filterOption={filterOption}
             onChange={(value, option: any) => {
+              form.resetFields();
               setSelectedStudent(true);
+              form.setFieldValue("MSSV", value);
+              form.setFieldValue("studentName", option.label.split(" - ")[0]);
               form.setFieldValue("teacherName", option.title.split(":")[0]);
               form.setFieldValue("teacher1", option.title.split(":")[1]);
               handleSetMSCBList();
-              form.setFieldValue("studentName", option.label.split(" - ")[0]);
             }}
           ></Select>
         </Form.Item>
@@ -388,7 +397,7 @@ function StudentListForm({
             allowClear
             onClear={handleSetMSCBList}
             disabled={!selectedStudent}
-            options={handleMapTeacher()}
+            options={teacherOptions}
             filterOption={filterOption}
             onChange={handleSetMSCBList}
           ></Select>
@@ -398,7 +407,7 @@ function StudentListForm({
             allowClear
             onClear={handleSetMSCBList}
             disabled={!selectedStudent}
-            options={handleMapTeacher()}
+            options={teacherOptions}
             filterOption={filterOption}
             onChange={handleSetMSCBList}
           ></Select>

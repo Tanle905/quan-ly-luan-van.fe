@@ -16,6 +16,8 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { FilterElement } from "./element/filter-element.organism";
 import { FilterValue, TablePaginationConfig } from "antd/es/table/interface";
 import { COMMON_ENDPOINT } from "../../../constants/endpoints";
+import { table } from "console";
+import { useRouter } from "next/router";
 
 interface OGTableProps extends TableProps<any> {
   config: TableConfig;
@@ -23,6 +25,7 @@ interface OGTableProps extends TableProps<any> {
 
 export function OGTable({ config, ...props }: OGTableProps) {
   const user = useRecoilValue<Student | null>(userState);
+  const router = useRouter();
   const [queryParams, setQueryParams] = useState<{}>({});
   const url =
     user &&
@@ -164,6 +167,16 @@ export function OGTable({ config, ...props }: OGTableProps) {
           pagination={{ pageSize: config.table.pageSize ?? 4 }}
           columns={config.table.columns}
           onChange={handleSortTable}
+          {...(config.table.redirect && {
+            onRow: (data) => ({
+              onClick: () =>
+                config?.table?.redirect &&
+                router.push(config.table.redirect(data)),
+            }),
+          })}
+          className={
+            config.table.redirect ? "cursor-pointer" : "cursor-default"
+          }
           dataSource={(config.apiEndpoint ? data : config.data).map(
             (data: any, index: any) => {
               return {
