@@ -77,9 +77,7 @@ export function MCAddScheduleEventModal({
         }
       );
       calendarEventSendSubject.next(1);
-      currentEventData
-        ? message.success("Chỉnh sửa ngày bận thành công")
-        : message.success("Thêm ngày bận thành công !");
+      message.success("Chỉnh sửa ngày bận thành công");
       handleCloseModal();
     } catch (error: any) {
       message.error(error.response.data.message);

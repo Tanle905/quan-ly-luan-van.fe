@@ -145,6 +145,7 @@ export function MCThesisDefenseScheduleCalendar({
           timeZone="none"
           firstDay={1}
           height={550}
+          displayEventEnd
           windowResizeDelay={100}
           eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
           dateClick={(dateData) => {

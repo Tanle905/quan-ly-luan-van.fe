@@ -60,13 +60,14 @@ export function MCAddUserFormModal({
     );
 
     try {
+      await form.validateFields();
       await axios.put(baseURL + endpoint, payload);
 
       message.success("Lưu thành công");
       handleCloseModal();
       reloadTableSubject.next(1);
     } catch (error: any) {
-      message.error(error?.response?.data?.message);
+      message.error(error?.response?.data?.message || error?.message);
     }
   }
 
@@ -107,6 +108,10 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
           name={"username"}
           className="inline-block w-96"
           style={{ marginBottom: 0 }}
+          rules={[
+            { required: true, message: "Vui lòng nhập tên đăng nhập" },
+            { max: 50, message: "Vui lòng nhập không quá 50 ký tự" },
+          ]}
         >
           <Input type="text" />
         </Form.Item>
@@ -147,7 +152,13 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
             className="inline-block w-96"
             style={{ marginBottom: 0 }}
           >
-            <InputNumber className="w-full" min={0} max={10} prefix="điểm" />
+            <InputNumber
+              type="number"
+              className="w-full"
+              min={0}
+              max={10}
+              prefix="điểm"
+            />
           </Form.Item>
         </div>
       )}
@@ -159,6 +170,13 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
           className="inline-block w-96"
           name={isStudent ? "MSSV" : "MSCB"}
           style={{ marginBottom: 0 }}
+          rules={[
+            {
+              required: true,
+              message: `Vui lòng nhập ${isStudent ? "MSSV" : "MSCB"}`,
+            },
+            { max: 10, message: "Vui lòng nhập không quá 10 ký tự" },
+          ]}
         >
           <Input type="text" prefix={<NumberOutlined />} />
         </Form.Item>
@@ -170,6 +188,13 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
             name={"lastName"}
             className="inline-block w-[11.4rem]"
             style={{ marginBottom: 0 }}
+            rules={[
+              {
+                required: true,
+                message: `Vui lòng nhập họ và tên đệm`,
+              },
+              { max: 20, message: "Vui lòng nhập không quá 20 ký tự" },
+            ]}
           >
             <Input type="text" prefix={<UserOutlined />} />
           </Form.Item>
@@ -177,6 +202,13 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
             name={"firstName"}
             className="inline-block w-[11.4rem]"
             style={{ marginBottom: 0 }}
+            rules={[
+              {
+                required: true,
+                message: `Vui lòng nhập tên`,
+              },
+              { max: 10, message: "Vui lòng nhập không quá 10 ký tự" },
+            ]}
           >
             <Input type="text" />
           </Form.Item>
@@ -188,6 +220,16 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
           name={"phoneNumber"}
           className="inline-block w-96"
           style={{ marginBottom: 0 }}
+          rules={[
+            {
+              required: true,
+              message: `Vui lòng nhập số điện thoại liên hệ`,
+            },
+            {
+              pattern: new RegExp(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g),
+              message: "Vui lòng nhập số điện thoại hợp lệ",
+            },
+          ]}
         >
           <Input type="number" prefix={<PhoneOutlined />} />
         </Form.Item>
@@ -198,6 +240,16 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
           name={"email"}
           className="inline-block w-96"
           style={{ marginBottom: 0 }}
+          rules={[
+            {
+              required: true,
+              message: `Vui lòng nhập địa chỉ email`,
+            },
+            {
+              pattern: new RegExp(/^\S+@\S+\.\S+$/),
+              message: "Vui lòng nhập địa chỉ email hợp lệ",
+            },
+          ]}
         >
           <Input type="text" prefix={<MailOutlined />} />
         </Form.Item>
@@ -261,7 +313,7 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
           className="inline-block w-96"
           style={{ marginBottom: 0 }}
         >
-          <Input type="text" />
+          <Input type="number" />
         </Form.Item>
       </div>
     </Form>

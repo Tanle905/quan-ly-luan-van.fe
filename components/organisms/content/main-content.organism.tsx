@@ -74,12 +74,12 @@ function TeacherContent() {
   const teacherContentItems: TabsProps["items"] = [
     {
       key: "1",
-      label: `Chờ xác nhận`,
+      label: `Yêu cầu chờ xác nhận`,
       children: <OGTable config={receivedRequestListConfig} key={1} />,
     },
     {
       key: "2",
-      label: `Đang thực hiện luận văn`,
+      label: `Tất cả sinh viên`,
       children: <OGTable config={studentListConfig} key={2} />,
     },
     {
