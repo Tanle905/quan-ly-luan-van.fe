@@ -30,6 +30,7 @@ export const teacherManagementListConfig: TableConfig = {
     () => <AddTagModal />,
   ],
   table: {
+    pageSize: 10,
     columns: [
       {
         key: "MSCB",
