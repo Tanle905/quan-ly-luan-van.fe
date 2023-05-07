@@ -65,62 +65,64 @@ export function MCThesisProgressCalendar({
 
   return (
     <>
-      <Layout.Content>
-        <FullCalendar
-          plugins={[daygrid, interaction, moment]}
-          headerToolbar={{
-            start: "title",
-            center: "dayGridMonth,dayGridWeek",
-            end: "prev,today,next",
-          }}
-          buttonText={{
-            prev: "Trước",
-            today: "Hôm nay",
-            next: "Tới",
-            dayGridMonth: "Tháng",
-            dayGridWeek: "Tuần",
-          }}
-          views={{
-            dayGrid: {
-              titleFormat: {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
+      <Layout.Content className="overflow-x-scroll">
+        <Layout.Content className="min-w-max">
+          <FullCalendar
+            plugins={[daygrid, interaction, moment]}
+            headerToolbar={{
+              start: "title",
+              center: "dayGridMonth,dayGridWeek",
+              end: "prev,today,next",
+            }}
+            buttonText={{
+              prev: "Trước",
+              today: "Hôm nay",
+              next: "Tới",
+              dayGridMonth: "Tháng",
+              dayGridWeek: "Tuần",
+            }}
+            views={{
+              dayGrid: {
+                titleFormat: {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                },
               },
-            },
-          }}
-          events={data}
-          weekNumbers
-          weekText="Tuần "
-          selectable
-          selectMirror
-          locale="vi"
-          firstDay={1}
-          height={500}
-          eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
-          dateClick={(data) => {
-            setCurrentDateData(data);
-            setIsModalVisible(true);
-          }}
-          select={(data) => {
-            setCurrentDateData(data);
-            setIsModalVisible(true);
-          }}
-          eventClick={({ event }) => {
-            setCurrentDateData(event);
-            setCurrentEventData(event as any);
-            setIsModalVisible(true);
-          }}
-        />
-        {!MSSV && (
-          <MCAddEventModal
-            currentDateData={currentDateData}
-            currentEventData={currentEventData}
-            setCurrentEventData={setCurrentEventData}
-            isModalVisible={isModalVisible}
-            setIsModelVisible={setIsModalVisible}
+            }}
+            events={data}
+            weekNumbers
+            weekText="Tuần "
+            selectable
+            selectMirror
+            locale="vi"
+            firstDay={1}
+            height={500}
+            eventClassNames="cursor-pointer hover:-translate-y-[0.75px] transition-all"
+            dateClick={(data) => {
+              setCurrentDateData(data);
+              setIsModalVisible(true);
+            }}
+            select={(data) => {
+              setCurrentDateData(data);
+              setIsModalVisible(true);
+            }}
+            eventClick={({ event }) => {
+              setCurrentDateData(event);
+              setCurrentEventData(event as any);
+              setIsModalVisible(true);
+            }}
           />
-        )}
+          {!MSSV && (
+            <MCAddEventModal
+              currentDateData={currentDateData}
+              currentEventData={currentEventData}
+              setCurrentEventData={setCurrentEventData}
+              isModalVisible={isModalVisible}
+              setIsModelVisible={setIsModalVisible}
+            />
+          )}
+        </Layout.Content>
       </Layout.Content>
       <style>{`
       .fc-daygrid-day:hover {
