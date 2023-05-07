@@ -2,8 +2,9 @@ import {
   ArrowLeftOutlined,
   CloseCircleOutlined,
   CloudUploadOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
-import { Divider, Layout, message, Modal, Upload } from "antd";
+import { Divider, Layout, message, Modal, Spin, Upload } from "antd";
 import { ReactNode, useEffect, useState } from "react";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { storage } from "../../../utils/firebase";
@@ -86,6 +87,7 @@ function ModalTitle({ onBack }: { onBack: () => void }) {
 function ModalContent({ MSSV }: { MSSV?: string }) {
   const user = useRecoilValue<Student | Teacher | null>(userState);
   const serialNumber = isTeacher() ? MSSV : user?.MSSV;
+  const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
   const curStorageRef = ref(storage, serialNumber);
   const fileLimit = THESIS_UPLOAD_FILE_LIMIT;
@@ -107,9 +109,13 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
 
   async function handleUploadFile(e: UploadChangeParam<UploadFile<any>>) {
     const { file } = e;
-    const { originFileObj, name, type } = file;
+    const { originFileObj, name, type, status } = file;
     const fileRef = ref(storage, `${serialNumber}/${name}`);
+
+    if (status !== "done") return;
+
     try {
+      setLoading(true);
       if (type?.split("/")[1] !== "pdf")
         throw Error("File đã chọn không phải định dạng PDF");
 
@@ -127,10 +133,13 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
       message.success("Tải file lên thành công.");
     } catch (error: any) {
       message.error(error.message ?? "Lỗi tải lên.");
+    } finally {
+      setLoading(false);
     }
   }
 
   async function handleSetFileList() {
+    setLoading(true);
     const uploadedFileList = (await list(curStorageRef)).items.map(
       async (file) => {
         const metaData = await getMetadata(file);
@@ -144,16 +153,19 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
       }
     );
     setFileList(await Promise.all(uploadedFileList));
+    setLoading(false);
   }
 
-  return (
+  return loading ? (
+    <Spin indicator={<LoadingOutlined spin />} />
+  ) : (
     <>
       {isStudent() && (
         <>
           <Divider className="pb-2" />
           <div className="rounded-md border-gray-700 border-2">
             <Dragger
-              beforeUpload={() => false}
+              beforeUpload={() => true}
               className="bg-indigo-400"
               disabled={isAtFileUploadLimit}
               onChange={handleUploadFile}

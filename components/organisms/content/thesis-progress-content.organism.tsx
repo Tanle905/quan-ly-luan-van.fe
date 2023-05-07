@@ -13,6 +13,7 @@ import { MCProfileForm } from "../../molecules/form/profile-form.molecule";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/auth.store";
 import { isTeacher } from "../../../utils/role.util";
+import { BookOutlined } from "@ant-design/icons";
 
 interface OGThesisProgressContentProps {
   MSSV?: string;
@@ -68,7 +69,7 @@ export function OGThesisProgressContent(props: OGThesisProgressContentProps) {
   }
 
   return (
-    <Layout.Content className="space-y-3 my-5 mx-20">
+    <Layout.Content className="space-y-3 my-5 mx-5 sm:mx-20">
       <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
         Báo cáo tiến độ luận văn
       </Typography.Title>
@@ -80,7 +81,10 @@ export function OGThesisProgressContent(props: OGThesisProgressContentProps) {
             <MCFilesAndAssetsModal MSSV={MSSV}>
               {(openModal) => (
                 <Button type="primary" onClick={openModal}>
-                  Files và Tài Liệu
+                  <span className="hidden sm:inline-block">
+                    Files và Tài Liệu
+                  </span>
+                  <BookOutlined />
                 </Button>
               )}
             </MCFilesAndAssetsModal>

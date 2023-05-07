@@ -33,7 +33,7 @@ export function OGLoginContent() {
 
   return (
     <>
-      <div className="h-screen grid grid-cols-2">
+      <div className="h-screen grid grid-cols-1 sm:grid-cols-2">
         <Content className="col-span-1 flex justify-center items-center w-full">
           <Content className="m-auto w-4/6">
             <Title>Chào Mừng</Title>
@@ -87,7 +87,7 @@ export function OGLoginContent() {
             </Form>
           </Content>
         </Content>
-        <Content className="col-span-1 bg-gray-100 flex items-center shadow-2xl">
+        <Content className="hidden col-span-1 bg-gray-100 sm:flex items-center shadow-2xl">
           <Image
             alt=""
             src="/images/login.svg"

@@ -58,7 +58,7 @@ export function OGHeader({}) {
   }
 
   return (
-    <Layout.Content className="flex justify-between px-20 py-1 bg-white shadow-sm">
+    <Layout.Content className="flex justify-between px-5 sm:px-20 py-1 bg-white shadow-sm">
       <MCHeaderLeft />
       <MCHeaderRight />
     </Layout.Content>

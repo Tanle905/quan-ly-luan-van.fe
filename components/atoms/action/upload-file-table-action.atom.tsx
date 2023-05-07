@@ -14,7 +14,6 @@ interface AtomTeacherTableActionProps {
 export function AtomUploadFileAction({
   storageRef,
 }: AtomTeacherTableActionProps) {
-  console.log(storageRef);
 
   return (
     <Layout.Content className="flex justify-end space-x-3">

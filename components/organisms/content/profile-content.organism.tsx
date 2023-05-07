@@ -74,19 +74,19 @@ export function OGPRofileContent({ userId }: OGPRofileContentProps) {
 
   return (
     <>
-      <Content className="mx-16 mt-2 space-y-2">
+      <Content className="my-5 mx-5 sm:mx-16 mt-2 space-y-2">
         <span className="text-2xl font-semibold text-gray-800">
           Trang cá nhân
         </span>
-        <Content className="grid grid-cols-12 space-x-5">
-          <Content className="col-span-3 flex flex-col items-center">
+        <Content className="grid grid-cols-12 space-y-5 sm:space-y-0 sm:space-x-5">
+          <Content className="col-span-12 sm:col-span-3 flex flex-col items-center">
             <MCProfileAvatarForm
               username={userId ? data?.username : user?.username}
               imageUrl={userId ? data?.imageUrl : user?.imageUrl}
               isDifferentUser={isDifferentUser}
             />
           </Content>
-          <Content className="col-span-9">
+          <Content className="col-span-12 sm:col-span-9">
             <Tabs items={items} className="rounded-md shadow-md bg-white p-5" />
           </Content>
         </Content>

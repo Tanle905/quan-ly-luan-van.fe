@@ -82,7 +82,7 @@ export function AtomNotificationListDropDown({
 
   return (
     <Dropdown
-      menu={{ items: menuItems, className: "max-h-96 overflow-auto" }}
+      menu={{ items: menuItems, className: "w-80 max-h-96 overflow-auto" }}
       trigger={["click"]}
       placement="bottomRight"
       open={open}

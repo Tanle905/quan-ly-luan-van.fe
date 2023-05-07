@@ -41,9 +41,6 @@ export function AtomStudentTableAction({
   return (
     <>
       <Layout.Content className="flex justify-end space-x-1">
-        <Tooltip title="Gửi tin cho sinh viên">
-          <MessageOutlined className="cursor-pointer p-2 hover:bg-indigo-600 hover:text-white rounded-md transition-all" />
-        </Tooltip>
         <Tooltip title="Xem thông tin sinh viên">
           <InfoCircleOutlined
             onClick={handleThesisProgressRedirect}

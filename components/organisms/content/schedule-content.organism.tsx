@@ -18,7 +18,7 @@ export function OGScheduleContent({ rightComponent, role }: OGScheduleContentPro
   return (
     <Layout.Content className={`space-y-3 my-5 ${role === Roles.ADMIN ? "" : "mx-5"}`}>
       <Layout.Content className="flex justify-between">
-        <Layout.Content className="flex justify-start space-x-5">
+        <Layout.Content className="sm:flex justify-start sm:space-x-5">
           <Typography.Title
             level={3}
             style={{ marginBottom: 0 }}

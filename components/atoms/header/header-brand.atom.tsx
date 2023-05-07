@@ -12,7 +12,7 @@ export function AtomHeaderBrand(props: any) {
       onClick={() => router.push(props.href)}
     >
       <BookOutlined className="text-3xl mr-2" />
-      <span className="inline-block text-xl font-semibold my-2">
+      <span className="hidden sm:inline-block text-xl font-semibold my-2">
         Quản lý luận văn.
       </span>
     </Content>

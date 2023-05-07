@@ -167,17 +167,17 @@ export function MCProfileForm({
           </div>
           <div className="flex items-center">
             <span className="w-52">Họ và tên: </span>
-            <div className="flex items-center space-x-5">
+            <div className="flex items-center space-x-1 sm:space-x-5">
               <Form.Item
                 name={"lastName"}
-                className="inline-block w-[11.4rem]"
+                className="inline-block sm:w-[11.4rem]"
                 style={{ marginBottom: 0 }}
               >
                 <Input type="text" readOnly prefix={<UserOutlined />} />
               </Form.Item>
               <Form.Item
                 name={"firstName"}
-                className="inline-block w-[11.4rem]"
+                className="inline-block sm:w-[11.4rem]"
                 style={{ marginBottom: 0 }}
               >
                 <Input type="text" readOnly />

@@ -58,7 +58,7 @@ export function OGRequestInfoContent({}: OGRequestInfoContentProps) {
   }
 
   return (
-    <Layout.Content className="space-y-3 my-5 mx-20">
+    <Layout.Content className="space-y-3 my-5 mx-5 sm:mx-20">
       <Typography.Title level={3} style={{ marginBottom: 0 }} className="m-0">
         Chủ đề luận văn và chi tiết
       </Typography.Title>

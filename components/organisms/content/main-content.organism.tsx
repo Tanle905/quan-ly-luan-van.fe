@@ -35,6 +35,7 @@ import { isTeacher } from "../../../utils/role.util";
 import { OGTable } from "../table/table.organism";
 import { scheduleListConfig } from "../../../config/teacher/schedule-list.config";
 import useSWR from "swr";
+import { UploadOutlined } from "@ant-design/icons";
 
 interface OGMainContentProps {}
 
@@ -99,7 +100,10 @@ function TeacherContent() {
         <SendStudentModal>
           {(setOpen) => (
             <Button type="primary" onClick={() => setOpen(true)}>
-              Nộp danh sách báo cáo
+              <span className="hidden sm:inline-block">
+                Nộp danh sách báo cáo
+              </span>
+              <UploadOutlined />
             </Button>
           )}
         </SendStudentModal>
