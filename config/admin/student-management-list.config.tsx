@@ -43,14 +43,6 @@ export const studentManagementListConfig: TableConfig = {
   ],
   extraRightComponent: [
     () => <GradingStatusSwitch />,
-    ({ key, href }) =>
-      href && (
-        <AtomExportButton
-          key={key}
-          href={baseURL + STUDENT_ENDPOINT.BASE + COMMON_ENDPOINT.EXPORT}
-          method="POST"
-        />
-      ),
     (props) => (
       <MCAddUserFormModal
         title="Thêm sinh viên"
