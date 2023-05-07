@@ -165,7 +165,11 @@ function ModalContent({ MSSV }: { MSSV?: string }) {
           <Divider className="pb-2" />
           <div className="rounded-md border-gray-700 border-2">
             <Dragger
-              beforeUpload={() => true}
+              customRequest={(options) => {
+                setTimeout(() => {
+                  options.onSuccess && options.onSuccess("ok");
+                }, 0);
+              }}
               className="bg-indigo-400"
               disabled={isAtFileUploadLimit}
               onChange={handleUploadFile}
