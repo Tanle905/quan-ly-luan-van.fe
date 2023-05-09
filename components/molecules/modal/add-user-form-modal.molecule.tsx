@@ -178,7 +178,7 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
             { max: 20, message: "Vui lòng nhập không quá 20 ký tự" },
           ]}
         >
-          <Input type="text" prefix={<NumberOutlined />} />
+          <Input disabled type="text" prefix={<NumberOutlined />} />
         </Form.Item>
       </div>
       <div className="flex items-center">
