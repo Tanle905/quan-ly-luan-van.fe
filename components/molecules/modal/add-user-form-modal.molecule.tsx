@@ -175,7 +175,7 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
               required: true,
               message: `Vui lòng nhập ${isStudent ? "MSSV" : "MSCB"}`,
             },
-            { max: 10, message: "Vui lòng nhập không quá 10 ký tự" },
+            { max: 20, message: "Vui lòng nhập không quá 20 ký tự" },
           ]}
         >
           <Input type="text" prefix={<NumberOutlined />} />
@@ -207,7 +207,7 @@ function MCAddInfoForm({ form, profile, role }: MCAddInfoFormProps) {
                 required: true,
                 message: `Vui lòng nhập tên`,
               },
-              { max: 10, message: "Vui lòng nhập không quá 10 ký tự" },
+              { max: 20, message: "Vui lòng nhập không quá 20 ký tự" },
             ]}
           >
             <Input type="text" />

@@ -53,6 +53,10 @@ export function AtomSentRequestTableAction({
       );
 
       reloadTableSubject.next(1);
+      reloadProfileSubject.next(1);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
       message.success("Chấp nhận yêu cầu thành công");
     } catch (error: any) {
       message.error(error.response.data.message);

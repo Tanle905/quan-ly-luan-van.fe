@@ -126,7 +126,7 @@ export function MCTopicForm({
         {
           topicName,
           topicEnglishName,
-          majorTag: majorTag.map((tag: any) => ({ value: tag })),
+          majorTag: majorTag.map((tag: any) => ({ value: tag.value ?? tag })),
           topicDescription,
           role: user.roles[0],
           updatedBy: `${user.lastName} ${user.firstName}`,

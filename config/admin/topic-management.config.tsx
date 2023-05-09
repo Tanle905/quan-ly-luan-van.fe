@@ -8,6 +8,7 @@ export const topicManagementListConfig: TableConfig = {
   apiEndpoint: TOPIC_MANAGEMENT_ENDPOINT.BASE,
   search: true,
   table: {
+    pageSize: 6,
     columns: [
       {
         key: "MSSV",
