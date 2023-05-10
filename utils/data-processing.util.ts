@@ -28,10 +28,11 @@ export function exportExcels(data: any) {
       },
     ];
   }, []);
+  console.log(processedData);
   const sheetData = slotsData.map((slot, index) => {
     const curSlotEventList = dateArr.map((date) => {
       const formattedDate = date.format("DD-MM-YYYY");
-      const curSlotEvent = processedData.find(
+      const curSlotEvents = processedData.filter(
         (d: any) =>
           dayjs(d.start).format("DD-MM-YYYY") === formattedDate &&
           d.slots === slot.value
@@ -39,25 +40,23 @@ export function exportExcels(data: any) {
 
       return [
         formattedDate,
-        curSlotEvent
-          ? `Đề tài: ${curSlotEvent?.topic.topicName} - Sinh viên thực hiện: ${curSlotEvent?.studentName} - Các giảng viên phụ trách: ${curSlotEvent?.teacherName?.join(', ')} `
-          : "",
+        curSlotEvents
+          .map((curSlotEvent: any) =>
+            curSlotEvent
+              ? `_Đề tài: ${curSlotEvent?.topic.topicName} - Sinh viên: ${
+                  curSlotEvent?.studentName
+                } - Giảng viên: ${curSlotEvent?.teacherName?.join(", ")} `
+              : ""
+          )
+          .join("\n"),
       ];
     });
 
     return {
-      ["Buổi"]: slot.name,
+      ["Buổi/Ngày"]: slot.name,
       ...Object.fromEntries(curSlotEventList),
     };
   });
-  const cellProps: XLSX.CellObject = {
-    s: {
-      alignment: {
-        wrapText: true,
-      },
-    },
-    t: "s",
-  };
 
   function isThesisDefenseWeek(e: any) {
     return e.backgroundColor === "#358630";
@@ -80,27 +79,27 @@ export function exportExcels(data: any) {
     cellStyles: true,
   });
   worksheet["!cols"] = [
-    { wch: 25 },
-    { wch: 25 },
-    { wch: 25 },
-    { wch: 25 },
-    { wch: 25 },
-    { wch: 25 },
-    { wch: 25 },
-    { wch: 25 },
+    { wch: 50 },
+    { wch: 50 },
+    { wch: 50 },
+    { wch: 50 },
+    { wch: 50 },
+    { wch: 50 },
+    { wch: 50 },
+    { wch: 50 },
   ];
   worksheet["!rows"] = [
     { hpx: 25 },
-    { hpx: 70 },
-    { hpx: 70 },
-    { hpx: 70 },
-    { hpx: 70 },
-    { hpx: 70 },
-    { hpx: 70 },
-    { hpx: 70 },
-    { hpx: 70 },
-    { hpx: 70 },
-    { hpx: 70 },
+    { hpx: 100 },
+    { hpx: 100 },
+    { hpx: 100 },
+    { hpx: 100 },
+    { hpx: 100 },
+    { hpx: 100 },
+    { hpx: 100 },
+    { hpx: 100 },
+    { hpx: 100 },
+    { hpx: 100 },
   ];
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
