@@ -227,7 +227,10 @@ function SendStudentModal({
         footer={[
           <Button
             type="primary"
-            disabled={user?.isImportedStudentListToSystem}
+            disabled={
+              user?.isImportedStudentListToSystem ||
+              selectedRowKeys.length === 0
+            }
             onClick={() =>
               Modal.confirm({
                 icon: null,
